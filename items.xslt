@@ -33,9 +33,9 @@
             </contained_in>
           </xsl:if>
           <xsl:if test="parent::items/parent::fridge">
-            <in>
+            <contained_in>
               <type>Fridge</type>
-            </in>
+            </contained_in>
           </xsl:if>
           <xsl:if test="parent::items/parent::Object/Name">
             <contained_in>
@@ -74,6 +74,7 @@
   </xsl:template>
 
   <xsl:template match="text()|@*"></xsl:template>
+
   <xsl:template name="colours">
     <xsl:param name="num" />
     <xsl:if test="$num=4278190080">Brown</xsl:if>
