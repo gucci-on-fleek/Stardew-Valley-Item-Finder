@@ -28,12 +28,12 @@
             </xsl:call-template>
           </actual_price>
           <xsl:if test="parent::items/parent::player">
-            <in>
+            <contained_in>
               <type>Player</type>
               <name>
                 <xsl:value-of select="parent::items/parent::player/name"/>
               </name>
-            </in>
+            </contained_in>
           </xsl:if>
           <xsl:if test="parent::items/parent::fridge">
             <in>
