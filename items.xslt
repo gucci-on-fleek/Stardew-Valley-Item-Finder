@@ -27,9 +27,9 @@
           <xsl:if test="parent::items/parent::player">
             <contained_in>
               <type>Player</type>
-              <name>
+              <description>
                 <xsl:value-of select="parent::items/parent::player/name" />
-              </name>
+              </description>
             </contained_in>
           </xsl:if>
           <xsl:if test="parent::items/parent::fridge">
@@ -43,11 +43,11 @@
                 <xsl:value-of select="parent::items/parent::Object/Name" />
               </type>
               <xsl:if test="parent::items/parent::Object/playerChoiceColor">
-                <colour>
+                <description>
                   <xsl:call-template name="colours">
                     <xsl:with-param name="num" select="parent::items/parent::Object/playerChoiceColor/PackedValue" />
                   </xsl:call-template>
-                </colour>
+                </description>
               </xsl:if>
             </contained_in>
           </xsl:if>

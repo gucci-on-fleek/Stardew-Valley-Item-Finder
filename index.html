@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="price-calculator.css" />
+    <link rel="prefetch" href="items.xslt" as="fetch" />
+    <link rel="prefetch" href="items-to-csv.xslt" as="fetch" />
+    <title>Stardew Valley Price Calculator</title>
+    <script src="price-calculator.js"></script>
+    <script src="libraries/papaparse.min.js"></script>
+    <script src="libraries/tablesort.min.js"></script>
+    <script src="libraries/tablesort.number.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="text">
+            <h1>Stardew Valley Price Calculator</h1>
+            <h2>Instructions</h2>
+            <p>
+                The save file is of the form <span class="mono">Name_123456789</span>. It can be found in the following
+                folders.
+                <ul>
+                    <li>Windows: <span class="mono">%appdata%\StardewValley\Saves</span></li>
+                    <li>Linux and macOS: <span class="mono">~/.config/StardewValley/Saves</span></li>
+                </ul>
+            </p>
+            <p>
+                You can sort the table by clicking on the headers, and you can download the table as a <span
+                    class="mono">CSV</span> file to use in Excel.
+            </p>
+        </div>
+        <input type='file' onchange='file_opened(event)'>
+
+        <div id="output"></div>
+        <div class="text">
+            <h2>About</h2>
+            <p>
+                Currently, this tool does <i>not</i> account for any professions, which can make some of the prices
+                inaccurate
+                at higher skill levels.
+            </p>
+            <p>
+                This tool runs entirely inside the browser. Your save file is never sent across the network. All of the
+                data
+                is
+                extracted using <span class="mono">xslt</span> if that sort of thing interests you.
+            </p>
+            <p>
+                Source repository located at <a
+                    href="https://github.com/gucci-on-fleek/Stardew-Valley-Price-Calculator">https://github.com/gucci-on-fleek/Stardew-Valley-Price-Calculator</a>.
+                Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>
+            </p>
+        </div>
+    </div>
+</body>

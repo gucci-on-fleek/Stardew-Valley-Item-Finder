@@ -1,0 +1,32 @@
+body {
+    font-family: sans-serif;
+    margin: 15px;
+}
+
+thead {
+    font-weight: bold;
+}
+
+td:nth-of-type(3), td:nth-of-type(4), td:nth-of-type(6) {
+    text-align: right;
+}
+
+table { 
+    margin-left: -20px;
+    border-collapse: separate;
+    border-spacing: 20px 2px;
+    table-layout: auto;
+}
+
+span.mono {
+    font-family: monospace
+}
+
+.text {
+    max-width: 800px;
+}
+
+.container {
+    display: grid;
+   justify-items: center;
+}
