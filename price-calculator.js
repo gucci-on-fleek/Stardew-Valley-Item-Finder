@@ -1,4 +1,5 @@
-var csv_str, x, y;
+'use strict';
+var csv_str;
 
 function file_opened(event) {
     var input = event.target;
@@ -8,10 +9,8 @@ function file_opened(event) {
         var file_contents = reader.result;
         var xml_parser = new DOMParser();
         var save_game = xml_parser.parseFromString(file_contents, "text/xml")
-        y = save_game;
         var items = process_xslt(save_game, "items.xslt");
         var csv = process_xslt(items, "items-to-csv.xslt")
-        x = csv;
         csv_str = csv.firstChild.wholeText;
         var csv_parsed = Papa.parse(csv_str).data;
         set_output(make_html_table(csv_parsed));
@@ -20,7 +19,6 @@ function file_opened(event) {
         Tablesort.extend('quality', function (item) {
             return /Gold|Silver|Iridium/.test(item);
         }, function (a, b) {
-            // e.g var n = (a > b) ? -1 : 1;
             if (a === 'Iridium') { return 1 };
             if (b === 'Iridium') { return -1 };
             if (a === 'Gold') { return 1 };
@@ -36,9 +34,11 @@ function file_opened(event) {
 
 function set_output(text) {
     var node = document.getElementById('output');
-    node.innerHTML += '<h2>Items</h2>'
+    node.innerHTML = ""
+    node.innerHTML += '<h2>Items <input type="text" id="filter" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>'
     node.innerHTML += '<input type="button" id="down-button" value="Download as CSV" onclick="download(csv_str)" />'
     node.innerHTML += text;
+    calculate_sum()
 }
 
 function process_xslt(text, path) {
@@ -59,19 +59,20 @@ function process_xslt(text, path) {
 
 function make_html_table(arr) {
     var result = "<table id='prices'>";
-    result += "<thead>"
+    result += "<thead><tr class='header'>"
     for (var j = 0; j < arr[0].length; j++) {
         result += "<td>" + arr[0][j] + "</td>";
     }
-    result += "</thead><tbody>"
+    result += "</tr></thead><tbody>"
     for (var i = 1; i < arr.length - 1; i++) {
         result += "<tr>";
         for (var j = 0; j < arr[i].length; j++) {
-            result += "<td>" + arr[i][j] + "</td>";
+            result += "<td>" + format_numbers(arr[i][j]) + "</td>";
         }
         result += "</tr>";
+
     }
-    result += "</tbody></table>";
+    result += "</tbody><tfoot></tfoot></table>";
 
     return result;
 }
@@ -83,8 +84,40 @@ function download(text) {
 
     element.style.display = 'none';
     document.body.appendChild(element);
-
     element.click();
-
     document.body.removeChild(element);
+}
+
+function filter_table() {
+    const filter = document.querySelector('#filter').value.toLowerCase();
+    const rows = document.querySelectorAll('#prices tr:not(.header)');
+    rows.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toLowerCase().includes(filter)) ? '' : 'none');
+    calculate_sum()
+}
+
+function calculate_sum() {
+    document.querySelector('tfoot').innerHTML = ""
+    var table = document.querySelector('#prices');
+    var tot_price = 0;
+    var tot_count = 0;
+    for (var i = 1, row; row = table.rows[i]; i++) {
+        if (row.style.display === 'none') { continue; }
+        tot_count += parse_numbers(row.cells[3].innerText);
+        tot_price += parse_numbers(row.cells[5].innerText);
+    }
+    var result = "";
+    result += "<tr>";
+    result += "<td>Total</td><td></td><td></td>";
+    result += "<td>" + format_numbers(tot_count) + "</td>";
+    result += "<td></td>";
+    result += "<td>" + format_numbers(tot_price) + "</td></tr>";
+    document.querySelector('tfoot').innerHTML = result;
+}
+
+function format_numbers(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+function parse_numbers(num) {
+    return Number(num.match(/\d/g).join(''))
 }
