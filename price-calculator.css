@@ -46,6 +46,7 @@ table thead tr td {
     top: 0;
     z-index: 5;
     background: #fff;
+    cursor: pointer;
 }
 
 table tfoot tr td {
@@ -54,4 +55,12 @@ table tfoot tr td {
     bottom: 0;
     z-index: 5;
     background: #fff;
+}
+
+img.icon {
+    height: 1em;
+}
+
+.sort {
+    display: none
 }

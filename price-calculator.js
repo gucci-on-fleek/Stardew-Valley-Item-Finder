@@ -15,19 +15,9 @@ function file_opened(event) {
         var csv_parsed = Papa.parse(csv_str).data;
         set_output(make_html_table(csv_parsed));
         new Tablesort(document.getElementById('prices'));
+        Tablesort.extend('number', item => item.match(/\d/),
+            (a, b) => parse_numbers(a) - parse_numbers(b))
 
-        Tablesort.extend('quality', function (item) {
-            return /Gold|Silver|Iridium/.test(item);
-        }, function (a, b) {
-            if (a === 'Iridium') { return 1 };
-            if (b === 'Iridium') { return -1 };
-            if (a === 'Gold') { return 1 };
-            if (b === 'Gold') { return -1 };
-            if (a === 'Silver') { return 1 };
-            if (b === 'Silver') { return -1 };
-            if (a === '') { return -1 };
-            if (b === '') { return 1 };
-        });
     };
     reader.readAsText(input.files[0]);
 };
@@ -67,6 +57,10 @@ function make_html_table(arr) {
     for (var i = 1; i < arr.length - 1; i++) {
         result += "<tr>";
         for (var j = 0; j < arr[i].length; j++) {
+            if (j === 1) {
+                result += "<td>" + replace_icon(arr[i][j]) + "</td>";
+                continue;
+            }
             result += "<td>" + format_numbers(arr[i][j]) + "</td>";
         }
         result += "</tr>";
@@ -119,5 +113,13 @@ function format_numbers(num) {
 }
 
 function parse_numbers(num) {
-    return Number(num.match(/\d/g).join(''))
+    var match = num.match(/\d/g);
+    return match ? Number(match.join('')) : 0
+}
+
+function replace_icon(str) {
+    return str
+        .replace(/Silver/g, '<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort">-1</div>')
+        .replace(/Gold/g, '<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort">-2</div>')
+        .replace(/Iridium/g, '<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort">-3</div>');
 }
