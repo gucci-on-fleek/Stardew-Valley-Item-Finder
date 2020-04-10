@@ -17,7 +17,7 @@ function file_opened(event) {
         var csv_parsed = Papa.parse(csv_str).data;
         set_output(make_html_table(csv_parsed));
 
-        new Tablesort(document.querySelector('#prices'));
+        new Tablesort(document.querySelector('#item_table'));
         Tablesort.extend('number', item => item.match(/\d/),
             (a, b) => parse_integer(a) - parse_integer(b))
     };
@@ -51,7 +51,7 @@ function process_xslt(text, path) {
 
 
 function make_html_table(arr) {
-    var result = "<table id='prices'>";
+    var result = "<table id='item_table'>";
 
     result += "<thead><tr class='header'>"
     for (var j = 0; j < arr[0].length; j++) {
@@ -89,14 +89,14 @@ function download_as_csv(text) {
 
 function filter_table() {
     var filter = document.querySelector('#filter').value.toLowerCase();
-    var rows = document.querySelectorAll('#prices tr:not(.header)');
+    var rows = document.querySelectorAll('#item_table tr:not(.header)');
     rows.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toLowerCase().includes(filter)) ? '' : 'none');
     calculate_sum()
 }
 
 function calculate_sum() {
     document.querySelector('tfoot').innerHTML = ""
-    var table = document.querySelector('#prices');
+    var table = document.querySelector('#item_table');
     var tot_price = 0;
     var tot_count = 0;
 
@@ -117,7 +117,7 @@ function calculate_sum() {
 }
 
 function format_integer(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 function parse_integer(num) {
