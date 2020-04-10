@@ -3,14 +3,6 @@ body {
     margin: 15px;
 }
 
-thead {
-    font-weight: bold;
-}
-
-td:nth-of-type(3), td:nth-of-type(4), td:nth-of-type(6) {
-    text-align: right;
-}
-
 table { 
     margin-left: -20px;
     border-collapse: separate;
@@ -19,7 +11,36 @@ table {
     font-variant-numeric: tabular-nums;
 }
 
-span.mono {
+thead {
+    font-weight: bold;
+}
+
+tfoot {
+    font-weight: bold;
+}
+
+td:nth-of-type(3), td:nth-of-type(4), td:nth-of-type(6) {
+    text-align: right;
+}
+
+thead tr td, tfoot tr td {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #fff;
+    cursor: pointer;
+}
+
+tfoot tr td {
+    bottom: 0;
+}
+
+thead tr td {
+    top: 0;
+}
+
+.mono {
     font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Fira Mono", Courier, monospace
 }
 
@@ -32,35 +53,14 @@ span.mono {
     justify-items: center;
 }
 
-tfoot {
-    font-weight: bold;
-}
-
 #filter {
     margin-left: 50px;
-}
-
-table thead tr td {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: #fff;
-    cursor: pointer;
-}
-
-table tfoot tr td {
-    position: -webkit-sticky;
-    position: sticky;
-    bottom: 0;
-    z-index: 5;
-    background: #fff;
 }
 
 img.icon {
     height: 1em;
 }
 
-.sort {
+.sort-id {
     display: none
 }

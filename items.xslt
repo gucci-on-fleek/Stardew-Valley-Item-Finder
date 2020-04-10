@@ -80,12 +80,12 @@
     <xsl:if test="$num=4278190080">Brown</xsl:if>
     <xsl:if test="$num=4294923605">Dark Blue</xsl:if>
     <xsl:if test="$num=4294950775">Light Blue</xsl:if>
-    <xsl:if test="$num=4289374720">Dark Blue-Green</xsl:if>
-    <xsl:if test="$num=4289718784">Light Blue-Green</xsl:if>
+    <xsl:if test="$num=4289374720">Dark Blue–Green</xsl:if>
+    <xsl:if test="$num=4289718784">Light Blue–Green</xsl:if>
     <xsl:if test="$num=4278233600">Dark Green</xsl:if>
     <xsl:if test="$num=4278250655">Light Green</xsl:if>
     <xsl:if test="$num=4279429887">Yellow</xsl:if>
-    <xsl:if test="$num=4279412735">Yellow-Orange</xsl:if>
+    <xsl:if test="$num=4279412735">Yellow–Orange</xsl:if>
     <xsl:if test="$num=4279396863">Orange</xsl:if>
     <xsl:if test="$num=4278190335">Red</xsl:if>
     <xsl:if test="$num=4280483975">Dark Red</xsl:if>
