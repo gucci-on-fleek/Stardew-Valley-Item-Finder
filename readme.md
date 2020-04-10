@@ -1,5 +1,5 @@
 
-Stardew Valley Price Calculator
+Stardew Valley Item Finder
 ===============================
 
 Instructions
@@ -25,7 +25,7 @@ across the network. Internally, the data is processed using
 `xslt`
 
 Source repository located at
-<https://github.com/gucci-on-fleek/Stardew-Valley-Price-Calculator>.
+<https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder>.
 Inspired by the [Stardew Fair
 Helper](https://mouseypounds.github.io/stardew-fair-helper/)
 
