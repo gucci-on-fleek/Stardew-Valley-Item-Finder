@@ -5,11 +5,11 @@ Stardew Valley Item Finder
 Instructions
 ------------
 
-The save file is of the form `Name\_123456789`. It can be found
+The save file is of the form `Name_123456789`. It can be found
 in the following folders.
 
--   Windows: `%appdata%\\StardewValley\\Saves`
--   Linux and macOS: `\~/.config/StardewValley/Saves`
+-   Windows: `%appdata%\StardewValley\Saves`
+-   Linux and macOS: `~/.config/StardewValley/Saves`
 
 You can sort the table by clicking on the headers, and you can download
 the table as a `CSV` file to use in Excel.
@@ -28,8 +28,6 @@ Source code repository located at
 Inspired by the [Stardew Fair
 Helper](https://mouseypounds.github.io/stardew-fair-helper/).
 
-All files in this repository are licensed under the [MPL version 2 or later](https://www.mozilla.org/en-US/MPL/2.0/). This excludes the files in the `libraries` folder, which are licensed as stated in each file. The files in the `assets` folder belong to ConcernedApe and are used under fair use.
-
 Command Line Usage
 ------------------
 
@@ -37,3 +35,8 @@ Advanced users can convert their save files to `CSV` on the command line. First,
 ```bash
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
 ```
+
+Licencing
+---------
+
+All files in this repository are licensed under the [MPL version 2 or later](https://www.mozilla.org/en-US/MPL/2.0/). This excludes the files in the `libraries` folder, which are licensed as stated in each file. The files in the `assets` folder belong to ConcernedApe and are used under fair use.
