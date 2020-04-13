@@ -2,7 +2,7 @@
     <xsl:output method="text" encoding="utf-8" />
 
     <xsl:variable name="col_sep" select="','" />
-    <xsl:variable name="quote" select="'&quot;'" />
+    <xsl:variable name="quote" select="''" />
     <xsl:variable name="row_sep" select="'&#xA;'" />
 
     <xsl:template match="/items">

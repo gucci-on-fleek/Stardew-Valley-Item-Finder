@@ -14,7 +14,7 @@ function file_opened(event) {
         var csv = process_xslt(items, "items-to-csv.xslt")
 
         csv_str = csv.firstChild.wholeText;
-        var csv_parsed = Papa.parse(csv_str).data;
+        var csv_parsed = parse_csv(csv_str);
         set_output(make_html_table(csv_parsed));
 
         new Tablesort(document.querySelector('#item_table'));
@@ -27,12 +27,13 @@ function file_opened(event) {
 function set_output(text) {
     var node = document.querySelector('#output');
 
-    node.innerHTML = ""
-    node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>'
-    node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_str)" />'
+    node.innerHTML = "";
+    node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>';
+    node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_str)" />';
     node.innerHTML += text;
 
-    calculate_sum()
+    calculate_sum();
+    document.querySelector('#filter').focus();
 }
 
 function process_xslt(text, path) {
@@ -130,4 +131,8 @@ function replace_icon(str) {
         .replace(/Silver/, '<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort-id">1</div>')
         .replace(/Gold/, '<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort-id">2</div>')
         .replace(/Iridium/, '<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort-id">3</div>');
+}
+
+function parse_csv(str) {
+    return str.split('\n').map(x => x.split(','))
 }
