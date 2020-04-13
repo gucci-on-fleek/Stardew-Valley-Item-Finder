@@ -41,17 +41,23 @@
                 at higher skill levels.
             </p>
             <p>
-                This tool runs entirely inside the browser. Your save file is never sent across the network. Internally,
-                the
-                data
-                is
-                processed using <span class="mono">xslt</span>.
+                This tool runs entirely inside the browser. Your save file is never sent across the network.
             </p>
             <p>
-                Source repository located at <a
+                Source code repository located at <a
                     href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder</a>.
-                Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>
+                Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>.
             </p>
+            <h2>Command Line Usage</h2>
+            <p>
+                Advanced users can convert their save files to <span class="mono">CSV</span> on the command line. First,
+                you'll need to
+                download the <span class="mono">xslt</span> files from the <a
+                    href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
+                Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><span class=mono>xsltproc</span></a></p>
+            <pre>
+xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
+</pre>
         </div>
     </div>
 </body>
