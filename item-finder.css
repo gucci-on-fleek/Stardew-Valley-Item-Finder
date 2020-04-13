@@ -1,6 +1,54 @@
+:root {
+    --color-light: hsl(32, 98%, 92%);
+    --color-light-faded: hsla(32, 100%, 90%, 40%);
+    --color-dark: hsl(32, 80%, 8%);
+    --color-dark-faded: hsla(32, 80%, 8%, 40%);
+    --color-blue: hsl(212, 90%, 45%);
+    --color-purple: hsl(280, 90%, 45%);
+    --color-light-blue: hsl(212, 85%, 75%);
+    --color-light-purple: hsl(280, 84%, 75%);
+}
+
+
+:root {
+    --color-background: var(--color-light);
+    --color-text: var(--color-dark);
+    --color-link: var(--color-blue);
+    --color-link-followed: var(--color-purple);
+    --color-faded: var(--color-dark-faded);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: var(--color-dark);
+        --color-text: var(--color-light);
+        --color-link: var(--color-light-blue);
+        --color-link-followed: var(--color-light-purple);
+        --color-faded: var(--color-light-faded);
+    }
+}
+
+html {
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+a:link {
+    color: var(--color-link);
+}
+
+a:visited {
+    color: var(--color-link-followed);
+}
+
 body {
     font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', system-ui, sans-serif;
     margin: 15px;
+}
+
+h1 {
+    padding-bottom: .1em;
+    border-bottom: 1px solid var(--color-faded);
 }
 
 table { 
@@ -28,7 +76,7 @@ thead tr td, tfoot tr td {
     position: sticky;
     top: 0;
     z-index: 5;
-    background: #fff;
+    background: var(--color-background);
     cursor: pointer;
 }
 

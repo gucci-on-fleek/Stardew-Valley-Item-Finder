@@ -28,8 +28,8 @@ function set_output(text) {
     var node = document.querySelector('#output');
 
     node.innerHTML = ""
-    node.innerHTML += '<h2>Items <input type="text" id="filter" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>'
-    node.innerHTML += '<input type="button" id="down-button" value="Download as CSV" onclick="download(csv_str)" />'
+    node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>'
+    node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_str)" />'
     node.innerHTML += text;
 
     calculate_sum()
@@ -79,7 +79,7 @@ function make_html_table(arr) {
 function download_as_csv(text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', 'Stardew Valley.csv');
+    element.setAttribute('download', 'Stardew Valley Items.csv');
 
     element.style.display = 'none';
     document.body.appendChild(element);
@@ -90,7 +90,7 @@ function download_as_csv(text) {
 function filter_table() {
     var filter = document.querySelector('#filter').value.toLowerCase();
     var rows = document.querySelectorAll('#item_table tr:not(.header)');
-    rows.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toLowerCase().includes(filter)) ? '' : 'none');
+    rows.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toLowerCase().match(RegExp(filter))) ? '' : 'none');
     calculate_sum()
 }
 
