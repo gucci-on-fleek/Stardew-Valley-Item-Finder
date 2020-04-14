@@ -8,18 +8,28 @@ function file_opened(event) {
 
     reader.onload = function () {
         var file_contents = reader.result;
-        var xml_parser = new DOMParser();
 
-        var save_game = xml_parser.parseFromString(file_contents, "text/xml")
-        var items = fetch_and_process_xslt(save_game, "items.xslt");
-        var csv = fetch_and_process_xslt(items, "items-to-csv.xslt")
+        var save_game = parse_xml(file_contents)
+        var items = process_xslt(get_file("items.xslt"), save_game);
+        var csv = process_xslt(get_file("items-to-csv.xslt"), items)
 
-        csv_str = csv.firstChild.wholeText; // Easiest way to get the xslt-transformed text
+        csv_str = xslt_output_to_text(csv); // Easiest way to get the xslt-transformed text
         var csv_parsed = parse_csv(csv_str);
         set_output(make_html_table(csv_parsed));
     };
     reader.readAsText(input.files[0]);
 };
+
+function xslt_output_to_text(xslt_out) {
+    /* Convert the xslt transformed output into a string */
+    return xslt_out.firstChild.wholeText
+}
+
+function parse_xml(text) {
+    /* Parse a string into xml */
+    var xml_parser = new DOMParser();
+    return xml_parser.parseFromString(text, "text/xml")
+}
 
 function set_output(text) {
     /* Put the table's html into the document */
@@ -38,13 +48,13 @@ function set_output(text) {
         (a, b) => parse_integer(a) - parse_integer(b))
 }
 
-function fetch_and_process_xslt(text, path) {
+function get_file(path) {
     /* Download the xslt and transform the xml */
     var http_request = new XMLHttpRequest();
     http_request.open("GET", path, false); // We could use async, but there's nothing to do until the xslt is loaded, so why bother
     http_request.send(null);
 
-    return process_xslt(http_request.responseXML, text);
+    return http_request.responseXML;
 }
 
 
