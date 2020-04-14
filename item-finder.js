@@ -11,16 +11,12 @@ function file_opened(event) {
         var xml_parser = new DOMParser();
 
         var save_game = xml_parser.parseFromString(file_contents, "text/xml")
-        var items = process_xslt(save_game, "items.xslt");
-        var csv = process_xslt(items, "items-to-csv.xslt")
+        var items = fetch_and_process_xslt(save_game, "items.xslt");
+        var csv = fetch_and_process_xslt(items, "items-to-csv.xslt")
 
         csv_str = csv.firstChild.wholeText; // Easiest way to get the xslt-transformed text
         var csv_parsed = parse_csv(csv_str);
         set_output(make_html_table(csv_parsed));
-
-        new Tablesort(document.querySelector('#item_table')); // Allow the table headings to be used for sorting
-        Tablesort.extend('number', item => item.match(/\d/),
-            (a, b) => parse_integer(a) - parse_integer(b))
     };
     reader.readAsText(input.files[0]);
 };
@@ -36,16 +32,26 @@ function set_output(text) {
 
     calculate_sum(); // Calculate the sums after the table has been build
     document.querySelector('#filter').focus();
+
+    new Tablesort(document.querySelector('#item_table')); // Allow the table headings to be used for sorting
+    Tablesort.extend('number', item => item.match(/\d/),
+        (a, b) => parse_integer(a) - parse_integer(b))
 }
 
-function process_xslt(text, path) {
+function fetch_and_process_xslt(text, path) {
     /* Download the xslt and transform the xml */
-    var xslt_processor = new XSLTProcessor();
-
     var http_request = new XMLHttpRequest();
     http_request.open("GET", path, false); // We could use async, but there's nothing to do until the xslt is loaded, so why bother
     http_request.send(null);
-    var xslt = http_request.responseXML;
+
+    return process_xslt(http_request.responseXML, text);
+}
+
+
+
+function process_xslt(xslt, text) {
+    /* Transform the xml */
+    var xslt_processor = new XSLTProcessor();
 
     xslt_processor.importStylesheet(xslt);
     var processed = xslt_processor.transformToFragment(text, new Document()); // Non-standard, but supported by everything that isn't IE
