@@ -40,7 +40,7 @@ function set_output(text) {
     var node = document.querySelector('#output');
 
     node.innerHTML = "";
-    node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>';
+    node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input></h2>';
     node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_string)" />';
     node.innerHTML += text;
 
