@@ -13,16 +13,19 @@ function file_opened(event) {
         var items = process_xslt(get_file("items.xslt"), save_game);
         var csv = process_xslt(get_file("items-to-csv.xslt"), items)
 
-        csv_str = xslt_output_to_text(csv); // Easiest way to get the xslt-transformed text
-        var csv_parsed = parse_csv(csv_str);
-        set_output(make_html_table(csv_parsed));
+        set_output(
+            make_html_table(
+                parse_csv(
+                    xslt_output_to_text(csv)
+                )))
     };
     reader.readAsText(input.files[0]);
 };
 
 function xslt_output_to_text(xslt_out) {
     /* Convert the xslt transformed output into a string */
-    return xslt_out.firstChild.wholeText
+    csv_str = xslt_out.firstChild.wholeText;
+    return csv_str
 }
 
 function parse_xml(text) {
