@@ -16,10 +16,12 @@
     <div class="container">
         <div class="text">
             <h1>Stardew Valley Item Finder</h1>
+            <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
+                table shows the item's name, location, and price.</p>
             <h2>Instructions</h2>
             <p>
-                The save file is of the form <span class="mono">Name_123456789</span>. It can be found in the following
-                folders.
+                Your save file is named <span class="mono">Name_123456789</span>, where <span class="mono">Name</span>
+                is your player's name and <span class="mono">123456789</span> is a random 9-digit number.
             </p>
             <ul>
                 <li>Windows: <span class="mono">%appdata%\StardewValley\Saves</span></li>
@@ -54,7 +56,7 @@
                 you'll need to
                 download the <span class="mono">xslt</span> files from the <a
                     href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
-                Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><span class=mono>xsltproc</span></a></p>
+                Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><span class=mono>xsltproc</span></a>:</p>
             <pre>
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
 </pre>

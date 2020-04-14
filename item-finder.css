@@ -4,9 +4,9 @@
     --color-light-faded: hsla(32, 100%, 90%, 40%);
     --color-dark: hsl(32, 80%, 8%);
     --color-dark-faded: hsla(32, 80%, 8%, 40%);
-    --color-blue: hsl(212, 90%, 45%);
+    --color-blue: hsl(213, 90%, 45%);
     --color-purple: hsl(280, 90%, 45%);
-    --color-light-blue: hsl(212, 85%, 75%);
+    --color-light-blue: hsl(213, 85%, 75%);
     --color-light-purple: hsl(280, 84%, 75%);
 }
 
@@ -28,6 +28,21 @@
         --color-link: var(--color-light-blue);
         --color-link-followed: var(--color-light-purple);
         --color-faded: var(--color-light-faded);
+    }
+}
+
+@media print {
+    :root {
+        --color-background: white;
+        --color-text: black;
+    }
+
+    .text, h2, input {
+        display: none
+    }
+
+    table {
+        font-size: 10pt;
     }
 }
 
@@ -102,7 +117,7 @@ thead tr td {
 }
 
 .mono, pre {
-    font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Fira Mono", Courier, monospace
+    font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace
 }
 
 .text {
@@ -128,3 +143,15 @@ img.icon {
     /* sort-id is only used to sort the qualities */
     display: none
 }
+
+pre {
+    overflow-x: auto !important; 
+    position:absolute;
+    max-width: 90%;
+    padding-bottom: 1ex;
+    margin-top: 0;
+}
+
+html, body {
+    overflow-x: hidden;
+  }

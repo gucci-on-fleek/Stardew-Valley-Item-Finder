@@ -2,10 +2,14 @@
 Stardew Valley Item Finder
 ===============================
 
+This tool extracts information about all of your items in Stardew Valley
+and displays it in a table. The table shows the item's name, location,
+and price.
+
 Instructions
 ------------
 
-The save file is of the form `Name_123456789`. It can be found
+Your save file is named `Name_123456789`, where `Name` is your player's name and `123456789` is a random 9-digit number. It can be found
 in the following folders.
 
 -   Windows: `%appdata%\StardewValley\Saves`
