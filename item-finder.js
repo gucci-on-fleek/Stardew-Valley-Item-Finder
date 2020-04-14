@@ -1,5 +1,5 @@
 'use strict';
-var csv_str; // String holding the csv file
+var csv_string; // String holding the csv file
 
 function file_opened(event) {
     /* Handle the user opening a file */
@@ -10,22 +10,23 @@ function file_opened(event) {
         var file_contents = reader.result;
 
         var save_game = parse_xml(file_contents)
-        var items = process_xslt(get_file("items.xslt"), save_game);
-        var csv = process_xslt(get_file("items-to-csv.xslt"), items)
+        get_files(["items.xslt", "items-to-csv.xslt"]).then(
+            function (requests) {
+                var items = process_xslt(parse_xml(requests[0]), save_game);
+                var csv = process_xslt(parse_xml(requests[1]), items)
 
-        set_output(
-            make_html_table(
-                parse_csv(
-                    xslt_output_to_text(csv)
-                )))
+                var csv_parsed = parse_csv(xslt_output_to_text(csv));
+                var html = make_html_table(csv_parsed);
+                set_output(html);
+            })
     };
     reader.readAsText(input.files[0]);
 };
 
 function xslt_output_to_text(xslt_out) {
     /* Convert the xslt transformed output into a string */
-    csv_str = xslt_out.firstChild.wholeText;
-    return csv_str
+    csv_string = xslt_out.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
+    return csv_string
 }
 
 function parse_xml(text) {
@@ -40,7 +41,7 @@ function set_output(text) {
 
     node.innerHTML = "";
     node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"></input></h2>';
-    node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_str)" />';
+    node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_string)" />';
     node.innerHTML += text;
 
     calculate_sum(); // Calculate the sums after the table has been build
@@ -51,13 +52,14 @@ function set_output(text) {
         (a, b) => parse_integer(a) - parse_integer(b))
 }
 
-function get_file(path) {
-    /* Download the xslt and transform the xml */
-    var http_request = new XMLHttpRequest();
-    http_request.open("GET", path, false); // We could use async, but there's nothing to do until the xslt is loaded, so why bother
-    http_request.send(null);
+function get_files(paths) {
+    /* Download an array of files */
+    var requests = []
+    for (var i = 0; i < paths.length; i++) {
+        requests.push(fetch(paths[i]).then(x => x.text()))
+    }
 
-    return http_request.responseXML;
+    return Promise.all(requests)
 }
 
 
