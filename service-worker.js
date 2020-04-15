@@ -1,4 +1,4 @@
-var cache_name = 'stardew-valley-item-finder-v0.4'
+var cache_name = 'stardew-valley-item-finder-v0.5'
 var cache = caches.open(cache_name)
 
 self.addEventListener('install', function (event) {
@@ -12,6 +12,8 @@ self.addEventListener('install', function (event) {
     'assets/gold_star.png',
     'assets/silver_star.png',
     'assets/iridium_star.png',
+    'assets/icon.svg',
+    'assets/icon-32.png',
     'libraries/tablesort.min.js'
   ])))
 })
