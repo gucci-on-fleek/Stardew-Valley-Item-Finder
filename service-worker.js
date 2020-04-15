@@ -3,7 +3,7 @@ var cache = caches.open(cache_name)
 
 self.addEventListener('install', function (event) {
   event.waitUntil(cache.then(c => c.addAll([
-    '/',
+    '/Stardew-Valley-Item-Finder/',
     'index.html',
     'item-finder.js',
     'item-finder.css',

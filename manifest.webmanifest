@@ -19,9 +19,9 @@
             "sizes": "16x16 32x32 64x64 72x72 128x128 192x192 256x256 512x512"
         }
     ],
-    "start_url": "/",
+    "start_url": "/Stardew-Valley-Item-Finder/",
     "background_color": "#241504",
     "display": "standalone",
-    "scope": "/",
+    "scope": "/Stardew-Valley-Item-Finder/",
     "theme_color": "#241504"
 }
