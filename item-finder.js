@@ -1,6 +1,46 @@
 'use strict';
 var csv_string; // String holding the csv file
 
+var o = {
+    /* Object containing all output HTML strings */
+    items: {
+        /* Items Section */
+        heading: {
+            begin: () => `<h2>Items`,
+            filter: () => `<input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>`,
+            end: () => `</h2>`,
+        },
+        download: (x) => `<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(${x})" />`,
+        table: {
+            begin: () => `<table id='item_table'>`,
+            end: () => `</table>`,
+            cell: (x) => `<td>${x}</td>`,
+            header: {
+                begin: () => `<thead><tr class='header'>`,
+                end: () => `</tr></thead>`,
+            },
+            body: {
+                begin: () => `<tbody>`,
+                end: () => `</tbody>`
+            },
+            row: {
+                begin: () => `<tr>`,
+                end: () => `</tr>`
+            },
+            footer: {
+                begin: () => `<tfoot>`,
+                end: () => `</tfoot>`
+            }
+
+        },
+        icons: {
+            silver: () => `<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort-id">1</div>`,
+            gold: () => `<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort-id">2</div>`,
+            iridium: () => `<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort-id">3</div>`,
+        }
+    }
+}
+
 function file_opened(event) {
     /* Handle the user opening a file */
     var input = event.target;
@@ -37,11 +77,11 @@ function parse_xml(text) {
 
 function set_output(text) {
     /* Put the table's html into the document */
-    var node = document.querySelector('#output');
+    var node = document.querySelector('output');
 
     node.innerHTML = "";
-    node.innerHTML += '<h2>Items <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input></h2>';
-    node.innerHTML += '<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(csv_string)" />';
+    node.innerHTML += o.items.heading.begin() + o.items.heading.filter() + o.items.heading.end();
+    node.innerHTML += o.items.download('csv_str');
     node.innerHTML += text;
 
     calculate_sum(); // Calculate the sums after the table has been build
@@ -77,27 +117,27 @@ function process_xslt(xslt, text) {
 
 function make_html_table(arr) {
     /* Converts the array into the html table */
-    var result = "<table id='item_table'>";
+    var result = o.items.table.begin();
 
-    result += "<thead><tr class='header'>"
+    result += o.items.table.header.begin()
     for (var j = 0; j < arr[0].length; j++) {
-        result += "<td>" + arr[0][j] + "</td>";
+        result += o.items.table.cell(arr[0][j]);
     }
-    result += "</tr></thead><tbody>"
+    result += o.items.table.header.end() + o.items.table.body.begin();
 
     for (var i = 1; i < arr.length - 1; i++) {
-        result += "<tr>";
+        result += o.items.table.row.begin();
         for (var j = 0; j < arr[i].length; j++) {
             if (j === 1) { // Quality column
-                result += "<td>" + replace_icon(arr[i][j]) + "</td>";
+                result += o.items.table.cell(replace_icon(arr[i][j]));
                 continue;
             }
-            result += "<td>" + format_integer(arr[i][j]) + "</td>";
+            result += o.items.table.cell(format_integer(arr[i][j]));
         }
-        result += "</tr>";
+        result += o.items.table.row.end();
 
     }
-    result += "</tbody><tfoot></tfoot></table>";
+    result += "</tbody><tfoot></tfoot></table>"; o.items.table.body.end() + o.items.table.footer.begin() + o.items.table.footer.end() + o.items.table.end()
 
     return result;
 }
@@ -136,11 +176,11 @@ function calculate_sum() {
     }
 
     var result = "";
-    result += "<tr>";
-    result += "<td>Total</td><td></td><td></td>";
-    result += "<td>" + format_integer(tot_count) + "</td>";
-    result += "<td></td>";
-    result += "<td>" + format_integer(tot_price) + "</td></tr>";
+    result += o.items.table.row.begin();
+    result += o.items.table.cell("Total") + o.items.table.cell("") + o.items.table.cell("");
+    result += o.items.table.cell(format_integer(tot_count));
+    result += o.items.table.cell("");
+    result += o.items.table.cell(format_integer(tot_price)) + o.items.table.row.end();
 
     document.querySelector('tfoot').innerHTML = result;
 }
@@ -159,9 +199,9 @@ function parse_integer(num) {
 function replace_icon(str) {
     /* Use the Stardew Valley icons for qualities */
     return str
-        .replace(/Silver/, '<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort-id">1</div>')
-        .replace(/Gold/, '<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort-id">2</div>')
-        .replace(/Iridium/, '<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort-id">3</div>');
+        .replace(/Silver/, o.items.icons.silver())
+        .replace(/Gold/, o.items.icons.gold())
+        .replace(/Iridium/, o.items.icons.iridium());
 }
 
 function parse_csv(str) {

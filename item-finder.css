@@ -76,6 +76,7 @@ h1 {
     /* Add a horizontal rule below the title */
     padding-bottom: .1em;
     border-bottom: 1px solid var(--color-faded);
+    margin-bottom: 0;
 }
 
 table { 
@@ -117,16 +118,18 @@ thead tr td {
     top: 0;
 }
 
-.mono, pre {
+code, pre {
     font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace
 }
 
-.text {
+section, header, footer {
     /* Don't want really wide text */
     max-width: 800px;
+    display: block;
+    width: 100%;
 }
 
-.container {
+body {
     /* Center all content in the viewport */
     display: grid;
     justify-items: center;

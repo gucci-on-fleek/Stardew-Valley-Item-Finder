@@ -42,53 +42,53 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="text">
-            <h1>Stardew Valley Item Finder</h1>
-            <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
-                table shows the item's name, location, and price.</p>
-            <h2>Instructions</h2>
-            <p>
-                Your save file is named <span class="mono">Name_123456789</span>, where <span class="mono">Name</span>
-                is your player's name and <span class="mono">123456789</span> is a random 9-digit number.
-            </p>
-            <ul>
-                <li>Windows: <span class="mono">%appdata%\StardewValley\Saves</span></li>
-                <li>Linux and macOS: <span class="mono">~/.config/StardewValley/Saves</span></li>
-            </ul>
-            <p>
-                You can sort the table by clicking on the headers, and you can download the table as a <span
-                    class="mono">CSV</span> file to use in Excel.
-            </p>
-        </div>
-        <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
+    <header>
+        <h1>Stardew Valley Item Finder</h1>
+    </header>
+    <section class="text">
+        <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
+            table shows the item's name, location, and price.</p>
+        <h2>Instructions</h2>
+        <p>
+            Your save file is named <code>Name_123456789</code>, where <code>Name</code>
+            is your player's name and <code>123456789</code> is a random 9-digit number.
+        </p>
+        <ul>
+            <li>Windows: <code>%appdata%\StardewValley\Saves</code></li>
+            <li>Linux and macOS: <code>~/.config/StardewValley/Saves</code></li>
+        </ul>
+        <p>
+            You can sort the table by clicking on the headers, and you can download the table as a <code>CSV</code>
+            file to use in Excel.
+        </p>
+    </section>
+    <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
 
-        <div id="output"></div>
-        <div class="text">
-            <h2>About</h2>
-            <p>
-                Currently, this tool does <i>not</i> account for any professions, which can make some of the prices
-                inaccurate
-                at higher skill levels.
-            </p>
-            <p>
-                This tool runs entirely inside the browser. Your save file is never sent across the network.
-            </p>
-            <p>
-                Source code repository located at <a
-                    href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder</a>.
-                Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>.
-            </p>
-            <h2>Command Line Usage</h2>
-            <p>
-                Advanced users can convert their save files to <span class="mono">CSV</span> on the command line. First,
-                you'll need to
-                download the <span class="mono">xslt</span> files from the <a
-                    href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
-                Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><span class=mono>xsltproc</span></a>:</p>
-            <pre>
+    <output></output>
+    <section class="text">
+        <h2>About</h2>
+        <p>
+            Currently, this tool does <i>not</i> account for any professions, which can make some of the prices
+            inaccurate
+            at higher skill levels.
+        </p>
+        <p>
+            This tool runs entirely inside the browser. Your save file is never sent across the network.
+        </p>
+        <p>
+            Source code repository located at <a
+                href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder</a>.
+            Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>.
+        </p>
+        <h2>Command Line Usage</h2>
+        <p>
+            Advanced users can convert their save files to <code>CSV</code> on the command line. First,
+            you'll need to
+            download the <code>xslt</code> files from the <a
+                href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
+            Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><code>xsltproc</code></a>:</p>
+        <pre>
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
 </pre>
-        </div>
-    </div>
+    </section>
 </body>
