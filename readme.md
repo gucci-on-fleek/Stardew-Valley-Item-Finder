@@ -1,6 +1,5 @@
-
 Stardew Valley Item Finder
-===============================
+==========================
 
 This tool extracts information about all of your items in Stardew Valley
 and displays it in a table. The table shows the item's name, location,
@@ -9,8 +8,9 @@ and price.
 Instructions
 ------------
 
-Your save file is named `Name_123456789`, where `Name` is your player's name and `123456789` is a random 9-digit number. It can be found
-in the following folders.
+You'll need to upload your save file below to begin. Your save file is
+named `Name_123456789`, where `Name` is your player's name and
+`123456789` is a random 9-digit number.
 
 -   Windows: `%appdata%\StardewValley\Saves`
 -   Linux and macOS: `~/.config/StardewValley/Saves`
@@ -18,27 +18,42 @@ in the following folders.
 You can sort the table by clicking on the headers, and you can download
 the table as a `CSV` file to use in Excel.
 
+Currently, this tool does *not* account for any professions or special
+events. This may lead to some prices being slightly inaccurate for your
+specific character.
+
 About
 -----
-
-Currently, this tool does *not* account for any professions, which can
-make some of the prices inaccurate at higher skill levels.
 
 This tool runs entirely inside the browser. Your save file is never sent
 across the network.
 
 Source code repository located at
-<https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder>.
-Inspired by the [Stardew Fair
+<https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder>. Inspired
+by the [Stardew Fair
 Helper](https://mouseypounds.github.io/stardew-fair-helper/).
 
-Command Line Usage
-------------------
+Advanced Usage
+--------------
 
-Advanced users can convert their save files to `CSV` on the command line. First, you'll need to download the `xslt` files from the [source code repository](https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder). Then, using [`xsltproc`](http://xmlsoft.org/XSLT/xsltproc.html):
+### Running from the Command Line
+
+Advanced users can convert their save files to `CSV` on the command
+line. First, you'll need to download the `xslt` files from the [source
+code
+repository](https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder).
+Then, using [`xsltproc`](http://xmlsoft.org/XSLT/xsltproc.html):
+
 ```bash
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
 ```
+
+### Regular Expressions
+
+The "filter" fully supports Regular Expressions. For most users, the
+most important part is that you can search for multiple items at a time
+by separating them with a pipe (`|`). For example, to show all carrots
+and potatoes, you would type `carrot|potato`.
 
 Licencing
 ---------

@@ -32,13 +32,16 @@
 }
 
 @media print {
+
     /* Only print the table, and in black and white */
     :root {
         --color-background: white;
         --color-text: black;
     }
 
-    .text, h2, input {
+    .text,
+    h2,
+    input {
         display: none
     }
 
@@ -79,12 +82,15 @@ h1 {
     margin-bottom: 0;
 }
 
-table { 
-    margin-left: -20px; /* Counteract border-spacing for the left */
+table {
     border-collapse: separate;
     border-spacing: 20px 2px;
+    /* Counteract border-spacing for the left */
+    margin-left: -20px;
     table-layout: auto;
-    font-variant-numeric: tabular-nums; /* Monospaced numerals */
+    /* Monospaced numerals */
+    font-variant-numeric: tabular-nums;
+
 }
 
 thead {
@@ -95,12 +101,15 @@ tfoot {
     font-weight: bold;
 }
 
-td:nth-of-type(3), td:nth-of-type(4), td:nth-of-type(6) {
+td:nth-of-type(3),
+td:nth-of-type(4),
+td:nth-of-type(6) {
     /* Numeric columns should be right-aligned */
     text-align: right;
 }
 
-thead tr td, tfoot tr td {
+thead tr td,
+tfoot tr td {
     /* Have the header/footer of the table stay in the viewport */
     position: -webkit-sticky;
     position: sticky;
@@ -122,7 +131,10 @@ code {
     font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace
 }
 
-section, header, footer, article {
+section,
+header,
+footer,
+article {
     /* Don't want really wide text */
     max-width: 800px;
     display: block;
@@ -139,7 +151,7 @@ body {
     margin-left: 50px;
 }
 
-img.icon {
+.icon {
     height: 1em;
 }
 
@@ -150,9 +162,29 @@ img.icon {
 
 code.block {
     overflow-x: auto;
-    position:absolute;
     max-width: 90%;
     padding-bottom: 1ex;
     margin-top: 0;
+    height: 2em;
 }
 
+footer {
+    padding-top: 0;
+    border-top: 1px solid var(--color-faded);
+    margin-top: 1em;
+    text-align: right;
+}
+
+footer ul {
+    margin: 0;
+    padding: 0;
+}
+
+footer ul li {
+    list-style-type: none;
+    display: inline;
+}
+
+footer li:not(:first-child):before {
+    content: " • ";
+}

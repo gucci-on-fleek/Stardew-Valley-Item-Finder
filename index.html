@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
-        content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item's name, location, and price." />
+        content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item’s name, location, and price." />
     <meta name="theme-color" content="#241504" />
     <link rel="stylesheet" href="item-finder.css" />
     <link rel="preload" href="items.xslt" as="fetch" crossorigin="anonymous" />
@@ -47,11 +47,12 @@
     </header>
     <section class="text">
         <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
-            table shows the item's name, location, and price.</p>
+            table shows the item’s name, location, and price.</p>
         <h2>Instructions</h2>
         <p>
-            Your save file is named <code>Name_123456789</code>, where <code>Name</code>
-            is your player's name and <code>123456789</code> is a random 9-digit number.
+            You’ll need to upload your save file below to begin. Your save file is named <code>Name_123456789</code>,
+            where <code>Name</code>
+            is your player’s name and <code>123456789</code> is a random 9-digit number.
         </p>
         <ul>
             <li>Windows: <code>%appdata%\StardewValley\Saves</code></li>
@@ -66,12 +67,11 @@
 
     <output></output>
     <section class="text">
-        <h2>About</h2>
         <p>
-            Currently, this tool does <i>not</i> account for any professions, which can make some of the prices
-            inaccurate
-            at higher skill levels.
+            Currently, this tool does <i>not</i> account for any professions or special events. This may lead to some
+            prices being slightly inaccurate for your specific character.
         </p>
+        <h2>About</h2>
         <p>
             This tool runs entirely inside the browser. Your save file is never sent across the network.
         </p>
@@ -80,15 +80,26 @@
                 href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder</a>.
             Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>.
         </p>
-        <h2>Command Line Usage</h2>
+        <h2>Advanced Usage</h2>
+        <h3>Running from the Command Line</h3>
         <p>
             Advanced users can convert their save files to <code>CSV</code> on the command line. First,
-            you'll need to
+            you’ll need to
             download the <code>xslt</code> files from the <a
                 href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
             Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><code>xsltproc</code></a>:</p>
         <code class="block">
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
         </code>
+        <h3>Regular Expressions</h3>
+        The “filter” fully supports Regular Expressions. For most users, the most important part is that you can search
+        for multiple items at a time by separating them with a pipe (<code>|</code>). For example, to show all carrots
+        and potatoes, you would type <code>carrot|potato</code>.
     </section>
+    <footer>
+        <ul>
+            <li>Made by <a href="https://github.com/gucci-on-fleek">gucci-on-fleek</a></li>
+            <li> View on <a href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">GitHub</a></li>
+        </ul>
+    </footer>
 </body>
