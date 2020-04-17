@@ -118,11 +118,11 @@ thead tr td {
     top: 0;
 }
 
-code, pre {
+code {
     font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace
 }
 
-section, header, footer {
+section, header, footer, article {
     /* Don't want really wide text */
     max-width: 800px;
     display: block;
@@ -148,7 +148,7 @@ img.icon {
     display: none
 }
 
-pre {
+code.block {
     overflow-x: auto;
     position:absolute;
     max-width: 90%;
