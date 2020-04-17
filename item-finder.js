@@ -1,45 +1,40 @@
 'use strict';
 var csv_string; // String holding the csv file
 
-var o = {
+const template = {
     /* Object containing all output HTML strings */
-    items: {
-        /* Items Section */
-        heading: {
-            begin: () => `<h2>Items`,
-            filter: () => `<input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>`,
-            end: () => `</h2>`,
-        },
-        download: (x) => `<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(${x})" />`,
-        table: {
-            begin: () => `<table id='item_table'>`,
-            end: () => `</table>`,
-            cell: (x) => `<td>${x}</td>`,
-            header: {
-                begin: () => `<thead><tr class='header'>`,
-                end: () => `</tr></thead>`,
-            },
-            body: {
-                begin: () => `<tbody>`,
-                end: () => `</tbody>`
-            },
-            row: {
-                begin: () => `<tr>`,
-                end: () => `</tr>`
-            },
-            footer: {
-                begin: () => `<tfoot>`,
-                end: () => `</tfoot>`
-            }
-
-        },
-        icons: {
-            silver: () => `<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort-id">1</div>`,
-            gold: () => `<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort-id">2</div>`,
-            iridium: () => `<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort-id">3</div>`,
-        }
+    heading: `<h2>Items
+    <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>
+    </h2>`,
+    download: (x) => `<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(${x})" />`,
+    table: {
+        begin: `<table id='item_table'>`,
+        end: `</table>`,
+        cell: (x) => `<td>${x}</td>`,
+    },
+    header: {
+        begin: `<thead><tr class='header'>`,
+        end: `</tr></thead>`,
+    },
+    body: {
+        begin: `<tbody>`,
+        end: `</tbody>`
+    },
+    row: {
+        begin: `<tr>`,
+        end: `</tr>`
+    },
+    footer: {
+        begin: `<tfoot>`,
+        end: `</tfoot>`
+    },
+    icons: {
+        silver: `<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort-id">1</div>`,
+        gold: `<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort-id">2</div>`,
+        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort-id">3</div>`,
     }
 }
+
 
 function file_opened(event) {
     /* Handle the user opening a file */
@@ -80,8 +75,8 @@ function set_output(text) {
     var node = document.querySelector('output');
 
     node.innerHTML = "";
-    node.innerHTML += o.items.heading.begin() + o.items.heading.filter() + o.items.heading.end();
-    node.innerHTML += o.items.download('csv_str');
+    node.innerHTML += template.heading;
+    node.innerHTML += template.download('csv_str');
     node.innerHTML += text;
 
     calculate_sum(); // Calculate the sums after the table has been build
@@ -117,27 +112,27 @@ function process_xslt(xslt, text) {
 
 function make_html_table(arr) {
     /* Converts the array into the html table */
-    var result = o.items.table.begin();
+    var result = template.table.begin;
 
-    result += o.items.table.header.begin()
+    result += template.header.begin
     for (var j = 0; j < arr[0].length; j++) {
-        result += o.items.table.cell(arr[0][j]);
+        result += template.table.cell(arr[0][j]);
     }
-    result += o.items.table.header.end() + o.items.table.body.begin();
+    result += template.header.end + template.body.begin;
 
     for (var i = 1; i < arr.length - 1; i++) {
-        result += o.items.table.row.begin();
+        result += template.row.begin;
         for (var j = 0; j < arr[i].length; j++) {
             if (j === 1) { // Quality column
-                result += o.items.table.cell(replace_icon(arr[i][j]));
+                result += template.table.cell(replace_icon(arr[i][j]));
                 continue;
             }
-            result += o.items.table.cell(format_integer(arr[i][j]));
+            result += template.table.cell(format_integer(arr[i][j]));
         }
-        result += o.items.table.row.end();
+        result += template.row.end;
 
     }
-    result += "</tbody><tfoot></tfoot></table>"; o.items.table.body.end() + o.items.table.footer.begin() + o.items.table.footer.end() + o.items.table.end()
+    result += "</tbody><tfoot></tfoot></table>"; template.body.end + template.footer.begin + template.footer.end + template.table.end
 
     return result;
 }
@@ -176,11 +171,11 @@ function calculate_sum() {
     }
 
     var result = "";
-    result += o.items.table.row.begin();
-    result += o.items.table.cell("Total") + o.items.table.cell("") + o.items.table.cell("");
-    result += o.items.table.cell(format_integer(tot_count));
-    result += o.items.table.cell("");
-    result += o.items.table.cell(format_integer(tot_price)) + o.items.table.row.end();
+    result += template.row.begin;
+    result += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
+    result += template.table.cell(format_integer(tot_count));
+    result += template.table.cell("");
+    result += template.table.cell(format_integer(tot_price)) + template.row.end;
 
     document.querySelector('tfoot').innerHTML = result;
 }
@@ -199,9 +194,9 @@ function parse_integer(num) {
 function replace_icon(str) {
     /* Use the Stardew Valley icons for qualities */
     return str
-        .replace(/Silver/, o.items.icons.silver())
-        .replace(/Gold/, o.items.icons.gold())
-        .replace(/Iridium/, o.items.icons.iridium());
+        .replace(/Silver/, template.icons.silver)
+        .replace(/Gold/, template.icons.gold)
+        .replace(/Iridium/, template.icons.iridium);
 }
 
 function parse_csv(str) {
