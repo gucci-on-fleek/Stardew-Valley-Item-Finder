@@ -20,7 +20,7 @@
         }
     ],
     "start_url": "/Stardew-Valley-Item-Finder/",
-    "background_color": "#241504",
+    "background_color": "#FEEBD6",
     "display": "standalone",
     "scope": "/Stardew-Valley-Item-Finder/",
     "theme_color": "#241504"

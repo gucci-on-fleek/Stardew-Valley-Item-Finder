@@ -5,12 +5,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
-        content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item's name, location, and price.">
+        content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item's name, location, and price." />
     <meta name="theme-color" content="#241504" />
     <link rel="stylesheet" href="item-finder.css" />
-    <link rel="preload" href="items.xslt" as="fetch" />
-    <link rel="preload" href="items-to-csv.xslt" as="fetch" />
-    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preload" href="items.xslt" as="fetch" crossorigin="anonymous" />
+    <link rel="preload" href="items-to-csv.xslt" as="fetch" crossorigin="anonymous" />
+    <link rel="preload" href="assets/gold_star.png" as="image" />
+    <link rel="preload" href="assets/silver_star.png" as="image" />
+    <link rel="preload" href="assets/iridium_star.png" as="image" />
+    <link rel="preload" href="service-worker.js" as="script"
+        onload="navigator.serviceWorker.register('service-worker.js')" />
+    <link rel="manifest" href="manifest.webmanifest" />
 
     <link rel="icon" type="image/png" sizes="196x196" href="assets/icon-192.png">
     <link rel="icon" type="image/png" sizes="160x160" href="assets/icon-160.png">
@@ -33,9 +38,6 @@
     <title>Stardew Valley Item Finder</title>
     <script src="item-finder.js"></script>
     <script src="libraries/tablesort.min.js"></script>
-    <script>
-        navigator.serviceWorker.register('service-worker.js')
-    </script>
 
 </head>
 

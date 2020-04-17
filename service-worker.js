@@ -1,9 +1,9 @@
-var cache_name = 'stardew-valley-item-finder-v0.5'
+var cache_name = 'stardew-valley-item-finder-v0.6'
 var cache = caches.open(cache_name)
 
 self.addEventListener('install', function (event) {
   event.waitUntil(cache.then(c => c.addAll([
-    '/Stardew-Valley-Item-Finder/',
+    '.',
     'index.html',
     'item-finder.js',
     'item-finder.css',
