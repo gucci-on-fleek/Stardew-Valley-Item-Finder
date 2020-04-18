@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="item-finder.css" />
     <link rel="preload" href="items.xslt" as="fetch" crossorigin="anonymous" />
     <link rel="preload" href="items-to-csv.xslt" as="fetch" crossorigin="anonymous" />
-    <link rel="preload" href="assets/gold_star.png" as="image" />
-    <link rel="preload" href="assets/silver_star.png" as="image" />
-    <link rel="preload" href="assets/iridium_star.png" as="image" />
+    <link rel="prefetch" href="assets/gold_star.png" as="image" />
+    <link rel="prefetch" href="assets/silver_star.png" as="image" />
+    <link rel="prefetch" href="assets/iridium_star.png" as="image" />
     <link rel="preload" href="service-worker.js" as="script"
         onload="navigator.serviceWorker.register('service-worker.js')" />
     <link rel="manifest" href="manifest.webmanifest" />
@@ -103,3 +103,5 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
         </ul>
     </footer>
 </body>
+
+</html>

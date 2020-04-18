@@ -10,6 +10,7 @@ self.addEventListener('install', function (event) {
     'item-finder.css',
     'items.xslt',
     'items-to-csv.xslt',
+    'service-worker.js',
     'assets/gold_star.png',
     'assets/silver_star.png',
     'assets/iridium_star.png',
