@@ -1,0 +1,31 @@
+name: GitHub Pages Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: sudo npm i -g csso-cli terser
+      - name: Update Cache
+        run: sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' service-worker.js
+      - name: Minify Javascript
+        run: |
+          terser item-finder.js -c unsafe=true -m "properties=true, toplevel=true, reserved=['csv_string']" --source-map --output item-finder.min.js
+          terser service-worker.js -c unsafe=true -m "properties=true, toplevel=true, reserved=['csv_string']" --source-map --output service-worker.min.js
+      - name: Minify CSS
+        run: csso item-finder.css --source-map file --output item-finder.min.css
+      - name: Use minified files
+        run: sed -i 's/item-finder.js/item-finder.min.js/; s/service-worker.js/service-worker.min.js/; s/item-finder.css/item-finder.min.css/' index.html
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: .
