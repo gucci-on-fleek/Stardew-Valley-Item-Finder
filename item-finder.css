@@ -101,9 +101,25 @@ tfoot {
     font-weight: bold;
 }
 
+th {
+    text-align: left;
+}
+
+th:focus {
+    outline: none;
+    text-decoration: underline;
+}
+
+th:hover {
+    cursor: pointer
+}
+
 td:nth-of-type(3),
 td:nth-of-type(4),
-td:nth-of-type(6) {
+td:nth-of-type(6),
+th:nth-of-type(3),
+th:nth-of-type(4),
+th:nth-of-type(6) {
     /* Numeric columns should be right-aligned */
     text-align: right;
 }

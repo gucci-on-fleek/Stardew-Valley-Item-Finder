@@ -11,6 +11,7 @@ const template = {
         begin: `<table id='item_table'>`,
         end: `</table></article>`,
         cell: (x) => `<td>${x}</td>`,
+        header_cell: (x) => `<th tabindex="0">${x}</th>`,
     },
     header: {
         begin: `<thead><tr class='header'>`,
@@ -29,9 +30,9 @@ const template = {
         end: `</tfoot>`
     },
     icons: {
-        silver: `<img src="assets/silver_star.png" class="icon" /alt="Silver"><div class="sort-id">1</div>`,
-        gold: `<img src="assets/gold_star.png" class="icon" /alt="Gold"><div class="sort-id">2</div>`,
-        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium"/><div class="sort-id">3</div>`,
+        silver: `<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1</div>`,
+        gold: `<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" /><div class="sort-id">2</div>`,
+        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Gold" /><div class="sort-id">3</div>`,
     }
 }
 
@@ -53,6 +54,7 @@ function file_opened(event) {
                 const csv_parsed = parse_csv(xslt_output_to_text(csv));
                 const html = make_html_table(csv_parsed);
                 set_output(html);
+                enable_table_sort();
             })
     };
     reader.readAsText(input.files[0]);
@@ -81,10 +83,23 @@ function set_output(text) {
 
     calculate_sum(); // Calculate the sums after the table has been build
     document.querySelector('#filter').focus();
+}
 
-    new Tablesort(document.querySelector('#item_table')); // Allow the table headings to be used for sorting
-    Tablesort.extend('number', item => item.match(/\d/),
-        (a, b) => parse_integer(a) - parse_integer(b))
+function enable_table_sort() {
+    const item_table = document.querySelector('#item_table');
+    const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
+
+    Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
+        (a, b) => parse_integer(a) - parse_integer(b));
+
+    const cells = item_table.tHead.rows[0].cells;
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                tablesort.sortTable(e.srcElement)
+            }
+        })
+    }
 }
 
 function get_files(paths) {
@@ -116,7 +131,7 @@ function make_html_table(arr) {
 
     result += template.header.begin
     for (let j = 0; j < arr[0].length; j++) {
-        result += template.table.cell(arr[0][j]);
+        result += template.table.header_cell(arr[0][j]);
     }
     result += template.header.end + template.body.begin;
 
