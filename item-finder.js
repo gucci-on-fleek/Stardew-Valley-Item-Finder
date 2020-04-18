@@ -31,8 +31,8 @@ const template = {
     },
     icons: {
         silver: `<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1</div>`,
-        gold: `<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" /><div class="sort-id">2</div>`,
-        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Gold" /><div class="sort-id">3</div>`,
+        gold: `<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2</div>`,
+        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3</div>`,
     }
 }
 
@@ -72,20 +72,21 @@ function parse_xml(text) {
     return xml_parser.parseFromString(text, "text/xml")
 }
 
-function set_output(text) {
+function set_output(html) {
     /* Put the table's html into the document */
     const node = document.querySelector('output');
 
     node.innerHTML = "";
     node.innerHTML += template.heading;
     node.innerHTML += template.download('csv_string');
-    node.innerHTML += text;
+    node.innerHTML += html;
 
     calculate_sum(); // Calculate the sums after the table has been build
     document.querySelector('#filter').focus();
 }
 
 function enable_table_sort() {
+    /* Allow the table to be sorted by clicking on the headings */
     const item_table = document.querySelector('#item_table');
     const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
 
