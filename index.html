@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item’s name, location, and price." />
+    <meta name="theme-color" content="#241504" />
+    <link rel="stylesheet" href="item-finder.min.css" />
+    <link rel="preload" href="items.xslt" as="fetch" crossorigin="anonymous" />
+    <link rel="preload" href="items-to-csv.xslt" as="fetch" crossorigin="anonymous" />
+    <link rel="preload" href="assets/gold_star.png" as="image" />
+    <link rel="preload" href="assets/silver_star.png" as="image" />
+    <link rel="preload" href="assets/iridium_star.png" as="image" />
+    <link rel="preload" href="service-worker.min.js" as="script"
+        onload="navigator.serviceWorker.register('service-worker.min.js')" />
+    <link rel="manifest" href="manifest.webmanifest" />
+
+    <link rel="icon" type="image/png" sizes="196x196" href="assets/icon-192.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="assets/icon-160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/icon-96.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/icon-64.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icon-16.png">
+    <link rel="apple-touch-icon" href="assets/icon-57.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/icon-114.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/icon-72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/icon-144.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/icon-60.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/icon-120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/icon-76.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/icon-152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">
+    <meta name="msapplication-TileImage" content="assets/icon-144.png">
+    <link rel="icon" sizes="any" href="assets/icon.svg" type="image/svg+xml">
+
+    <title>Stardew Valley Item Finder</title>
+    <script src="item-finder.min.js"></script>
+    <script src="libraries/tablesort.min.js"></script>
+
+</head>
+
+<body>
+    <header>
+        <h1>Stardew Valley Item Finder</h1>
+    </header>
+    <section class="text">
+        <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
+            table shows the item’s name, location, and price.</p>
+        <h2>Instructions</h2>
+        <p>
+            You’ll need to upload your save file below to begin. Your save file is named <code>Name_123456789</code>,
+            where <code>Name</code>
+            is your player’s name and <code>123456789</code> is a random 9-digit number.
+        </p>
+        <ul>
+            <li>Windows: <code>%appdata%\StardewValley\Saves</code></li>
+            <li>Linux and macOS: <code>~/.config/StardewValley/Saves</code></li>
+        </ul>
+        <p>
+            You can sort the table by clicking on the headers, and you can download the table as a <code>CSV</code>
+            file to use in Excel.
+        </p>
+    </section>
+    <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
+
+    <output></output>
+    <section class="text">
+        <p>
+            Currently, this tool does <i>not</i> account for any professions or special events. This may lead to some
+            prices being slightly inaccurate for your specific character.
+        </p>
+        <h2>About</h2>
+        <p>
+            This tool runs entirely inside the browser. Your save file is never sent across the network.
+        </p>
+        <p>
+            Source code repository located at <a
+                href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder</a>.
+            Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>.
+        </p>
+        <h2>Advanced Usage</h2>
+        <h3>Running from the Command Line</h3>
+        <p>
+            Advanced users can convert their save files to <code>CSV</code> on the command line. First,
+            you’ll need to
+            download the <code>xslt</code> files from the <a
+                href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
+            Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><code>xsltproc</code></a>:</p>
+        <code class="block">
+xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
+        </code>
+        <h3>Regular Expressions</h3>
+        The “filter” fully supports Regular Expressions. For most users, the most important part is that you can search
+        for multiple items at a time by separating them with a pipe (<code>|</code>). For example, to show all carrots
+        and potatoes, you would type <code>carrot|potato</code>.
+    </section>
+    <footer>
+        <ul>
+            <li>Made by <a href="https://github.com/gucci-on-fleek">gucci-on-fleek</a></li>
+            <li> View on <a href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">GitHub</a></li>
+        </ul>
+    </footer>
+</body>
