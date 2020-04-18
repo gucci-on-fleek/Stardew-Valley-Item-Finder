@@ -17,8 +17,8 @@ jobs:
         run: sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' service-worker.js
       - name: Minify Javascript
         run: |
-          terser item-finder.js -c unsafe=true -m "properties=true, toplevel=true, reserved=['csv_string']" --source-map --output item-finder.min.js
-          terser service-worker.js -c unsafe=true -m "properties=true, toplevel=true, reserved=['csv_string']" --source-map --output service-worker.min.js
+          terser item-finder.js -c unsafe=true -m "properties=true, toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --source-map --output item-finder.min.js
+          terser service-worker.js --source-map --output service-worker.min.js
       - name: Minify CSS
         run: csso item-finder.css --source-map file --output item-finder.min.css
       - name: Use minified files
