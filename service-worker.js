@@ -1,4 +1,4 @@
-const version="81281661"
+const version="81755600"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 
@@ -6,10 +6,11 @@ self.addEventListener('install', function (event) {
   event.waitUntil(cache.then(c => c.addAll([
     '.',
     'index.html',
-    'item-finder.js',
-    'item-finder.css',
+    'item-finder.min.js',
+    'item-finder.min.css',
     'items.xslt',
     'items-to-csv.xslt',
+    'service-worker.min.js',
     'assets/gold_star.png',
     'assets/silver_star.png',
     'assets/iridium_star.png',

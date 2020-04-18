@@ -2,15 +2,15 @@ Stardew Valley Item Finder
 ==========================
 
 This tool extracts information about all of your items in Stardew Valley
-and displays it in a table. The table shows the item's name, location,
-and price.
+and displays it in a table. The table shows the items’ names, locations,
+and prices.
 
 Instructions
 ------------
 
-You'll need to upload your save file below to begin. Your save file is
-named `Name_123456789`, where `Name` is your player's name and
-`123456789` is a random 9-digit number.
+You’ll need to upload your save file below to begin. Your save file is
+named `Name_123456789`, where `Name` is your player’s name and
+`123456789` is a random 9-digit number. The save file can be found in [one of the following folders](https://stardewvalleywiki.com/Saves#Find_your_save_files):
 
 -   Windows: `%appdata%\StardewValley\Saves`
 -   Linux and macOS: `~/.config/StardewValley/Saves`
@@ -39,7 +39,7 @@ Advanced Usage
 ### Running from the Command Line
 
 Advanced users can convert their save files to `CSV` on the command
-line. First, you'll need to download the `xslt` files from the [source
+line. First, you’ll need to download the `xslt` files from the [source
 code
 repository](https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder).
 Then, using [`xsltproc`](http://xmlsoft.org/XSLT/xsltproc.html):
@@ -50,7 +50,7 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
 
 ### Regular Expressions
 
-The "filter" fully supports Regular Expressions. For most users, the
+The filter fully supports Regular Expressions. For most users, the
 most important part is that you can search for multiple items at a time
 by separating them with a pipe (`|`). For example, to show all carrots
 and potatoes, you would type `carrot|potato`.
