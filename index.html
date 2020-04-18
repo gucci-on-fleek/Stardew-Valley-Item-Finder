@@ -47,12 +47,13 @@
     </header>
     <section class="text">
         <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
-            table shows the item’s name, location, and price.</p>
+            table shows the items’ names, locations, and prices.</p>
         <h2>Instructions</h2>
         <p>
             You’ll need to upload your save file below to begin. Your save file is named <code>Name_123456789</code>,
             where <code>Name</code>
-            is your player’s name and <code>123456789</code> is a random 9-digit number.
+            is your player’s name and <code>123456789</code> is a random 9-digit number. The save file can be found in
+            <a href="https://stardewvalleywiki.com/Saves#Find_your_save_files">one of the following folders</a>:
         </p>
         <ul>
             <li>Windows: <code>%appdata%\StardewValley\Saves</code></li>
@@ -92,7 +93,7 @@
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
         </code>
         <h3>Regular Expressions</h3>
-        The “filter” fully supports Regular Expressions. For most users, the most important part is that you can search
+        The filter fully supports Regular Expressions. For most users, the most important part is that you can search
         for multiple items at a time by separating them with a pipe (<code>|</code>). For example, to show all carrots
         and potatoes, you would type <code>carrot|potato</code>.
     </section>
