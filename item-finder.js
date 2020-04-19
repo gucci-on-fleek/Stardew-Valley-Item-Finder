@@ -78,15 +78,19 @@ function set_output(html) {
     output += template.heading;
     output += template.download('csv_string');
     output += html;
-    document.querySelector('output').innerHTML = output;
+
+    const old_output = document.querySelector('article');
+    if (old_output) { old_output.remove() }
+
+    document.querySelector('output').insertAdjacentHTML('afterbegin', output);
 
     calculate_sum(); // Calculate the sums *after* the table has been build
-    document.querySelector('#filter').focus();
+    document.getElementById('filter').focus();
 }
 
 function enable_table_sort() {
     /* Allow the table to be sorted by clicking on the headings */
-    const item_table = document.querySelector('#item_table');
+    const item_table = document.getElementById('item_table');
     const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
 
     Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
@@ -112,7 +116,6 @@ function get_files(paths) {
 
     return Promise.all(requests)
 }
-
 
 
 function process_xslt(xslt, text) {
@@ -166,7 +169,7 @@ function download_as_csv(text) {
     document.body.removeChild(element);
 }
 
-let last_class = 0;
+let this_class = 1;
 function filter_table() {
     /* Allows the table to be filtered
      *
@@ -182,27 +185,28 @@ function filter_table() {
      */
     const filter = document.getElementById('filter').value;
     const rows = document.querySelectorAll('#item_table tbody tr');
-    const class_name = x => `filter_${x}`
-
-    const this_class = last_class + 1; // The class that we're adding
+    const search = RegExp(filter, 'i');
+    const last_class = this_class - 1; // The class that we're adding
     const last_last_class = last_class - 1; // The class that we're removing
+    const this_class_name = `filter_${this_class}`;
+    const last_last_class_name = `filter_${last_last_class}`;
 
     for (let i = 0; i < rows.length; i++) {
         let row = rows[i];
-        if (!row.textContent.match(RegExp(filter, 'i'))) {
-            row.classList.add(class_name(this_class));
+        if (!row.textContent.match(search)) {
+            row.classList.add(this_class_name);
         }
-        row.classList.remove(class_name(last_last_class)); // Cleanup old filter classes
+        row.classList.remove(last_last_class_name); // Cleanup old filter classes
     }
 
     const style = document.styleSheets[0];
-    style.insertRule(`.${class_name(this_class)} {display:none}`);
+    style.insertRule(`.${this_class_name} {display:none}`);
     if (last_last_class >= 0) {
         style.deleteRule(1)
     }
 
     calculate_sum() // Update the footer after the filter is applied
-    last_class++; // Increment the class's name
+    this_class++; // Increment the class's name
 }
 
 function calculate_sum() {
@@ -210,11 +214,12 @@ function calculate_sum() {
     const table = document.querySelector('#item_table tbody');
     let tot_price = 0;
     let tot_count = 0;
+    const current_hidden = `filter_${this_class}`;
 
     for (let i = 1, row; row = table.rows[i]; i++) {
-        if (row.classList.contains(`filter_${last_class + 1}`)) { continue; } // Skip if hidden by filter
-        tot_count += parse_integer(row.cells[3].innerText);
-        tot_price += parse_integer(row.cells[5].innerText);
+        if (row.classList.contains(current_hidden)) { continue; } // Skip if hidden by filter
+        tot_count += parse_integer(row.cells[3].textContent);
+        tot_price += parse_integer(row.cells[5].textContent);
     }
 
     let result = "";
@@ -224,7 +229,10 @@ function calculate_sum() {
     result += template.table.cell("");
     result += template.table.cell(format_integer(tot_price)) + template.row.end;
 
-    document.querySelector('tfoot').innerHTML = result;
+    const old_output = document.querySelector('tfoot tr');
+    if (old_output) { old_output.remove() }
+
+    document.querySelector('tfoot').insertAdjacentHTML('afterbegin', result);
 }
 
 function format_integer(num) {
