@@ -60,54 +60,10 @@ function file_opened(event) {
 };
 
 
-let csv_string;
-function xslt_output_to_text(xslt_out) {
-    /* Convert the xslt transformed output into a string */
-    csv_string = xslt_out.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
-    return csv_string
-}
-
-
 function parse_xml(text) {
     /* Parse a string into xml */
     const xml_parser = new DOMParser();
     return xml_parser.parseFromString(text, "text/xml")
-}
-
-
-function set_output(html) {
-    /* Put the table's html into the document */
-    let output = template.heading;
-    output += template.download('csv_string');
-    output += html;
-
-    const old_output = document.querySelector('article');
-    if (old_output) { old_output.remove() }
-
-    document.querySelector('output').insertAdjacentHTML('afterbegin', output);
-
-    calculate_sum(); // Calculate the sums *after* the table has been build
-    document.getElementById('filter').focus();
-}
-
-
-function enable_table_sort() {
-    /* Allow the table to be sorted by clicking on the headings */
-    const item_table = document.getElementById('item_table');
-    const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
-
-    Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
-        (a, b) => parse_integer(a) - parse_integer(b));
-
-    const header_cells = item_table.tHead.rows[0].cells;
-    for (let i = 0; i < header_cells.length; i++) {
-        header_cells[i].addEventListener('keydown', function (event) {
-            /* Allow the keyboard to be used for sorting */
-            if (event.key === 'Enter') {
-                tablesort.sortTable(event.srcElement)
-            }
-        })
-    }
 }
 
 
@@ -121,7 +77,6 @@ function get_files(paths) {
     return Promise.all(requests)
 }
 
-
 function process_xslt(xslt, text) {
     /* Transform the xml */
     const xslt_processor = new XSLTProcessor();
@@ -130,6 +85,20 @@ function process_xslt(xslt, text) {
     const processed = xslt_processor.transformToFragment(text, new Document()); // Non-standard, but supported by everything that isn't IE
 
     return processed;
+}
+
+
+let csv_string;
+function xslt_output_to_text(xslt_out) {
+    /* Convert the xslt transformed output into a string */
+    csv_string = xslt_out.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
+    return csv_string
+}
+
+
+function csv_to_array(csv) {
+    /* Parse the csv file into an array */
+    return csv.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
 }
 
 
@@ -160,6 +129,91 @@ function make_html_table(array) {
     html += template.body.end + template.footer.begin + template.footer.end + template.table.end;
 
     return html;
+}
+
+
+function replace_icon(quality_name) {
+    /* Use the Stardew Valley icons for qualities */
+    return quality_name
+        .replace(/Silver/, template.icons.silver)
+        .replace(/Gold/, template.icons.gold)
+        .replace(/Iridium/, template.icons.iridium);
+}
+
+
+function format_integer(number) {
+    /* Separate the thousands by a thin space */
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+
+function set_output(html) {
+    /* Put the table's html into the document */
+    let output = template.heading;
+    output += template.download('csv_string');
+    output += html;
+
+    const old_output = document.querySelector('article');
+    if (old_output) { old_output.remove() }
+
+    document.querySelector('output').insertAdjacentHTML('afterbegin', output);
+
+    calculate_sum(); // Calculate the sums *after* the table has been build
+    document.getElementById('filter').focus();
+}
+
+
+function parse_integer(number) {
+    /* Strip the thin space added by format_integer() */
+    const match = number.match(/\d/g);
+    return match ? Number(match.join('')) : 0
+}
+
+
+function calculate_sum() {
+    /* Show the sums in the footer */
+    const table = document.getElementById('item_table').tBodies[0];
+    let tot_price = 0;
+    let tot_count = 0;
+    const current_hidden_filter_class = `filter_${filter_class}`;
+
+    for (let i = 1, row; row = table.rows[i]; i++) {
+        if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
+        tot_count += parse_integer(row.cells[3].textContent);
+        tot_price += parse_integer(row.cells[5].textContent);
+    }
+
+    let html = "";
+    html += template.row.begin;
+    html += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
+    html += template.table.cell(format_integer(tot_count));
+    html += template.table.cell("");
+    html += template.table.cell(format_integer(tot_price)) + template.row.end;
+
+    const old_output = document.querySelector('tfoot tr');
+    if (old_output) { old_output.remove() }
+
+    document.querySelector('tfoot').insertAdjacentHTML('afterbegin', html);
+}
+
+
+function enable_table_sort() {
+    /* Allow the table to be sorted by clicking on the headings */
+    const item_table = document.getElementById('item_table');
+    const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
+
+    Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
+        (a, b) => parse_integer(a) - parse_integer(b));
+
+    const header_cells = item_table.tHead.rows[0].cells;
+    for (let i = 0; i < header_cells.length; i++) {
+        header_cells[i].addEventListener('keydown', function (event) {
+            /* Allow the keyboard to be used for sorting */
+            if (event.key === 'Enter') {
+                tablesort.sortTable(event.srcElement)
+            }
+        })
+    }
 }
 
 
@@ -214,59 +268,4 @@ function filter_table() {
 
     calculate_sum() // Update the footer after the filter is applied
     filter_class++; // Increment the class's name
-}
-
-
-function calculate_sum() {
-    /* Show the sums in the footer */
-    const table = document.getElementById('item_table').tBodies[0];
-    let tot_price = 0;
-    let tot_count = 0;
-    const current_hidden_filter_class = `filter_${filter_class}`;
-
-    for (let i = 1, row; row = table.rows[i]; i++) {
-        if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
-        tot_count += parse_integer(row.cells[3].textContent);
-        tot_price += parse_integer(row.cells[5].textContent);
-    }
-
-    let html = "";
-    html += template.row.begin;
-    html += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
-    html += template.table.cell(format_integer(tot_count));
-    html += template.table.cell("");
-    html += template.table.cell(format_integer(tot_price)) + template.row.end;
-
-    const old_output = document.querySelector('tfoot tr');
-    if (old_output) { old_output.remove() }
-
-    document.querySelector('tfoot').insertAdjacentHTML('afterbegin', html);
-}
-
-
-function format_integer(number) {
-    /* Separate the thousands by a thin space */
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
-
-function parse_integer(number) {
-    /* Strip the thin space added by format_integer() */
-    const match = number.match(/\d/g);
-    return match ? Number(match.join('')) : 0
-}
-
-
-function replace_icon(quality_name) {
-    /* Use the Stardew Valley icons for qualities */
-    return quality_name
-        .replace(/Silver/, template.icons.silver)
-        .replace(/Gold/, template.icons.gold)
-        .replace(/Iridium/, template.icons.iridium);
-}
-
-
-function csv_to_array(csv) {
-    /* Parse the csv file into an array */
-    return csv.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
 }
