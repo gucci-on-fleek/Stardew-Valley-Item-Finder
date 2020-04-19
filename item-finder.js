@@ -1,5 +1,4 @@
 'use strict';
-let csv_string; // String holding the csv file
 
 const template = {
     /* Object containing all output HTML strings */
@@ -60,6 +59,7 @@ function file_opened(event) {
     reader.readAsText(input.files[0]);
 };
 
+let csv_string;
 function xslt_output_to_text(xslt_out) {
     /* Convert the xslt transformed output into a string */
     csv_string = xslt_out.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
@@ -158,11 +158,10 @@ function make_html_table(arr) {
 
 function download_as_csv(text) {
     /* Allow the user to download their save as a CSV */
-    const element = document
-        .createElement('a')
-        .setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
-        .setAttribute('download', 'Stardew Valley Items.csv')
-        .style.display = 'none';
+    const element = document.createElement('a')
+    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
+    element.setAttribute('download', 'Stardew Valley Items.csv')
+    element.style.display = 'none';
 
     document.body.appendChild(element);
     element.click();
