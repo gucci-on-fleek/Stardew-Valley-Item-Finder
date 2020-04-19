@@ -30,9 +30,9 @@ const template = {
         end: `</tfoot>`
     },
     icons: {
-        silver: `<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1</div>`,
-        gold: `<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2</div>`,
-        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3</div>`,
+        silver: `<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1 Silver</div>`,
+        gold: `<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2 Gold</div>`,
+        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3 Iridium</div>`,
     }
 }
 
@@ -74,14 +74,13 @@ function parse_xml(text) {
 
 function set_output(html) {
     /* Put the table's html into the document */
-    const node = document.querySelector('output');
+    let output = "";
+    output += template.heading;
+    output += template.download('csv_string');
+    output += html;
+    document.querySelector('output').innerHTML = output;
 
-    node.innerHTML = "";
-    node.innerHTML += template.heading;
-    node.innerHTML += template.download('csv_string');
-    node.innerHTML += html;
-
-    calculate_sum(); // Calculate the sums after the table has been build
+    calculate_sum(); // Calculate the sums *after* the table has been build
     document.querySelector('#filter').focus();
 }
 
@@ -96,6 +95,7 @@ function enable_table_sort() {
     const cells = item_table.tHead.rows[0].cells;
     for (let i = 0; i < cells.length; i++) {
         cells[i].addEventListener('keydown', function (e) {
+            // Allow the keyboard to be used for sorting
             if (e.key === 'Enter') {
                 tablesort.sortTable(e.srcElement)
             }
@@ -155,11 +155,12 @@ function make_html_table(arr) {
 
 function download_as_csv(text) {
     /* Allow the user to download their save as a CSV */
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', 'Stardew Valley Items.csv');
+    const element = document
+        .createElement('a')
+        .setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
+        .setAttribute('download', 'Stardew Valley Items.csv')
+        .style.display = 'none';
 
-    element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -167,16 +168,23 @@ function download_as_csv(text) {
 
 function filter_table() {
     /* Allows the table to be filtered */
-    const filter = document.querySelector('#filter').value.toLowerCase();
-    const rows = document.querySelectorAll('#item_table tr:not(.header)');
-    rows.forEach(tr => tr.style.display = [...tr.children].find(td => td.innerHTML.toLowerCase().match(RegExp(filter))) ? '' : 'none');
+    const filter = document.querySelector('#filter').value;
+    const rows = document.querySelectorAll('#item_table tbody tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        if (row.textContent.match(RegExp(filter, 'i'))) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
     calculate_sum() // Update the footer after the filter is applied
 }
 
 function calculate_sum() {
     /* Show the sums in the footer */
-    document.querySelector('tfoot').innerHTML = ""
-    const table = document.querySelector('#item_table');
+    const table = document.querySelector('#item_table tbody');
     let tot_price = 0;
     let tot_count = 0;
 
