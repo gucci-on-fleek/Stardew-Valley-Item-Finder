@@ -1,44 +1,52 @@
 'use strict';
-let csv_string; // String holding the csv file
 
+/**
+ * Object containing all output HTML strings 
+ * @param x - (Optional) The string to include in the template
+ * @returns An `HTML` fragment
+ */
 const template = {
-    /* Object containing all output HTML strings */
-    heading: `<article><h2>Items
-    <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>
-    </h2>`,
+
+    heading: '<article><h2>Items' +
+        '<input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>' +
+        '</h2>',
     download: (x) => `<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(${x})" />`,
     table: {
-        begin: `<table id='item_table'>`,
-        end: `</table></article>`,
+        begin: '<table id="item_table">',
+        end: '</table></article>',
         cell: (x) => `<td>${x}</td>`,
         header_cell: (x) => `<th tabindex="0">${x}</th>`,
     },
     header: {
-        begin: `<thead><tr class='header'>`,
-        end: `</tr></thead>`,
+        begin: '<thead><tr class="header">',
+        end: '</tr></thead>',
     },
     body: {
-        begin: `<tbody>`,
-        end: `</tbody>`
+        begin: '<tbody>',
+        end: '</tbody>'
     },
     row: {
-        begin: `<tr>`,
-        end: `</tr>`
+        begin: '<tr>',
+        end: '</tr>'
     },
     footer: {
-        begin: `<tfoot>`,
-        end: `</tfoot>`
+        begin: '<tfoot>',
+        end: '</tfoot>'
     },
     icons: {
-        silver: `<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1 Silver</div>`,
-        gold: `<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2 Gold</div>`,
-        iridium: `<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3 Iridium</div>`,
+        silver: '<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1 Silver</div>',
+        gold: '<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2 Gold</div>',
+        iridium: '<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3 Iridium</div>',
     }
 }
 
 
+/**
+ * Handle the user opening a file
+ * @param {Event} event - The event
+ * @remarks Triggered by the file input
+ */
 function file_opened(event) {
-    /* Handle the user opening a file */
     const input = event.target;
     const reader = new FileReader();
 
@@ -51,8 +59,8 @@ function file_opened(event) {
                 const items = process_xslt(parse_xml(requests[0]), save_game);
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
-                const csv_parsed = parse_csv(xslt_output_to_text(csv));
-                const html = make_html_table(csv_parsed);
+                const csv_array = csv_to_array(xslt_output_to_text(csv));
+                const html = make_html_table(csv_array);
                 set_output(html);
                 enable_table_sort();
             })
@@ -60,51 +68,24 @@ function file_opened(event) {
     reader.readAsText(input.files[0]);
 };
 
-function xslt_output_to_text(xslt_out) {
-    /* Convert the xslt transformed output into a string */
-    csv_string = xslt_out.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
-    return csv_string
-}
 
+/**
+ * Parse a string as `XML`
+ * @param {String} text - The string to parse as `XML`
+ * @returns {XMLDocument} A `DOM` object representing the input `XML`
+ */
 function parse_xml(text) {
-    /* Parse a string into xml */
     const xml_parser = new DOMParser();
     return xml_parser.parseFromString(text, "text/xml")
 }
 
-function set_output(html) {
-    /* Put the table's html into the document */
-    let output = "";
-    output += template.heading;
-    output += template.download('csv_string');
-    output += html;
-    document.querySelector('output').innerHTML = output;
 
-    calculate_sum(); // Calculate the sums *after* the table has been build
-    document.querySelector('#filter').focus();
-}
-
-function enable_table_sort() {
-    /* Allow the table to be sorted by clicking on the headings */
-    const item_table = document.querySelector('#item_table');
-    const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
-
-    Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
-        (a, b) => parse_integer(a) - parse_integer(b));
-
-    const cells = item_table.tHead.rows[0].cells;
-    for (let i = 0; i < cells.length; i++) {
-        cells[i].addEventListener('keydown', function (e) {
-            // Allow the keyboard to be used for sorting
-            if (e.key === 'Enter') {
-                tablesort.sortTable(e.srcElement)
-            }
-        })
-    }
-}
-
+/**
+ * Download an array of URLs
+ * @param {String[]} paths - An array of URLs to fetch
+ * @returns {Promise} A promise holding the text for each request
+ */
 function get_files(paths) {
-    /* Download an array of files */
     let requests = []
     for (let i = 0; i < paths.length; i++) {
         requests.push(fetch(paths[i]).then(x => x.text()))
@@ -114,139 +95,246 @@ function get_files(paths) {
 }
 
 
-
-function process_xslt(xslt, text) {
-    /* Transform the xml */
+/**
+ * Transform the `XML`
+ * @param {DocumentFragment} xslt - The `XSLT` used for the transformation
+ * @param {DocumentFragment} xml - The `XML` to transform
+ * @returns {DocumentFragment} The transformed `XML`
+ */
+function process_xslt(xslt, xml) {
     const xslt_processor = new XSLTProcessor();
 
     xslt_processor.importStylesheet(xslt);
-    const processed = xslt_processor.transformToFragment(text, new Document()); // Non-standard, but supported by everything that isn't IE
+    const processed = xslt_processor.transformToFragment(xml, new Document()); // Non-standard, but supported by everything that isn't IE
 
     return processed;
 }
 
 
-function make_html_table(arr) {
-    /* Converts the array into the html table */
-    let result = template.table.begin;
-
-    result += template.header.begin
-    for (let j = 0; j < arr[0].length; j++) {
-        result += template.table.header_cell(arr[0][j]);
-    }
-    result += template.header.end + template.body.begin;
-
-    for (let i = 1; i < arr.length - 1; i++) {
-        result += template.row.begin;
-        for (let j = 0; j < arr[i].length; j++) {
-            if (j === 1) { // Quality column
-                result += template.table.cell(replace_icon(arr[i][j]));
-                continue;
-            }
-            result += template.table.cell(format_integer(arr[i][j]));
-        }
-        result += template.row.end;
-
-    }
-    result += "</tbody><tfoot></tfoot></table>"; template.body.end + template.footer.begin + template.footer.end + template.table.end
-
-    return result;
+let csv_string; // Global, holds the CSV so that it can later be downloaded
+/**
+ * Convert the `XSLT` transformed output into a string
+ * @param {DocumentFragment} xml - The `XML` to convert to a string
+ * @returns {String} A string representing the `XML`'s contents
+ * @remarks `XSLT` transform a document into another `XML` document
+ *          or plain text, however, the `XSLTProcessor` object always
+ *          returns an `XMLDocument` object. Since we are transforming
+ *          the `CSV` into plain text, we need to call this function
+ *          to get a string.
+ */
+function xslt_output_to_text(xml) {
+    csv_string = xml.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
+    return csv_string
 }
 
+
+/**
+ * Parse the `CSV` file into an array
+ * @param {String} csv - The `CSV` file
+ * @returns {Array(String)} - An array representing the `CSV`
+ * @remarks This is a very basic `CSV` parser. It just splits on
+ *          commas and newlines, so any edge cases **will not** be
+ *          accounted for. However, there won't be any edge cases
+ *          since we control the input `CSV`.
+ */
+function csv_to_array(csv) {
+    return csv.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
+}
+
+
+/**
+ * Converts the array into the `HTML` table
+ * @param {String[]} array - The array to make into a table
+ * @returns {String} The input array as an `HTML` table
+ */
+function make_html_table(array) {
+    let html = template.table.begin;
+
+    html += template.header.begin
+    for (let j = 0; j < array[0].length; j++) {
+        html += template.table.header_cell(array[0][j]);
+    }
+    html += template.header.end
+
+    html += template.body.begin;
+    for (let i = 1; i < array.length - 1; i++) {
+        html += template.row.begin;
+
+        for (let j = 0; j < array[i].length; j++) {
+            if (j === 1) { // Quality column
+                html += template.table.cell(replace_icon(array[i][j]));
+                continue;
+            }
+            html += template.table.cell(format_integer(array[i][j]));
+        }
+
+        html += template.row.end;
+    }
+    html += template.body.end + template.footer.begin + template.footer.end + template.table.end;
+
+    return html;
+}
+
+
+/**
+ * Replace quality names with their corresponding icon
+ * @param {"Silver"|"Gold"|"Iridium"|""} quality_name - The quality name (Silver, Gold, or Iridium)
+ * @returns {String} An `HTML` fragment containing a star icon
+ * @remarks Uses the Stardew Valley icons for qualities
+ */
+function replace_icon(quality_name) {
+    return quality_name
+        .replace(/Silver/, template.icons.silver)
+        .replace(/Gold/, template.icons.gold)
+        .replace(/Iridium/, template.icons.iridium);
+}
+
+
+/**
+ * Format an integer so that it is human-readable
+ * @param {String|Number} number - The integer to format
+ * @remarks Separate the thousands by a thin space
+ */
+function format_integer(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+
+/**
+ * Put the table's `HTML` into the document
+ * @param {String} html - The `HTML` fragment to add to the document
+ */
+function set_output(html) {
+    let output = template.heading;
+    output += template.download('csv_string');
+    output += html;
+
+    const old_output = document.querySelector('article');
+    if (old_output) { old_output.remove() }
+
+    document.querySelector('output').insertAdjacentHTML('afterbegin', output);
+
+    calculate_sum(); // Calculate the sums *after* the table has been build
+    document.getElementById('filter').focus();
+}
+
+
+/**
+ * Strip the thin space added by `format_integer()`
+ * @param {String} number - A string containing a number
+ * @returns {Number} The integer found, or 0 otherwise
+ * @remarks Just concatenates all numerals found in a string
+ */
+function parse_integer(number) {
+    const match = number.match(/\d/g);
+    return match ? Number(match.join('')) : 0
+}
+
+
+/**
+ * Show the table sums in its footer
+ */
+function calculate_sum() {
+    const table = document.getElementById('item_table').tBodies[0];
+    let tot_price = 0;
+    let tot_count = 0;
+    const current_hidden_filter_class = `filter_${filter_class}`;
+
+    for (let i = 1, row; row = table.rows[i]; i++) {
+        if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
+        tot_count += parse_integer(row.cells[3].textContent);
+        tot_price += parse_integer(row.cells[5].textContent);
+    }
+
+    let html = "";
+    html += template.row.begin;
+    html += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
+    html += template.table.cell(format_integer(tot_count));
+    html += template.table.cell("");
+    html += template.table.cell(format_integer(tot_price)) + template.row.end;
+
+    const old_output = document.querySelector('tfoot tr');
+    if (old_output) { old_output.remove() }
+
+    document.querySelector('tfoot').insertAdjacentHTML('afterbegin', html);
+}
+
+
+/**
+ * Allow the table to be sorted by clicking on the headings
+ */
+function enable_table_sort() {
+    const item_table = document.getElementById('item_table');
+    const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
+
+    Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
+        (a, b) => parse_integer(a) - parse_integer(b));
+
+    const header_cells = item_table.tHead.rows[0].cells;
+    for (let i = 0; i < header_cells.length; i++) {
+        header_cells[i].addEventListener('keydown', function (event) {
+            /* Allow the keyboard to be used for sorting */
+            if (event.key === 'Enter') {
+                tablesort.sortTable(event.srcElement)
+            }
+        })
+    }
+}
+
+
+/**
+ * Allow the user to download their save as a CSV
+ * @param {String} text 
+ * @remarks Called by the download button
+ */
 function download_as_csv(text) {
-    /* Allow the user to download their save as a CSV */
-    const element = document
-        .createElement('a')
-        .setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
-        .setAttribute('download', 'Stardew Valley Items.csv')
-        .style.display = 'none';
+    const element = document.createElement('a')
+    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
+    element.setAttribute('download', 'Stardew Valley Items.csv')
+    element.style.display = 'none';
 
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
 }
 
-let last_class = 0;
-function filter_table() {
-    /* Allows the table to be filtered
-     *
-     * The naïve version of this function directly applied
-     * 'display: none' to each row. However, this triggered 
-     * a repaint for each row, since it was removed from display. 
-     * The optimized version of this function applies a new
-     * and unique class to each row whenever a filter is 
-     * applied. Then—and only then—can we hide that class. 
-     * This means that only one repaint is triggered instead
-     * of one for each row. In benchmarks, this is about 250%
-     * faster than the old function.
-     */
-    const filter = document.getElementById('filter').value;
-    const rows = document.querySelectorAll('#item_table tbody tr');
-    const class_name = x => `filter_${x}`
 
-    const this_class = last_class + 1; // The class that we're adding
-    const last_last_class = last_class - 1; // The class that we're removing
+/** 
+ * Allows the table to be filtered
+ * @remarks The naïve version of this function directly applied
+ *          'display: none' to each row. However, this triggered 
+ *          a repaint for each row, since it was removed from display. 
+ *          The optimized version of this function applies a new
+ *          and unique class to each row whenever a filter is 
+ *          applied. Then—and only then—can we hide that class. 
+ *          This means that only one repaint is triggered instead
+ *          of one for each row. In benchmarks, this is about 250%
+ *          faster than the old function.
+ */
+let filter_class = 1;
+function filter_table() {
+    const filter = document.getElementById('filter').value;
+    const rows = document.getElementById('item_table').tBodies[0].rows;
+    const search = RegExp(filter, 'i');
+    const last_filter_class = filter_class - 1; // The class that we're adding
+    const last_last_filter_class = last_filter_class - 1; // The class that we're removing
+    const filter_class_name = `filter_${filter_class}`;
+    const last_last_filter_class_name = `filter_${last_last_filter_class}`;
 
     for (let i = 0; i < rows.length; i++) {
         let row = rows[i];
-        if (!row.textContent.match(RegExp(filter, 'i'))) {
-            row.classList.add(class_name(this_class));
+        if (!row.textContent.match(search)) {
+            row.classList.add(filter_class_name);
         }
-        row.classList.remove(class_name(last_last_class)); // Cleanup old filter classes
+        row.classList.remove(last_last_filter_class_name); // Cleanup old filter classes
     }
 
     const style = document.styleSheets[0];
-    style.insertRule(`.${class_name(this_class)} {display:none}`);
-    if (last_last_class >= 0) {
+    style.insertRule(`.${filter_class_name} {display:none}`);
+    if (last_last_filter_class >= 0) {
         style.deleteRule(1)
     }
 
     calculate_sum() // Update the footer after the filter is applied
-    last_class++; // Increment the class's name
-}
-
-function calculate_sum() {
-    /* Show the sums in the footer */
-    const table = document.querySelector('#item_table tbody');
-    let tot_price = 0;
-    let tot_count = 0;
-
-    for (let i = 1, row; row = table.rows[i]; i++) {
-        if (row.classList.contains(`filter_${last_class + 1}`)) { continue; } // Skip if hidden by filter
-        tot_count += parse_integer(row.cells[3].innerText);
-        tot_price += parse_integer(row.cells[5].innerText);
-    }
-
-    let result = "";
-    result += template.row.begin;
-    result += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
-    result += template.table.cell(format_integer(tot_count));
-    result += template.table.cell("");
-    result += template.table.cell(format_integer(tot_price)) + template.row.end;
-
-    document.querySelector('tfoot').innerHTML = result;
-}
-
-function format_integer(num) {
-    /* Separate the thousands by a thin space */
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
-
-function parse_integer(num) {
-    /* Strip the thin space added by format_integer() */
-    const match = num.match(/\d/g);
-    return match ? Number(match.join('')) : 0
-}
-
-function replace_icon(str) {
-    /* Use the Stardew Valley icons for qualities */
-    return str
-        .replace(/Silver/, template.icons.silver)
-        .replace(/Gold/, template.icons.gold)
-        .replace(/Iridium/, template.icons.iridium);
-}
-
-function parse_csv(str) {
-    /* Parse the csv file into an array */
-    return str.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
+    filter_class++; // Increment the class's name
 }
