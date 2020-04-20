@@ -1,7 +1,12 @@
 'use strict';
 
+/**
+ * Object containing all output HTML strings 
+ * @param x - (Optional) The string to include in the template
+ * @returns An `HTML` fragment
+ */
 const template = {
-    /* Object containing all output HTML strings */
+
     heading: '<article><h2>Items' +
         '<input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>' +
         '</h2>',
@@ -36,8 +41,12 @@ const template = {
 }
 
 
+/**
+ * Handle the user opening a file
+ * @param {Event} event - The event
+ * @remarks Triggered by the file input
+ */
 function file_opened(event) {
-    /* Handle the user opening a file */
     const input = event.target;
     const reader = new FileReader();
 
@@ -60,15 +69,23 @@ function file_opened(event) {
 };
 
 
+/**
+ * Parse a string as `XML`
+ * @param {String} text - The string to parse as `XML`
+ * @returns {XMLDocument} A `DOM` object representing the input `XML`
+ */
 function parse_xml(text) {
-    /* Parse a string into xml */
     const xml_parser = new DOMParser();
     return xml_parser.parseFromString(text, "text/xml")
 }
 
 
+/**
+ * Download an array of URLs
+ * @param {String[]} paths - An array of URLs to fetch
+ * @returns {Promise} A promise holding the text for each request
+ */
 function get_files(paths) {
-    /* Download an array of URLs */
     let requests = []
     for (let i = 0; i < paths.length; i++) {
         requests.push(fetch(paths[i]).then(x => x.text()))
@@ -77,33 +94,60 @@ function get_files(paths) {
     return Promise.all(requests)
 }
 
-function process_xslt(xslt, text) {
-    /* Transform the xml */
+
+/**
+ * Transform the `XML`
+ * @param {DocumentFragment} xslt - The `XSLT` used for the transformation
+ * @param {DocumentFragment} xml - The `XML` to transform
+ * @returns {DocumentFragment} The transformed `XML`
+ */
+function process_xslt(xslt, xml) {
     const xslt_processor = new XSLTProcessor();
 
     xslt_processor.importStylesheet(xslt);
-    const processed = xslt_processor.transformToFragment(text, new Document()); // Non-standard, but supported by everything that isn't IE
+    const processed = xslt_processor.transformToFragment(xml, new Document()); // Non-standard, but supported by everything that isn't IE
 
     return processed;
 }
 
 
-let csv_string;
-function xslt_output_to_text(xslt_out) {
-    /* Convert the xslt transformed output into a string */
-    csv_string = xslt_out.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
+let csv_string; // Global, holds the CSV so that it can later be downloaded
+/**
+ * Convert the `XSLT` transformed output into a string
+ * @param {DocumentFragment} xml - The `XML` to convert to a string
+ * @returns {String} A string representing the `XML`'s contents
+ * @remarks `XSLT` transform a document into another `XML` document
+ *          or plain text, however, the `XSLTProcessor` object always
+ *          returns an `XMLDocument` object. Since we are transforming
+ *          the `CSV` into plain text, we need to call this function
+ *          to get a string.
+ */
+function xslt_output_to_text(xml) {
+    csv_string = xml.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
     return csv_string
 }
 
 
+/**
+ * Parse the `CSV` file into an array
+ * @param {String} csv - The `CSV` file
+ * @returns {Array(String)} - An array representing the `CSV`
+ * @remarks This is a very basic `CSV` parser. It just splits on
+ *          commas and newlines, so any edge cases **will not** be
+ *          accounted for. However, there won't be any edge cases
+ *          since we control the input `CSV`.
+ */
 function csv_to_array(csv) {
-    /* Parse the csv file into an array */
     return csv.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
 }
 
 
+/**
+ * Converts the array into the `HTML` table
+ * @param {String[]} array - The array to make into a table
+ * @returns {String} The input array as an `HTML` table
+ */
 function make_html_table(array) {
-    /* Converts the array into the html table */
     let html = template.table.begin;
 
     html += template.header.begin
@@ -132,8 +176,13 @@ function make_html_table(array) {
 }
 
 
+/**
+ * Replace quality names with their corresponding icon
+ * @param {"Silver"|"Gold"|"Iridium"|""} quality_name - The quality name (Silver, Gold, or Iridium)
+ * @returns {String} An `HTML` fragment containing a star icon
+ * @remarks Uses the Stardew Valley icons for qualities
+ */
 function replace_icon(quality_name) {
-    /* Use the Stardew Valley icons for qualities */
     return quality_name
         .replace(/Silver/, template.icons.silver)
         .replace(/Gold/, template.icons.gold)
@@ -141,14 +190,21 @@ function replace_icon(quality_name) {
 }
 
 
+/**
+ * Format an integer so that it is human-readable
+ * @param {String|Number} number - The integer to format
+ * @remarks Separate the thousands by a thin space
+ */
 function format_integer(number) {
-    /* Separate the thousands by a thin space */
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 
+/**
+ * Put the table's `HTML` into the document
+ * @param {String} html - The `HTML` fragment to add to the document
+ */
 function set_output(html) {
-    /* Put the table's html into the document */
     let output = template.heading;
     output += template.download('csv_string');
     output += html;
@@ -163,15 +219,22 @@ function set_output(html) {
 }
 
 
+/**
+ * Strip the thin space added by `format_integer()`
+ * @param {String} number - A string containing a number
+ * @returns {Number} The integer found, or 0 otherwise
+ * @remarks Just concatenates all numerals found in a string
+ */
 function parse_integer(number) {
-    /* Strip the thin space added by format_integer() */
     const match = number.match(/\d/g);
     return match ? Number(match.join('')) : 0
 }
 
 
+/**
+ * Show the table sums in its footer
+ */
 function calculate_sum() {
-    /* Show the sums in the footer */
     const table = document.getElementById('item_table').tBodies[0];
     let tot_price = 0;
     let tot_count = 0;
@@ -197,8 +260,10 @@ function calculate_sum() {
 }
 
 
+/**
+ * Allow the table to be sorted by clicking on the headings
+ */
 function enable_table_sort() {
-    /* Allow the table to be sorted by clicking on the headings */
     const item_table = document.getElementById('item_table');
     const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
 
@@ -217,8 +282,12 @@ function enable_table_sort() {
 }
 
 
+/**
+ * Allow the user to download their save as a CSV
+ * @param {String} text 
+ * @remarks Called by the download button
+ */
 function download_as_csv(text) {
-    /* Allow the user to download their save as a CSV */
     const element = document.createElement('a')
     element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
     element.setAttribute('download', 'Stardew Valley Items.csv')
@@ -230,20 +299,20 @@ function download_as_csv(text) {
 }
 
 
+/** 
+ * Allows the table to be filtered
+ * @remarks The naïve version of this function directly applied
+ *          'display: none' to each row. However, this triggered 
+ *          a repaint for each row, since it was removed from display. 
+ *          The optimized version of this function applies a new
+ *          and unique class to each row whenever a filter is 
+ *          applied. Then—and only then—can we hide that class. 
+ *          This means that only one repaint is triggered instead
+ *          of one for each row. In benchmarks, this is about 250%
+ *          faster than the old function.
+ */
 let filter_class = 1;
 function filter_table() {
-    /* Allows the table to be filtered
-     *
-     * The naïve version of this function directly applied
-     * 'display: none' to each row. However, this triggered 
-     * a repaint for each row, since it was removed from display. 
-     * The optimized version of this function applies a new
-     * and unique class to each row whenever a filter is 
-     * applied. Then—and only then—can we hide that class. 
-     * This means that only one repaint is triggered instead
-     * of one for each row. In benchmarks, this is about 250%
-     * faster than the old function.
-     */
     const filter = document.getElementById('filter').value;
     const rows = document.getElementById('item_table').tBodies[0].rows;
     const search = RegExp(filter, 'i');
