@@ -1,4 +1,4 @@
-const version="82514600"
+const version="82516875"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 
