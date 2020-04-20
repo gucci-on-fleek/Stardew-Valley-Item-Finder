@@ -124,7 +124,7 @@ th:nth-of-type(6) {
     text-align: right;
 }
 
-thead tr td,
+thead tr th,
 tfoot tr td {
     /* Have the header/footer of the table stay in the viewport */
     position: -webkit-sticky;
@@ -139,7 +139,7 @@ tfoot tr td {
     bottom: 0;
 }
 
-thead tr td {
+thead tr th {
     top: 0;
 }
 
