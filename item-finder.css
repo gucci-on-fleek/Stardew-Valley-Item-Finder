@@ -53,6 +53,7 @@
 html {
     background-color: var(--color-background);
     color: var(--color-text);
+    font-variant-ligatures: common-ligatures, contextual,
 }
 
 a:link {
@@ -203,4 +204,30 @@ footer ul li {
 
 footer li:not(:first-child):before {
     content: " • ";
+}
+
+abbr {
+    text-decoration: none;
+    font-variant-caps: all-small-caps;
+}
+
+dl {
+    display: grid;
+    margin-left: 1em;
+    grid-template-columns: max-content max-content;
+    margin: 0 0 0 0;
+    padding-inline-start: 40px;
+    justify-items: start;
+
+}
+
+dt {
+    display: list-item;
+    grid-column-start: 1;
+}
+
+dd {
+    display: inline;
+    margin-left: 1em;
+    grid-column-start: 2;
 }

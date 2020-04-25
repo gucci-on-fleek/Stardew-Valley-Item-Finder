@@ -7,6 +7,7 @@
     <meta name="description"
         content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item’s name, location, and price." />
     <meta name="theme-color" content="#241504" />
+    <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="item-finder.css" />
     <link rel="preload" href="items.xslt" as="fetch" crossorigin="anonymous" />
     <link rel="preload" href="items-to-csv.xslt" as="fetch" crossorigin="anonymous" />
@@ -57,12 +58,14 @@
             is your player’s name and <code>123456789</code> is a random 9-digit number. The save file can be found in
             <a href="https://stardewvalleywiki.com/Saves#Find_your_save_files">one of the following folders</a>:
         </p>
-        <ul>
-            <li>Windows: <code>%appdata%\StardewValley\Saves</code></li>
-            <li>Linux and macOS: <code>~/.config/StardewValley/Saves</code></li>
-        </ul>
+        <dl>
+            <dt>Windows</dt>
+            <dd><code>%appdata%\StardewValley\Saves</code></dd>
+            <dt>Linux and macOS</dt>
+            <dd><code>~/.config/StardewValley/Saves</code></dd>
+        </dl>
         <p>
-            You can sort the table by clicking on the headers, and you can download the table as a <code>CSV</code>
+            You can sort the table by clicking on the headers, and you can download the table as a <abbr>CSV</abbr>
             file to use in Excel.
         </p>
     </section>
@@ -86,9 +89,9 @@
         <h2>Advanced Usage</h2>
         <h3>Running from the Command Line</h3>
         <p>
-            Advanced users can convert their save files to <code>CSV</code> on the command line. First,
+            Advanced users can convert their save files to <abbr>CSV</abbr> on the command line. First,
             you’ll need to
-            download the <code>xslt</code> files from the <a
+            download the <abbr>XSLT</abbr> files from the <a
                 href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
             Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><code>xsltproc</code></a>:</p>
         <code class="block">
