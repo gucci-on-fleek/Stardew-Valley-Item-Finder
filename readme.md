@@ -55,6 +55,10 @@ most important part is that you can search for multiple items at a time
 by separating them with a pipe (`|`). For example, to show all carrots
 and potatoes, you would type `carrot|potato`.
 
+### Offline Use
+
+This tool fully supports offline usage. After the first load, no internet access is required.
+
 Licencing
 ---------
 
