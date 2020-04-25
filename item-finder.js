@@ -240,7 +240,7 @@ function calculate_sum() {
     let tot_count = 0;
     const current_hidden_filter_class = `filter_${filter_class}`;
 
-    for (let i = 1, row; row = table.rows[i]; i++) {
+    for (let i = 0, row; row = table.rows[i]; i++) {
         if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
         tot_count += parse_integer(row.cells[3].textContent);
         tot_price += parse_integer(row.cells[5].textContent);
