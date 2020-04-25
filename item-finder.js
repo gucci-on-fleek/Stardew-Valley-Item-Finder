@@ -6,14 +6,7 @@
  * @returns An `HTML` fragment
  */
 const template = {
-
-    heading: '<article><h2>Items' +
-        '<input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter" aria-label="Filter Table" ></input>' +
-        '</h2>',
-    download: (x) => `<input type="button" id="down-button" class="input" value="Download as CSV" onclick="download_as_csv(${x})" />`,
     table: {
-        begin: '<table id="item_table">',
-        end: '</table></article>',
         cell: (x) => `<td>${x}</td>`,
         header_cell: (x) => `<th tabindex="0">${x}</th>`,
     },
@@ -60,8 +53,9 @@ function file_opened(event) {
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 const csv_array = csv_to_array(xslt_output_to_text(csv));
-                const html = make_html_table(csv_array);
-                set_output(html);
+                const html_body = make_html_table(csv_array);
+                const html_head = make_header(csv_array);
+                set_output(html_body, html_head);
                 enable_table_sort();
             })
     };
@@ -148,15 +142,7 @@ function csv_to_array(csv) {
  * @returns {String} The input array as an `HTML` table
  */
 function make_html_table(array) {
-    let html = template.table.begin;
-
-    html += template.header.begin
-    for (let j = 0; j < array[0].length; j++) {
-        html += template.table.header_cell(array[0][j]);
-    }
-    html += template.header.end
-
-    html += template.body.begin;
+    let html = '';
     for (let i = 1; i < array.length - 1; i++) {
         html += template.row.begin;
 
@@ -170,9 +156,21 @@ function make_html_table(array) {
 
         html += template.row.end;
     }
-    html += template.body.end + template.footer.begin + template.footer.end + template.table.end;
-
     return html;
+}
+
+
+/**
+ * Extracts the header from the array and returns and `HTML` table header
+ * @param {String[]} array - The array to make into a header
+ * @returns {String} The input array as an `HTML` table header 
+ */
+function make_header(array) {
+    let html = '';
+    for (let j = 0; j < array[0].length; j++) {
+        html += template.table.header_cell(array[0][j]);
+    }
+    return html
 }
 
 
@@ -204,17 +202,24 @@ function format_integer(number) {
  * Put the table's `HTML` into the document
  * @param {String} html - The `HTML` fragment to add to the document
  */
-function set_output(html) {
-    let output = template.heading;
-    output += template.download('csv_string');
-    output += html;
+function set_output(html_body, html_head) {
+    document.querySelector('article').style.display = 'none' // Hide the container
+    const table = document.getElementById('item_table');
+    const body = table.tBodies[0];
+    const head = table.tHead
+    const foot = table.tFoot
+    if (body) {
+        head.remove()
+        body.remove()
+        foot.remove()
+    }
 
-    const old_output = document.querySelector('article');
-    if (old_output) { old_output.remove() }
-
-    document.querySelector('output').insertAdjacentHTML('afterbegin', output);
+    table.insertAdjacentHTML('beforeend', template.header.begin + html_head + template.header.end);
+    table.insertAdjacentHTML('beforeend', template.body.begin + html_body + template.body.end);
+    table.insertAdjacentHTML('beforeend', template.footer.begin + template.footer.end);
 
     calculate_sum(); // Calculate the sums *after* the table has been build
+    document.querySelector('article').style.removeProperty('display') // Show the container
     document.getElementById('filter').focus();
 }
 
