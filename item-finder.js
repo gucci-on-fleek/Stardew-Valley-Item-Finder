@@ -1,4 +1,9 @@
 'use strict';
+/* Stardew Valley Item Finder
+ * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+ * Licensed under MPL 2.0 or greater. See URL for more information.
+ */
+
 
 /**
  * Object containing all output HTML strings 

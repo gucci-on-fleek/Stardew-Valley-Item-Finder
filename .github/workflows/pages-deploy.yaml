@@ -1,5 +1,9 @@
 name: Build and Deploy to GitHub Pages
 
+# Stardew Valley Item Finder
+# https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+# Licensed under MPL 2.0 or greater. See URL for more information.
+
 on:
   push:
     branches:
