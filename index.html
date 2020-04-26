@@ -2,13 +2,18 @@
 <html lang="en">
 
 <head>
+    <!-- Basic meta tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
         content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item’s name, location, and price." />
+
+    <!-- Styling -->
     <meta name="theme-color" content="#241504" />
     <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="item-finder.css" />
+
+    <!-- Preloads -->
     <link rel="preload" href="items.xslt" as="fetch" crossorigin="anonymous" />
     <link rel="preload" href="items-to-csv.xslt" as="fetch" crossorigin="anonymous" />
     <link rel="prefetch" href="assets/gold_star.png" as="image" />
@@ -18,6 +23,7 @@
         onload="navigator.serviceWorker.register('service-worker.js')" />
     <link rel="manifest" href="manifest.webmanifest" />
 
+    <!-- Icons -->
     <link rel="icon" type="image/png" sizes="196x196" href="assets/icon-192.png">
     <link rel="icon" type="image/png" sizes="160x160" href="assets/icon-160.png">
     <link rel="icon" type="image/png" sizes="96x96" href="assets/icon-96.png">
@@ -99,6 +105,16 @@
             Inspired by the <a href="https://mouseypounds.github.io/stardew-fair-helper/">Stardew Fair Helper</a>.
         </p>
         <h2>Advanced Usage</h2>
+        <h3>Offline Use</h3>
+        <p>
+            This tool fully supports offline usage. After the first load, no internet access is required.</p>
+        <h3>Regular Expressions</h3>
+        <p>
+            The filter fully supports Regular Expressions. For most users, the most important part is that you can
+            search
+            for multiple items at a time by separating them with a pipe (<code>|</code>). For example, to show all
+            carrots
+            and potatoes, you would type <code>carrot|potato</code>.</p>
         <h3>Running from the Command Line</h3>
         <p>
             Advanced users can convert their save files to <abbr>CSV</abbr> on the command line. First,
@@ -109,16 +125,6 @@
         <code class="block">
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
         </code>
-        <h3>Regular Expressions</h3>
-        <p>
-            The filter fully supports Regular Expressions. For most users, the most important part is that you can
-            search
-            for multiple items at a time by separating them with a pipe (<code>|</code>). For example, to show all
-            carrots
-            and potatoes, you would type <code>carrot|potato</code>.</p>
-        <h3>Offline Use</h3>
-        <p>
-            This tool fully supports offline usage. After the first load, no internet access is required.</p>
     </section>
     <footer>
         <ul>
