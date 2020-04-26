@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <!-- Stardew Valley Item Finder
+     https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+     Licensed under MPL 2.0 or greater. See URL for more information.
+-->
     <xsl:output method="text" encoding="utf-8" />
 
     <xsl:variable name="col_sep" select="','" />

@@ -1,4 +1,10 @@
-const version="82545562"
+'use strict';
+/* Stardew Valley Item Finder
+ * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+ * Licensed under MPL 2.0 or greater. See URL for more information.
+ */
+
+const version="87943203"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 
