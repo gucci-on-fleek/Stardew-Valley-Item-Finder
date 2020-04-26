@@ -55,6 +55,13 @@
               </xsl:if>
             </contained_in>
           </xsl:if>
+          <xsl:if test="parent::items/parent::heldObject/parent::Object/Name">
+            <contained_in>
+              <type>
+                <xsl:value-of select="parent::items/parent::heldObject/parent::Object/Name" />
+              </type>
+            </contained_in>
+          </xsl:if>
           <internal_information>
             <base_price>
               <xsl:value-of select="price" />
