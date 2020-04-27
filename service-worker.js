@@ -4,7 +4,7 @@
  * Licensed under MPL 2.0 or greater. See URL for more information.
  */
 
-const version="87991401"
+const version="88668669"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 
@@ -14,8 +14,8 @@ self.addEventListener('install', function (event) {
     'index.html',
     'item-finder.min.js',
     'item-finder.min.css',
-    'items.xslt',
-    'items-to-csv.xslt',
+    'items.min.xslt',
+    'items-to-csv.min.xslt',
     'service-worker.min.js',
     'assets/gold_star.png',
     'assets/silver_star.png',
