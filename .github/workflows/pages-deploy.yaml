@@ -21,13 +21,15 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Install Dependencies
-        run: sudo npm i -g csso-cli terser html-minifier # csso to minify CSS, terser to minify JS, and html-minifier to minify HTML
+        run: |
+          sudo npm i -g csso-cli terser html-minifier # csso to minify CSS, terser to minify JS, and html-minifier to minify HTML
+          sudo apt install minify # to minify the XSLT
 
       - name: Update Cache
         run: sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' service-worker.js # The service worker will only update the cache if its version is changed
 
       - name: Use minified files
-        run: sed -i 's/item-finder.js/item-finder.min.js/; s/service-worker.js/service-worker.min.js/; s/item-finder.css/item-finder.min.css/' index.html service-worker.js
+        run: sed -i 's/item-finder.js/item-finder.min.js/; s/service-worker.js/service-worker.min.js/; s/item-finder.css/item-finder.min.css/; s/items.xslt/items.min.xslt/; s/items-to-csv.xslt/items-to-csv.min.xslt/' index.html service-worker.js item-finder.js
 
       - name: Minify Javascript
         run: |
@@ -36,6 +38,11 @@ jobs:
 
       - name: Minify CSS
         run: csso item-finder.css --source-map file --output item-finder.min.css
+
+      - name: Minify XSLT
+        run: |
+          minify --type=xml -o items.min.xslt items.xslt
+          minify --type=xml -o items-to-csv.min.xslt items-to-csv.xslt
 
       - name: Inline JavaScript and CSS
         run: |
