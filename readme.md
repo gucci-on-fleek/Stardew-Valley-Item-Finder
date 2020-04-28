@@ -59,6 +59,15 @@ and potatoes, you would type `carrot|potato`.
 
 This tool fully supports offline usage. After the first load, no internet access is required.
 
+Developing
+----------
+
+### Building
+The tool does not need to be build to be run. You can run your own copy of the tool with any simple webserver, like `python -m http.server`. If you want to minify the files, see [the build script](.github/workflows/pages-deploy.yaml) for reference.
+
+### Documentation
+The non-standard `@effects` tag is used to indicate if a function has side effects.
+
 Licencing
 ---------
 
