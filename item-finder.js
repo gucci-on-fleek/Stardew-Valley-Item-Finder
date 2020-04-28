@@ -278,26 +278,30 @@ function parse_integer(number) {
  * @effects None
  */
 function calculate_sum(table) {
-    const body = table.tBodies[0]
+    const foot = table.tFoot
     let tot_price = 0;
     let tot_count = 0;
     const current_hidden_filter_class = `filter_${filter_class}`;
 
-    for (let i = 0, row; row = table.rows[i]; i++) {
+    while (foot.rows[0]) { // Remove old footers
+        foot.rows[0].remove()
+    }
+
+    for (let i = 0, row; row = table.tBodies[0].rows[i]; i++) {
         if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
         tot_count += parse_integer(row.cells[3].textContent);
         tot_price += parse_integer(row.cells[5].textContent);
     }
 
-    const row = table.insertRow()
-    const blank = cell_text(row, (""))
+    const row = foot.insertRow()
+    const blank = () => cell_text(row.insertCell(), (""))()
 
-    cell_text(row, "Total")()
+    cell_text(row.insertCell(), "Total")()
     blank()
     blank()
-    cell_text(row, format_integer(tot_count))()
+    cell_text(row.insertCell(), format_integer(tot_count))()
     blank()
-    cell_text(row, format_integer(tot_price))()
+    cell_text(row.insertCell(), format_integer(tot_price))()
 
     return table
 }
@@ -360,7 +364,8 @@ let filter_class = 1;
  */
 function filter_table() {
     const filter = document.getElementById('filter').value;
-    const rows = document.getElementById('item_table').tBodies[0].rows;
+    const table = document.getElementById('item_table')
+    const rows = table.tBodies[0].rows;
     const search = RegExp(filter, 'i');
     const last_filter_class = filter_class - 1; // The class that we're adding
     const last_last_filter_class = last_filter_class - 1; // The class that we're removing
@@ -381,6 +386,7 @@ function filter_table() {
         style.deleteRule(1)
     }
 
-    calculate_sum() // Update the footer after the filter is applied
+    const new_foot = calculate_sum(table) // Update the footer after the filter is applied
+
     filter_class++; // Increment the class's name
 }
