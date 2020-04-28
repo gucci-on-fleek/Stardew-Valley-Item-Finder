@@ -5,44 +5,47 @@
  */
 
 
-/**
- * Object containing all output HTML strings 
- * @param x - (Optional) The string to include in the template
- * @returns An `HTML` fragment
- */
-const template = {
-    table: {
-        cell: (x) => `<td>${x}</td>`,
-        header_cell: (x) => `<th tabindex="0">${x}</th>`,
-    },
-    header: {
-        begin: '<thead><tr class="header">',
-        end: '</tr></thead>',
-    },
-    body: {
-        begin: '<tbody>',
-        end: '</tbody>'
-    },
-    row: {
-        begin: '<tr>',
-        end: '</tr>'
-    },
-    footer: {
-        begin: '<tfoot>',
-        end: '</tfoot>'
-    },
-    icons: {
-        silver: '<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1 Silver</div>',
-        gold: '<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2 Gold</div>',
-        iridium: '<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3 Iridium</div>',
+let template
+window.onload = function (e) {
+    const __template = {
+        table: document.getElementById('table_base'),
+        cell: document.getElementById('cell_base'),
+        row: document.getElementById('row_base'),
+        header_cell: document.getElementById('header_cell_base'),
+        header: document.getElementById('header_base'),
+        silver: document.getElementById('silver_base'),
+        gold: document.getElementById('gold_base'),
+        iridium: document.getElementById('iridium_base'),
+    }
+    /**
+     * Object that produces the HTML template
+     * @param x - The text/nodes to include in the template (Not for all elements)
+     * @returns {DocumentFragment} An element containing the template
+     * @effects None
+     */
+    template = {
+        table: () => __template.table.content.cloneNode(true).firstElementChild, // Creates an empty table
+        header_cell: function (x) { // Creates each header cell
+            const clone = __template.header_cell.content.cloneNode(true)
+            clone.firstElementChild.insertAdjacentHTML('beforeend', x)
+            return clone
+        },
+        header: function (x) { // Creates the header row
+            const clone = __template.header.content.cloneNode(true)
+            clone.firstElementChild.appendChild(x)
+            return clone
+        }, /* Produces the quality images */
+        silver: () => __template.silver.content.cloneNode(true),
+        gold: () => __template.gold.content.cloneNode(true),
+        iridium: () => __template.iridium.content.cloneNode(true),
     }
 }
-
 
 /**
  * Handle the user opening a file
  * @param {Event} event - The event
  * @remarks Triggered by the file input
+ * @effects Modifies the `#table_container` DOM element
  */
 function file_opened(event) {
     const input = event.target;
@@ -54,13 +57,14 @@ function file_opened(event) {
         const save_game = parse_xml(file_contents)
         get_files(["items.min.xslt", "items-to-csv.min.xslt"]).then(
             function (requests) {
+                let table = template.table()
                 const items = process_xslt(parse_xml(requests[0]), save_game);
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 const csv_array = csv_to_array(xslt_output_to_text(csv));
-                const html_body = make_html_table(csv_array);
-                const html_head = make_header(csv_array);
-                set_output(html_body, html_head);
+                table = make_html_table(csv_array, table);
+                table = make_header(csv_array, table);
+                set_output(table);
                 enable_table_sort();
             })
     };
@@ -72,6 +76,7 @@ function file_opened(event) {
  * Parse a string as `XML`
  * @param {String} text - The string to parse as `XML`
  * @returns {XMLDocument} A `DOM` object representing the input `XML`
+ * @effects None
  */
 function parse_xml(text) {
     const xml_parser = new DOMParser();
@@ -83,6 +88,7 @@ function parse_xml(text) {
  * Download an array of URLs
  * @param {String[]} paths - An array of URLs to fetch
  * @returns {Promise} A promise holding the text for each request
+ * @effects Initiates a network request to download the URLs
  */
 function get_files(paths) {
     let requests = []
@@ -99,6 +105,7 @@ function get_files(paths) {
  * @param {DocumentFragment} xslt - The `XSLT` used for the transformation
  * @param {DocumentFragment} xml - The `XML` to transform
  * @returns {DocumentFragment} The transformed `XML`
+ * @effects None
  */
 function process_xslt(xslt, xml) {
     const xslt_processor = new XSLTProcessor();
@@ -120,6 +127,7 @@ let csv_string; // Global, holds the CSV so that it can later be downloaded
  *          returns an `XMLDocument` object. Since we are transforming
  *          the `CSV` into plain text, we need to call this function
  *          to get a string.
+ * @effects Modifies global variable `csv_string`
  */
 function xslt_output_to_text(xml) {
     csv_string = xml.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
@@ -135,6 +143,7 @@ function xslt_output_to_text(xml) {
  *          commas and newlines, so any edge cases **will not** be
  *          accounted for. However, there won't be any edge cases
  *          since we control the input `CSV`.
+ * @effects None
  */
 function csv_to_array(csv) {
     return csv.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
@@ -142,40 +151,56 @@ function csv_to_array(csv) {
 
 
 /**
+ * Adds text to an `HTML` element
+ * @param {HTMLTableCellElement } cell - The cell to add the text
+ * @param {String} text - The text to add
+ * @returns {function} A function that adds the text when called
+ * @remarks Returns a function to make *this* function side-effect free.
+ * @effects None
+ */
+function cell_text(cell, text) {
+    return () => cell.appendChild(document.createTextNode(text))
+}
+
+
+/**
  * Converts the array into the `HTML` table
  * @param {String[]} array - The array to make into a table
+ * @param {DocumentFragment} table - The document fragment to make the table in
  * @returns {String} The input array as an `HTML` table
+ * @effects None
  */
-function make_html_table(array) {
-    let html = '';
+function make_html_table(array, table) {
     for (let i = 1; i < array.length - 1; i++) {
-        html += template.row.begin;
+        const row = table.insertRow()
 
         for (let j = 0; j < array[i].length; j++) {
+            const cell = row.insertCell()
             if (j === 1) { // Quality column
-                html += template.table.cell(replace_icon(array[i][j]));
+                cell.appendChild(replace_icon(array[i][j]));
                 continue;
             }
-            html += template.table.cell(format_integer(array[i][j]));
+            cell_text(cell, format_integer(array[i][j]))()
         }
-
-        html += template.row.end;
     }
-    return html;
+    return table;
 }
 
 
 /**
  * Extracts the header from the array and returns and `HTML` table header
  * @param {String[]} array - The array to make into a header
- * @returns {String} The input array as an `HTML` table header 
+ * @param {DocumentFragment} table - The document fragment to make the table in
+ * @returns {String} The input array as an `HTML` table header
+ * @effects None
  */
-function make_header(array) {
-    let html = '';
+function make_header(array, table) {
+    let html = new DocumentFragment;
     for (let j = 0; j < array[0].length; j++) {
-        html += template.table.header_cell(array[0][j]);
+        html.append(template.header_cell(array[0][j]))
     }
-    return html
+    table.tHead.appendChild(template.header(html))
+    return table
 }
 
 
@@ -184,12 +209,19 @@ function make_header(array) {
  * @param {"Silver"|"Gold"|"Iridium"|""} quality_name - The quality name (Silver, Gold, or Iridium)
  * @returns {String} An `HTML` fragment containing a star icon
  * @remarks Uses the Stardew Valley icons for qualities
+ * @effects None
  */
 function replace_icon(quality_name) {
-    return quality_name
-        .replace(/Silver/, template.icons.silver)
-        .replace(/Gold/, template.icons.gold)
-        .replace(/Iridium/, template.icons.iridium);
+    switch (quality_name) {
+        case "Silver":
+            return template.silver()
+        case "Gold":
+            return template.gold()
+        case "Iridium":
+            return template.iridium()
+        default:
+            return document.createTextNode('')
+    }
 }
 
 
@@ -197,34 +229,32 @@ function replace_icon(quality_name) {
  * Format an integer so that it is human-readable
  * @param {String|Number} number - The integer to format
  * @remarks Separate the thousands by a thin space
+ * @effects None
  */
 function format_integer(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 
+let previous_output = false
 /**
  * Put the table's `HTML` into the document
  * @param {String} html - The `HTML` fragment to add to the document
+ * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
  */
-function set_output(html_body, html_head) {
+function set_output(table) {
     document.querySelector('article').style.display = 'none' // Hide the container
-    const table = document.getElementById('item_table');
-    const body = table.tBodies[0];
-    const head = table.tHead
-    const foot = table.tFoot
-    if (body) {
-        head.remove()
-        body.remove()
-        foot.remove()
+
+    if (previous_output) { // Remove old table
+        document.getElementById('item_table').remove()
     }
+    table = calculate_sum(table);
 
-    table.insertAdjacentHTML('beforeend', template.header.begin + html_head + template.header.end);
-    table.insertAdjacentHTML('beforeend', template.body.begin + html_body + template.body.end);
-    table.insertAdjacentHTML('beforeend', template.footer.begin + template.footer.end);
+    const container = document.getElementById('table_container');
+    container.appendChild(table)
 
-    calculate_sum(); // Calculate the sums *after* the table has been build
     document.querySelector('article').style.removeProperty('display') // Show the container
+    previous_output = true
     document.getElementById('filter').focus();
 }
 
@@ -234,6 +264,7 @@ function set_output(html_body, html_head) {
  * @param {String} number - A string containing a number
  * @returns {Number} The integer found, or 0 otherwise
  * @remarks Just concatenates all numerals found in a string
+ * @effects None
  */
 function parse_integer(number) {
     const match = number.match(/\d/g);
@@ -243,9 +274,11 @@ function parse_integer(number) {
 
 /**
  * Show the table sums in its footer
+ * @param {DocumentFragment} table - The document fragment to sum
+ * @effects None
  */
-function calculate_sum() {
-    const table = document.getElementById('item_table').tBodies[0];
+function calculate_sum(table) {
+    const body = table.tBodies[0]
     let tot_price = 0;
     let tot_count = 0;
     const current_hidden_filter_class = `filter_${filter_class}`;
@@ -256,22 +289,23 @@ function calculate_sum() {
         tot_price += parse_integer(row.cells[5].textContent);
     }
 
-    let html = "";
-    html += template.row.begin;
-    html += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
-    html += template.table.cell(format_integer(tot_count));
-    html += template.table.cell("");
-    html += template.table.cell(format_integer(tot_price)) + template.row.end;
+    const row = table.insertRow()
+    const blank = cell_text(row, (""))
 
-    const old_output = document.querySelector('tfoot tr');
-    if (old_output) { old_output.remove() }
+    cell_text(row, "Total")()
+    blank()
+    blank()
+    cell_text(row, format_integer(tot_count))()
+    blank()
+    cell_text(row, format_integer(tot_price))()
 
-    document.querySelector('tfoot').insertAdjacentHTML('afterbegin', html);
+    return table
 }
 
 
 /**
  * Allow the table to be sorted by clicking on the headings
+ * @effects Initializes Tablesort. Adds event listeners to the table headers.
  */
 function enable_table_sort() {
     const item_table = document.getElementById('item_table');
@@ -296,6 +330,7 @@ function enable_table_sort() {
  * Allow the user to download their save as a CSV
  * @param {String} text 
  * @remarks Called by the download button
+ * @effects Temporarily modifies DOM. Triggers a download.
  */
 function download_as_csv(text) {
     const element = document.createElement('a')
@@ -309,6 +344,7 @@ function download_as_csv(text) {
 }
 
 
+let filter_class = 1;
 /** 
  * Allows the table to be filtered
  * @remarks The naïve version of this function directly applied
@@ -320,8 +356,8 @@ function download_as_csv(text) {
  *          This means that only one repaint is triggered instead
  *          of one for each row. In benchmarks, this is about 250%
  *          faster than the old function.
+ * @effects Modifies CSS and the `class` attribute of table rows. Modifies global variable `filter_class`.
  */
-let filter_class = 1;
 function filter_table() {
     const filter = document.getElementById('filter').value;
     const rows = document.getElementById('item_table').tBodies[0].rows;
