@@ -82,15 +82,14 @@
     <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
     <div>
         <!-- We need this empty div so that the contents are horizontally centered on the page. Without it, the contents are left aligned to the rest of the page. -->
-        <article style="display: none">
+        <article style="display: none" id="table_container">
             <h2>Items
                 <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter"
                     title="Filter" aria-label="Filter Table"></input>
             </h2>
             <input type="button" id="down-button" class="input" value="Download as CSV"
                 onclick="download_as_csv(csv_string)" />
-            <table id="item_table">
-            </table>
+
         </article>
     </div>
 
@@ -136,6 +135,41 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
             <li> View on <a href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">GitHub</a></li>
         </ul>
     </footer>
+    <template id="table_base">
+        <table id="item_table">
+            <thead>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+        </table>
+    </template>
+    <template id="cell_base">
+        <td></td>
+    </template>
+    <template id="row_base">
+        <tr></tr>
+    </template>
+    <template id="header_cell_base">
+        <th tabindex="0"></th>
+    </template>
+    <template id="header_base">
+        <tr class="header"></tr>
+    </template>
+    <template id="silver_base">
+        <td><img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" />
+            <div class="sort-id">1 Silver</div>
+        </td>
+    </template>
+    <template id="gold_base">
+        <td><img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" />
+            <div class="sort-id">2 Gold</div>
+        </td>
+    </template>
+    <template id="iridium_base">
+        <td><img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" />
+            <div class="sort-id">3 Iridium</div>
+        </td>
+    </template>
 </body>
 
 </html>

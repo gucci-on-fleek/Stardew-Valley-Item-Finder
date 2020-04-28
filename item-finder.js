@@ -5,39 +5,51 @@
  */
 
 
+let template
 /**
  * Object containing all output HTML strings 
  * @param x - (Optional) The string to include in the template
  * @returns An `HTML` fragment
  */
-const template = {
-    table: {
-        cell: (x) => `<td>${x}</td>`,
-        header_cell: (x) => `<th tabindex="0">${x}</th>`,
-    },
-    header: {
-        begin: '<thead><tr class="header">',
-        end: '</tr></thead>',
-    },
-    body: {
-        begin: '<tbody>',
-        end: '</tbody>'
-    },
-    row: {
-        begin: '<tr>',
-        end: '</tr>'
-    },
-    footer: {
-        begin: '<tfoot>',
-        end: '</tfoot>'
-    },
-    icons: {
-        silver: '<img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" /><div class="sort-id">1 Silver</div>',
-        gold: '<img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" /><div class="sort-id">2 Gold</div>',
-        iridium: '<img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" /><div class="sort-id">3 Iridium</div>',
+window.onload = function (e) {
+    const __template = {
+        table: document.getElementById('table_base'),
+        cell: document.getElementById('cell_base'),
+        row: document.getElementById('row_base'),
+        header_cell: document.getElementById('header_cell_base'),
+        header: document.getElementById('header_base'),
+        silver: document.getElementById('silver_base'),
+        gold: document.getElementById('gold_base'),
+        iridium: document.getElementById('iridium_base'),
+    }
+
+    template = {
+        table: () => __template.table.content.cloneNode(true),
+        cell: function (x) {
+            const clone = __template.cell.content.cloneNode(true)
+            clone.firstElementChild.insertAdjacentHTML('beforeend', x)
+            return clone
+        },
+        row: function (x) {
+            const clone = __template.row.content.cloneNode(true)
+            clone.firstElementChild.appendChild(x)
+            return clone
+        },
+        header_cell: function (x) {
+            const clone = __template.header_cell.content.cloneNode(true)
+            clone.firstElementChild.insertAdjacentHTML('beforeend', x)
+            return clone
+        },
+        header: function (x) {
+            const clone = __template.header.content.cloneNode(true)
+            clone.firstElementChild.appendChild(x)
+            return clone
+        },
+        silver: () => __template.silver.content.cloneNode(true),
+        gold: () => __template.gold.content.cloneNode(true),
+        iridium: () => __template.iridium.content.cloneNode(true),
     }
 }
-
 
 /**
  * Handle the user opening a file
@@ -147,19 +159,19 @@ function csv_to_array(csv) {
  * @returns {String} The input array as an `HTML` table
  */
 function make_html_table(array) {
-    let html = '';
+    let html = new DocumentFragment;
     for (let i = 1; i < array.length - 1; i++) {
-        html += template.row.begin;
+        let row = new DocumentFragment;
 
         for (let j = 0; j < array[i].length; j++) {
             if (j === 1) { // Quality column
-                html += template.table.cell(replace_icon(array[i][j]));
+                row.append(replace_icon(array[i][j]));
                 continue;
             }
-            html += template.table.cell(format_integer(array[i][j]));
+            row.append(template.cell(format_integer(array[i][j])));
         }
 
-        html += template.row.end;
+        html.append(template.row(row));
     }
     return html;
 }
@@ -171,11 +183,11 @@ function make_html_table(array) {
  * @returns {String} The input array as an `HTML` table header 
  */
 function make_header(array) {
-    let html = '';
+    let html = new DocumentFragment;
     for (let j = 0; j < array[0].length; j++) {
-        html += template.table.header_cell(array[0][j]);
+        html.append(template.header_cell(array[0][j]))
     }
-    return html
+    return template.header(html)
 }
 
 
@@ -186,10 +198,17 @@ function make_header(array) {
  * @remarks Uses the Stardew Valley icons for qualities
  */
 function replace_icon(quality_name) {
-    return quality_name
-        .replace(/Silver/, template.icons.silver)
-        .replace(/Gold/, template.icons.gold)
-        .replace(/Iridium/, template.icons.iridium);
+    switch (quality_name) {
+        case "Silver":
+            return template.silver()
+        case "Gold":
+            return template.gold()
+        case "Iridium":
+            return template.iridium()
+        default:
+            return template.cell('')
+
+    }
 }
 
 
@@ -203,28 +222,32 @@ function format_integer(number) {
 }
 
 
+let previous_output = false
 /**
  * Put the table's `HTML` into the document
  * @param {String} html - The `HTML` fragment to add to the document
  */
 function set_output(html_body, html_head) {
     document.querySelector('article').style.display = 'none' // Hide the container
+
+    if (previous_output) { // Remove old table
+        document.getElementById('item_table').remove()
+    }
+
+    const clone = template.table()
+    const container = document.getElementById('table_container');
+    container.appendChild(clone)
+
     const table = document.getElementById('item_table');
     const body = table.tBodies[0];
     const head = table.tHead
-    const foot = table.tFoot
-    if (body) {
-        head.remove()
-        body.remove()
-        foot.remove()
-    }
 
-    table.insertAdjacentHTML('beforeend', template.header.begin + html_head + template.header.end);
-    table.insertAdjacentHTML('beforeend', template.body.begin + html_body + template.body.end);
-    table.insertAdjacentHTML('beforeend', template.footer.begin + template.footer.end);
+    head.appendChild(html_head);
+    body.appendChild(html_body);
 
     calculate_sum(); // Calculate the sums *after* the table has been build
     document.querySelector('article').style.removeProperty('display') // Show the container
+    previous_output = true
     document.getElementById('filter').focus();
 }
 
@@ -256,17 +279,18 @@ function calculate_sum() {
         tot_price += parse_integer(row.cells[5].textContent);
     }
 
-    let html = "";
-    html += template.row.begin;
-    html += template.table.cell("Total") + template.table.cell("") + template.table.cell("");
-    html += template.table.cell(format_integer(tot_count));
-    html += template.table.cell("");
-    html += template.table.cell(format_integer(tot_price)) + template.row.end;
+    let html = new DocumentFragment;
+    html.append(template.cell("Total"))
+    html.append(template.cell(""))
+    html.append(template.cell(""))
+    html.append(template.cell(format_integer(tot_count)))
+    html.append(template.cell(""))
+    html.append(template.cell(format_integer(tot_price)))
 
     const old_output = document.querySelector('tfoot tr');
     if (old_output) { old_output.remove() }
 
-    document.querySelector('tfoot').insertAdjacentHTML('afterbegin', html);
+    document.querySelector('tfoot').appendChild(template.row(html));
 }
 
 
