@@ -24,17 +24,7 @@ window.onload = function (e) {
     }
 
     template = {
-        table: () => __template.table.content.cloneNode(true),
-        cell: function (x) {
-            const clone = __template.cell.content.cloneNode(true)
-            clone.firstElementChild.insertAdjacentHTML('beforeend', x)
-            return clone
-        },
-        row: function (x) {
-            const clone = __template.row.content.cloneNode(true)
-            clone.firstElementChild.appendChild(x)
-            return clone
-        },
+        table: () => __template.table.content.cloneNode(true).firstElementChild,
         header_cell: function (x) {
             const clone = __template.header_cell.content.cloneNode(true)
             clone.firstElementChild.insertAdjacentHTML('beforeend', x)
@@ -66,13 +56,14 @@ function file_opened(event) {
         const save_game = parse_xml(file_contents)
         get_files(["items.xslt", "items-to-csv.xslt"]).then(
             function (requests) {
+                let table = template.table()
                 const items = process_xslt(parse_xml(requests[0]), save_game);
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 const csv_array = csv_to_array(xslt_output_to_text(csv));
-                const html_body = make_html_table(csv_array);
-                const html_head = make_header(csv_array);
-                set_output(html_body, html_head);
+                table = make_html_table(csv_array, table);
+                table = make_header(csv_array, table);
+                set_output(table);
                 enable_table_sort();
             })
     };
@@ -153,27 +144,30 @@ function csv_to_array(csv) {
 }
 
 
+function cell_text(cell, text) {
+    return () => cell.appendChild(document.createTextNode(text))
+}
+
+
 /**
  * Converts the array into the `HTML` table
  * @param {String[]} array - The array to make into a table
  * @returns {String} The input array as an `HTML` table
  */
-function make_html_table(array) {
-    let html = new DocumentFragment;
+function make_html_table(array, table) {
     for (let i = 1; i < array.length - 1; i++) {
-        let row = new DocumentFragment;
+        const row = table.insertRow()
 
         for (let j = 0; j < array[i].length; j++) {
+            const cell = row.insertCell()
             if (j === 1) { // Quality column
-                row.append(replace_icon(array[i][j]));
+                cell.appendChild(replace_icon(array[i][j]));
                 continue;
             }
-            row.append(template.cell(format_integer(array[i][j])));
+            cell_text(cell, format_integer(array[i][j]))()
         }
-
-        html.append(template.row(row));
     }
-    return html;
+    return table;
 }
 
 
@@ -182,12 +176,13 @@ function make_html_table(array) {
  * @param {String[]} array - The array to make into a header
  * @returns {String} The input array as an `HTML` table header 
  */
-function make_header(array) {
+function make_header(array, table) {
     let html = new DocumentFragment;
     for (let j = 0; j < array[0].length; j++) {
         html.append(template.header_cell(array[0][j]))
     }
-    return template.header(html)
+    table.tHead.appendChild(template.header(html))
+    return table
 }
 
 
@@ -206,8 +201,7 @@ function replace_icon(quality_name) {
         case "Iridium":
             return template.iridium()
         default:
-            return template.cell('')
-
+            return document.createTextNode('')
     }
 }
 
@@ -227,25 +221,17 @@ let previous_output = false
  * Put the table's `HTML` into the document
  * @param {String} html - The `HTML` fragment to add to the document
  */
-function set_output(html_body, html_head) {
+function set_output(table) {
     document.querySelector('article').style.display = 'none' // Hide the container
 
     if (previous_output) { // Remove old table
         document.getElementById('item_table').remove()
     }
+    table = calculate_sum(table);
 
-    const clone = template.table()
     const container = document.getElementById('table_container');
-    container.appendChild(clone)
+    container.appendChild(table)
 
-    const table = document.getElementById('item_table');
-    const body = table.tBodies[0];
-    const head = table.tHead
-
-    head.appendChild(html_head);
-    body.appendChild(html_body);
-
-    calculate_sum(); // Calculate the sums *after* the table has been build
     document.querySelector('article').style.removeProperty('display') // Show the container
     previous_output = true
     document.getElementById('filter').focus();
@@ -267,8 +253,8 @@ function parse_integer(number) {
 /**
  * Show the table sums in its footer
  */
-function calculate_sum() {
-    const table = document.getElementById('item_table').tBodies[0];
+function calculate_sum(table) {
+    const body = table.tBodies[0]
     let tot_price = 0;
     let tot_count = 0;
     const current_hidden_filter_class = `filter_${filter_class}`;
@@ -279,18 +265,17 @@ function calculate_sum() {
         tot_price += parse_integer(row.cells[5].textContent);
     }
 
-    let html = new DocumentFragment;
-    html.append(template.cell("Total"))
-    html.append(template.cell(""))
-    html.append(template.cell(""))
-    html.append(template.cell(format_integer(tot_count)))
-    html.append(template.cell(""))
-    html.append(template.cell(format_integer(tot_price)))
+    const row = table.insertRow()
+    const blank = cell_text(row, (""))
 
-    const old_output = document.querySelector('tfoot tr');
-    if (old_output) { old_output.remove() }
+    cell_text(row, "Total")()
+    blank()
+    blank()
+    cell_text(row, format_integer(tot_count))()
+    blank()
+    cell_text(row, format_integer(tot_price))()
 
-    document.querySelector('tfoot').appendChild(template.row(html));
+    return table
 }
 
 
