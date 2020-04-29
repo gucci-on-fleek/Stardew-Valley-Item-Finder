@@ -104,7 +104,28 @@ table {
     table-layout: auto;
     /* Monospaced numerals */
     font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
 
+@media (max-width: 45em) {
+
+    /* For mobile */
+    table {
+        /* Reduce spacing when in a tight space */
+        border-spacing: 2px 2px;
+        margin-left: 0px;
+    }
+
+    td:nth-of-type(5),
+    th:nth-of-type(5) {
+        /* Need extra space between Count and Location */
+        padding-left: 5px;
+    }
+
+    th:nth-of-type(2) {
+        /* Hide quality header when in a tight space */
+        visibility: hidden
+    }
 }
 
 thead {
@@ -124,10 +145,6 @@ th:focus {
     text-decoration: underline;
 }
 
-th:hover {
-    cursor: pointer
-}
-
 td:nth-of-type(3),
 td:nth-of-type(4),
 td:nth-of-type(6),
@@ -136,6 +153,8 @@ th:nth-of-type(4),
 th:nth-of-type(6) {
     /* Numeric columns should be right-aligned */
     text-align: right;
+    /* Don't wrap numeric columns */
+    overflow-wrap: normal !important;
 }
 
 thead tr th,
@@ -145,7 +164,6 @@ tfoot tr td {
     position: sticky;
     z-index: 5;
     background: var(--color-background);
-    cursor: pointer;
 }
 
 tfoot tr td {
@@ -154,6 +172,7 @@ tfoot tr td {
 
 thead tr th {
     top: 0;
+    cursor: pointer;
 }
 
 code {
