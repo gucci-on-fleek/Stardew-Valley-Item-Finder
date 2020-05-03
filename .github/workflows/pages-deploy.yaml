@@ -33,8 +33,8 @@ jobs:
 
       - name: Minify Javascript
         run: |
-          terser item-finder.js -c unsafe=true -m "properties=true, toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --source-map --output item-finder.min.js
-          terser service-worker.js --source-map --output service-worker.min.js
+          terser item-finder.js -c unsafe=true -m "toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --mangle-props 'regex = /template/' --source-map "url=item-finder.min.js.map" --output item-finder.min.js
+          terser service-worker.js --source-map "url=service-worker.min.js.map" --output service-worker.min.js
 
       - name: Minify CSS
         run: csso item-finder.css --source-map file --output item-finder.min.css
