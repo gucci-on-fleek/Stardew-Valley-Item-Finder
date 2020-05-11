@@ -9,6 +9,7 @@
     <!-- Basic meta tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stardew Valley Item Finder</title>
     <meta name="description"
         content="This tool extracts information about all of your items in Stardew Valley and displays it in a table. The table shows the item’s name, location, and price." />
 
@@ -46,16 +47,16 @@
     <meta name="msapplication-TileImage" content="assets/icon-144.png">
     <link rel="icon" sizes="any" href="assets/icon.svg" type="image/svg+xml">
 
-    <title>Stardew Valley Item Finder</title>
+    <!-- Scripts -->
     <script src="item-finder.js"></script>
     <script src="libraries/tablesort.min.js" async></script>
-
 </head>
 
 <body>
     <header>
         <h1>Stardew Valley Item Finder</h1>
     </header>
+
     <section class="text">
         <p>This tool extracts information about all of your items in Stardew Valley and displays it in a table. The
             table shows the items’ names, locations, and prices.</p>
@@ -77,6 +78,7 @@
             file to use in Excel.
         </p>
     </section>
+
     <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
     <div>
         <!-- We need this empty div so that the contents are horizontally centered on the page. Without it, the contents are left aligned to the rest of the page. -->
@@ -127,12 +129,14 @@
 xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
         </code>
     </section>
+
     <footer>
         <ul>
             <li>Made by <a href="https://github.com/gucci-on-fleek">gucci-on-fleek</a></li>
             <li> View on <a href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">GitHub</a></li>
         </ul>
     </footer>
+
     <template id="table_base">
         <table id="item_table">
             <thead>
@@ -141,17 +145,20 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
             <tfoot></tfoot>
         </table>
     </template>
+
     <template id="header_cell_base">
         <th tabindex="0"></th>
     </template>
+
     <template id="header_base">
         <tr class="header"></tr>
     </template>
+
     <template id="silver_base">
         <img src="assets/silver_star.png" class="icon" alt="Silver" title="Silver" />
         <div class="sort-id">1 Silver</div>
-
     </template>
+
     <template id="gold_base">
         <img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" />
         <div class="sort-id">2 Gold</div>
@@ -160,8 +167,8 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
     <template id="iridium_base">
         <img src="assets/iridium_star.png" class="icon" alt="Iridium" title="Iridium" />
         <div class="sort-id">3 Iridium</div>
-
     </template>
+
 </body>
 
 </html>

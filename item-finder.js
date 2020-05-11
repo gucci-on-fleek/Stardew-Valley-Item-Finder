@@ -53,8 +53,8 @@ function file_opened(event) {
 
     reader.onload = function () {
         const file_contents = reader.result;
-
         const save_game = parse_xml(file_contents)
+
         get_files(["items.xslt", "items-to-csv.xslt"]).then(
             function (requests) {
                 let table = template.table()
@@ -130,7 +130,7 @@ let csv_string; // Global, holds the CSV so that it can later be downloaded
  * @effects Modifies global variable `csv_string`
  */
 function xslt_output_to_text(xml) {
-    csv_string = xml.firstChild.wholeText;  // Easiest way to get the xslt-transformed text
+    csv_string = xml.firstChild.wholeText;
     return csv_string
 }
 
@@ -188,7 +188,7 @@ function make_html_table(array, table) {
 
 
 /**
- * Extracts the header from the array and returns and `HTML` table header
+ * Extracts the header from the array and returns an `HTML` table header
  * @param {String[]} array - The array to make into a header
  * @param {DocumentFragment} table - The document fragment to make the table in
  * @returns {String} The input array as an `HTML` table header
@@ -236,7 +236,7 @@ function format_integer(number) {
 }
 
 
-let previous_output = false
+let previous_output = false // Global, true on 2nd/3rd/xth save file loads
 /**
  * Put the table's `HTML` into the document
  * @param {String} html - The `HTML` fragment to add to the document
@@ -348,7 +348,7 @@ function download_as_csv(text) {
 }
 
 
-let filter_class = 1;
+let filter_class = 1; // Monotonically incrementing counter to ensure unique CSS classes
 /** 
  * Allows the table to be filtered
  * @remarks The naïve version of this function directly applied

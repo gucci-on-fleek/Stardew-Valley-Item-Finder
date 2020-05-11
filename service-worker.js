@@ -61,8 +61,8 @@ function refresh_all() {
       promises.push(refresh(requests[i]))
     }
     fetched = Date.now()
-
     return Promise.all(promises)
+
   } else {
     return Promise.resolve() // Return an empty promise otherwise
   }
