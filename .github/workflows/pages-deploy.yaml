@@ -44,15 +44,6 @@ jobs:
           minify --type=xml -o items.min.xslt items.xslt
           minify --type=xml -o items-to-csv.min.xslt items-to-csv.xslt
 
-      - name: Inline JavaScript and CSS
-        run: |
-          sed -i '/<script src="item-finder.min.js">/r item-finder.min.js' index.html # Insert the contents of ---.js after the opening script tag
-          sed -i '/<script src="libraries\/tablesort.min.js" async>/r libraries/tablesort.min.js' index.html
-          sed -i 's/<link rel="stylesheet" href="item-finder.min.css" \/>/<style>\n<\/style>/' index.html # Replace the stylesheet link with a blank style element
-          sed -i '/<style>/r item-finder.min.css' index.html # Now insert the style into the style element
-          sed -i 's/script src=".*"\( async\)\?/script/' index.html # Remove the src attribute from the script tags
-          sed -i 's/"\(tablesort\|item-finder\)\.min\.\(js\|css\)",\?//g' service-worker.min.js # Remove the files from the cache since they're inlined
-
       - name: Minify HTML
         run: html-minifier index.html --collapse-boolean-attributes --collapse-inline-tag-whitespace --collapse-whitespace --conservative-collapse --decode-entities --html5 --include-auto-generated-tags --remove-attribute-quotes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes -o index.html
 
