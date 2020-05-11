@@ -4,7 +4,7 @@
  * Licensed under MPL 2.0 or greater. See URL for more information.
  */
 
-const version="101917501"
+const version="101919346"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
@@ -61,8 +61,8 @@ function refresh_all() {
       promises.push(refresh(requests[i]))
     }
     fetched = Date.now()
-
     return Promise.all(promises)
+
   } else {
     return Promise.resolve() // Return an empty promise otherwise
   }
