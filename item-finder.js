@@ -154,12 +154,10 @@ function csv_to_array(csv) {
  * Adds text to an `HTML` element
  * @param {HTMLTableCellElement } cell - The cell to add the text
  * @param {String} text - The text to add
- * @returns {function} A function that adds the text when called
- * @remarks Returns a function to make *this* function side-effect free.
- * @effects None
+ * @effects Modifies input param `cell`
  */
 function cell_text(cell, text) {
-    return () => cell.appendChild(document.createTextNode(text))
+    cell.appendChild(document.createTextNode(text))
 }
 
 
@@ -180,7 +178,7 @@ function make_html_table(array, table) {
                 cell.appendChild(replace_icon(array[i][j]));
                 continue;
             }
-            cell_text(cell, format_integer(array[i][j]))()
+            cell_text(cell, format_integer(array[i][j]))
         }
     }
     return table;
@@ -294,14 +292,14 @@ function calculate_sum(table) {
     }
 
     const row = foot.insertRow()
-    const blank = () => cell_text(row.insertCell(), (""))()
+    const blank = () => cell_text(row.insertCell(), (""))
 
-    cell_text(row.insertCell(), "Total")()
+    cell_text(row.insertCell(), "Total")
     blank()
     blank()
-    cell_text(row.insertCell(), format_integer(tot_count))()
+    cell_text(row.insertCell(), format_integer(tot_count))
     blank()
-    cell_text(row.insertCell(), format_integer(tot_price))()
+    cell_text(row.insertCell(), format_integer(tot_price))
 
     return table
 }
