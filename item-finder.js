@@ -164,8 +164,8 @@ function cell_text(cell, text) {
 /**
  * Converts the array into the `HTML` table
  * @param {String[]} array - The array to make into a table
- * @param {DocumentFragment} table - The document fragment to make the table in
- * @returns {String} The input array as an `HTML` table
+ * @param {HTMLTableElement} table - The document fragment to make the table in
+ * @returns {HTMLTableElement} The input array as an `HTML` table
  * @effects None
  */
 function make_html_table(array, table) {
@@ -188,8 +188,8 @@ function make_html_table(array, table) {
 /**
  * Extracts the header from the array and returns an `HTML` table header
  * @param {String[]} array - The array to make into a header
- * @param {DocumentFragment} table - The document fragment to make the table in
- * @returns {String} The input array as an `HTML` table header
+ * @param {HTMLTableElement} table - The document fragment to make the table in
+ * @returns {HTMLTableElement} The input array as an `HTML` table header
  * @effects None
  */
 function make_header(array, table) {
@@ -205,7 +205,7 @@ function make_header(array, table) {
 /**
  * Replace quality names with their corresponding icon
  * @param {"Silver"|"Gold"|"Iridium"|""} quality_name - The quality name (Silver, Gold, or Iridium)
- * @returns {String} An `HTML` fragment containing a star icon
+ * @returns {Node} An `HTML` fragment containing a star icon
  * @remarks Uses the Stardew Valley icons for qualities
  * @effects None
  */
@@ -237,7 +237,7 @@ function format_integer(number) {
 let previous_output = false // Global, true on 2nd/3rd/xth save file loads
 /**
  * Put the table's `HTML` into the document
- * @param {String} html - The `HTML` fragment to add to the document
+ * @param {DocumentFragment} table - The `HTML` fragment to add to the document
  * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
  */
 function set_output(table) {
@@ -272,7 +272,7 @@ function parse_integer(number) {
 
 /**
  * Show the table sums in its footer
- * @param {DocumentFragment} table - The document fragment to sum
+ * @param {HTMLTableElement} table - The document fragment to sum
  * @effects None
  */
 function calculate_sum(table) {
