@@ -4,7 +4,7 @@
  * Licensed under MPL 2.0 or greater. See URL for more information.
  */
 
-const version="94767689"
+const version="101917501"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
