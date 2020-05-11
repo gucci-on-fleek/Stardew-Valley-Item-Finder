@@ -33,6 +33,8 @@ Source code repository located at
 by the [Stardew Fair
 Helper](https://mouseypounds.github.io/stardew-fair-helper/).
 
+For support, feedback, and general questions, please [submit an issue](https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder/issues/new/choose) on GitHub.
+
 Advanced Usage
 --------------
 
