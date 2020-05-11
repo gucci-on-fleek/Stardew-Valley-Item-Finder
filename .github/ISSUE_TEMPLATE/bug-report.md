@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug Report
+about: Report all of the bugs that you find so that I can fix them
 title: ''
 labels: Bug
 assignees: gucci-on-fleek
