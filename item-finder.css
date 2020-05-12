@@ -61,6 +61,10 @@
         position: inherit !important;
     }
 
+    body {
+       margin: 0 !important;
+   }
+
 }
 
 html {
