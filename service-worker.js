@@ -4,7 +4,7 @@
  * Licensed under MPL 2.0 or greater. See URL for more information.
  */
 
-const version = '0.9'
+const version = '1.0'
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
@@ -24,7 +24,7 @@ const requests = [
   'manifest.webmanifest'
 ]
 let fetched = 0
-const threshold = 1000 * 60 * 15 // 15 minutes in milliseconds
+const threshold = 1000 * 60 * 60 * 24 // 1 day in milliseconds
 
 self.addEventListener('install', function (event) {
   event.waitUntil(cache.then(c => c.addAll(requests)))
