@@ -48,6 +48,7 @@ window.onload = function (e) {
  * @effects Modifies the `#table_container` DOM element
  */
 function file_opened(event) {
+    display_loading(true)
     const input = event.target;
     const reader = new FileReader();
 
@@ -66,10 +67,50 @@ function file_opened(event) {
                 table = make_header(csv_array, table);
                 set_output(table);
                 enable_table_sort();
+                display_loading(false)
             })
     };
     reader.readAsText(input.files[0]);
 };
+
+
+/**
+ * Hides a DOM element
+ * @param {HTMLElement} element - The element to hide
+ * @effects Modifies the DOM to hide the element
+ */
+function hide_element(element) {
+    element.style.display = 'none'
+}
+
+
+/**
+ * Shows a DOM element that has been previously hidden
+ * @param {HTMLElement} element - The element to show
+ * @effects Modifies the DOM to show the element
+ */
+function show_element(element) {
+    element.style.removeProperty('display')
+}
+
+
+/**
+ * Displays a loading indicator
+ * @param {Boolean} currently_loading - Should we show or hide the loading display
+ * @effects Modifies the DOM to show/hide the loading display
+ */
+function display_loading(currently_loading) {
+    const loading = document.getElementById('loading')
+    const input = document.querySelector('input[type=file]')
+
+    if (currently_loading) {
+        show_element(loading)
+        hide_element(input)
+    } else {
+        show_element(input)
+        hide_element(loading)
+    }
+}
 
 
 /**
@@ -241,7 +282,7 @@ let previous_output = false // Global, true on 2nd/3rd/xth save file loads
  * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
  */
 function set_output(table) {
-    document.querySelector('article').style.display = 'none' // Hide the container
+    hide_element(document.querySelector('article'))
 
     if (previous_output) { // Remove old table
         document.getElementById('item_table').remove()
@@ -251,7 +292,7 @@ function set_output(table) {
     const container = document.getElementById('table_container');
     container.appendChild(table)
 
-    document.querySelector('article').style.removeProperty('display') // Show the container
+    show_element(document.querySelector('article'))
     previous_output = true
     document.getElementById('filter').focus();
 }

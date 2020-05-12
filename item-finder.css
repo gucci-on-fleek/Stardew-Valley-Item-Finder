@@ -62,8 +62,8 @@
     }
 
     body {
-       margin: 0 !important;
-   }
+        margin: 0 !important;
+    }
 
 }
 
@@ -262,4 +262,10 @@ dd {
     display: inline;
     margin-left: 1em;
     grid-column-start: 2;
+}
+
+#loading {
+    font-size: 2em;
+    font-weight: bold;
+    letter-spacing: 2.5px;
 }
