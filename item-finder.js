@@ -6,7 +6,11 @@
 
 
 let template
-window.onload = function (e) {
+/**
+ * Populates the template object with its members
+ * @effects Modifies global `template`
+ */
+function create_template() {
     const __template = {
         table: document.getElementById('table_base'),
         cell: document.getElementById('cell_base'),
@@ -17,6 +21,7 @@ window.onload = function (e) {
         gold: document.getElementById('gold_base'),
         iridium: document.getElementById('iridium_base'),
     }
+
     /**
      * Object that produces the HTML template
      * @param x - The text/nodes to include in the template (Not for all elements)
@@ -41,6 +46,16 @@ window.onload = function (e) {
     }
 }
 
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', create_template);
+} else {  // DOMContentLoaded has already fired
+    create_template();
+}
+
+window.addEventListener('load', () => get_previous_save())
+
+
 /**
  * Handle the user opening a file
  * @param {Event} event - The event
@@ -58,20 +73,47 @@ function file_opened(event) {
 
         get_files(["items.xslt", "items-to-csv.xslt"]).then(
             function (requests) {
-                let table = template.table()
                 const items = process_xslt(parse_xml(requests[0]), save_game);
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
-                const csv_array = csv_to_array(xslt_output_to_text(csv));
-                table = make_html_table(csv_array, table);
-                table = make_header(csv_array, table);
-                set_output(table);
-                enable_table_sort();
+                csv_to_table(xslt_output_to_text(csv))
                 display_loading(false)
             })
     };
     reader.readAsText(input.files[0]);
 };
+
+
+/**
+ * Loads a previous save file from LocalStorage and treats as if
+ * it were manually loaded.
+ * @effects None directly, however called functions modify the DOM.
+ * @remarks Attempts to load previous save, does nothing if unsuccessful.
+ */
+function get_previous_save() {
+    const csv = localStorage.getItem('csv')
+    if (csv) {
+        display_loading(true)
+        csv_string = csv
+        csv_to_table(csv)
+        display_loading(false)
+    }
+}
+
+
+/**
+ * Makes an `HTML` table from `CSV` and inserts it into the DOM.
+ * @param {String} csv - The `CSV` to make a table from
+ * @effects None directly, however called functions modify the DOM.
+ */
+function csv_to_table(csv) {
+    let table = template.table()
+    const csv_array = csv_to_array(csv);
+    table = make_html_table(csv_array, table);
+    table = make_header(csv_array, table);
+    set_output(table);
+    enable_table_sort();
+}
 
 
 /**
@@ -160,7 +202,8 @@ function process_xslt(xslt, xml) {
 
 let csv_string; // Global, holds the CSV so that it can later be downloaded
 /**
- * Convert the `XSLT` transformed output into a string
+ * Convert the `XSLT` transformed output into a string. Also, save 
+ *          the output in LocalStorage.
  * @param {DocumentFragment} xml - The `XML` to convert to a string
  * @returns {String} A string representing the `XML`'s contents
  * @remarks `XSLT` transform a document into another `XML` document
@@ -168,10 +211,12 @@ let csv_string; // Global, holds the CSV so that it can later be downloaded
  *          returns an `XMLDocument` object. Since we are transforming
  *          the `CSV` into plain text, we need to call this function
  *          to get a string.
- * @effects Modifies global variable `csv_string`
+ * @effects Modifies global variable `csv_string`. Also adds `csv` key
+ *          to LocalStorage. 
  */
 function xslt_output_to_text(xml) {
     csv_string = xml.firstChild.wholeText;
+    localStorage.setItem('csv', csv_string)
     return csv_string
 }
 
