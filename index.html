@@ -48,7 +48,7 @@
     <link rel="icon" sizes="any" href="assets/icon.svg" type="image/svg+xml">
 
     <!-- Scripts -->
-    <script src="item-finder.js"></script>
+    <script src="item-finder.js" async></script>
     <script src="libraries/tablesort.min.js" async></script>
 </head>
 
@@ -81,13 +81,13 @@
 
     <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
     <div id="loading" style="display: none">Loading…</div>
-    
+
     <div>
         <!-- We need this empty div so that the contents are horizontally centered on the page. Without it, the contents are left aligned to the rest of the page. -->
         <article style="display: none" id="table_container">
             <h2>Items
                 <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter"
-                    title="Filter" aria-label="Filter Table"></input>
+                    title="Filter" role="search" aria-label="Filter Table"></input>
             </h2>
             <input type="button" id="down-button" class="input" value="Download as CSV"
                 onclick="download_as_csv(csv_string)" />
