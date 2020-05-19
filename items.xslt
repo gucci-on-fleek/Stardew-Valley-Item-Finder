@@ -28,42 +28,40 @@
               <xsl:with-param name="base_price" select="price" />
             </xsl:call-template>
           </actual_price>
-          <xsl:choose>
-            <xsl:when test="parent::items/parent::player">
-              <contained_in>
+          <contained_in>
+            <xsl:variable name="parent_items" select="parent::items" />
+            <xsl:choose>
+              <xsl:when test="$parent_items/parent::player">
                 <type>Player</type>
                 <description>
-                  <xsl:value-of select="parent::items/parent::player/name" />
+                  <xsl:value-of select="$parent_items/parent::player/name" />
                 </description>
-              </contained_in>
-            </xsl:when>
-            <xsl:when test="parent::items/parent::fridge">
-              <contained_in>
+              </xsl:when>
+              <xsl:when test="$parent_items/parent::fridge">
                 <type>Fridge</type>
-              </contained_in>
-            </xsl:when>
-            <xsl:when test="parent::items/parent::Object/Name">
-              <contained_in>
+                <xsl:call-template name="location" />
+              </xsl:when>
+              <xsl:when test="$parent_items/parent::Object/Name">
                 <type>
-                  <xsl:value-of select="parent::items/parent::Object/Name" />
+                  <xsl:value-of select="$parent_items/parent::Object/Name" />
                 </type>
-                <xsl:if test="parent::items/parent::Object/playerChoiceColor">
+                <xsl:if test="$parent_items/parent::Object/playerChoiceColor">
                   <description>
                     <xsl:call-template name="colours">
-                      <xsl:with-param name="num" select="parent::items/parent::Object/playerChoiceColor/PackedValue" />
+                      <xsl:with-param name="num" select="$parent_items/parent::Object/playerChoiceColor/PackedValue" />
                     </xsl:call-template>
                   </description>
                 </xsl:if>
-              </contained_in>
-            </xsl:when>
-            <xsl:when test="parent::items/parent::heldObject/parent::Object/Name">
-              <contained_in>
+                <xsl:call-template name="location" />
+              </xsl:when>
+              <xsl:when test="$parent_items/parent::heldObject/parent::Object/Name">
                 <type>
-                  <xsl:value-of select="parent::items/parent::heldObject/parent::Object/Name" />
+                  <xsl:value-of select="$parent_items/parent::heldObject/parent::Object/Name" />
                 </type>
-              </contained_in>
-            </xsl:when>
-          </xsl:choose>
+                <xsl:call-template name="location" />
+              </xsl:when>
+            </xsl:choose>
+          </contained_in>
           <internal_information>
             <base_price>
               <xsl:value-of select="price" />
@@ -141,6 +139,12 @@
         <xsl:value-of select="$base_price" />
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="location">
+    <location>
+      <xsl:value-of select="ancestor::GameLocation/name" />
+    </location>
   </xsl:template>
 
 </xsl:stylesheet>
