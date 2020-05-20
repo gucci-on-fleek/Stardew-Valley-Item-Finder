@@ -18,10 +18,6 @@ named `Name_123456789`, where `Name` is your player’s name and
 You can sort the table by clicking on the headers, and you can download
 the table as a `CSV` file to use in Excel.
 
-Currently, this tool does *not* account for any professions or special
-events. This may lead to some prices being slightly inaccurate for your
-specific character.
-
 About
 -----
 
