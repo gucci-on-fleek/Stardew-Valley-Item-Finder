@@ -2,6 +2,7 @@
 # Based on game version 1.4.3
 # Algorithm derived from Objects.cs:sellToStorePrice and Objects.cs:getPriceAfterMultipliers
 # The algorithm is written in a Python-like pseudocode to facilitate a transition from C# to xslt
+# This file is a fairly direct port of the decompiled C# code.
 
 @input id (int)
 @input category (int)

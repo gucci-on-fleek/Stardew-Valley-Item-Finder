@@ -1,0 +1,119 @@
+# Stardew Valley Price Calculation Algorithm
+# Based on game version 1.4.3
+# Algorithm derived from Objects.cs:sellToStorePrice and Objects.cs:getPriceAfterMultipliers
+# The algorithm is written in a Python-like pseudocode to facilitate a transition from C# to xslt
+# This file has the tests sorted by category. This should facilitate the transition to xslt where variables cannot be redefined.
+
+@input id (int)
+@input category (int)
+@input base_price (int)
+@input professions (int[])
+@input events (int[])
+@input quality (str)
+@input foraged (bool)
+@input profit_margin (float)
+
+@output final_price (int)
+
+@const rancher = 0
+@const tiller = 1
+@const artisan = 4
+@const fisher = 6
+@const angler = 8
+@const tapper = 15
+@const blacksmith = 20
+@const gemologist = 23
+
+@const bears_knowledge = 2120303
+@const spring_onion = 3910979
+
+@const fence_ids = [298, 322..324]
+@const animal_prod_ids = [197, 306, 307, 308, 424, 426, 428, 440, 807]
+@const cranberry_seeds = 493
+@const bar_ids = [334..337]
+
+@var quality_multiplier (float)
+@var multiplier (float)
+@var skip_multipliers (bool)
+
+switch quality:
+    case 'silver':
+        quality_multiplier = 1.25
+    case 'gold':
+        quality_multiplier = 1.5
+    case 'iridium':
+        quality_multiplier = 2
+    default:
+        quality_multiplier = 1
+
+switch category:
+    case 2, 12:
+        if gemologist in professions:
+            multiplier = 1.3
+
+    case 4:
+        if fisher in professions:
+            if angler in professions:
+                multiplier = 1.5
+            else:
+                multiplier = 1.25 
+
+    case 5, 6, 18:
+        if rancher in professions:
+            multiplier = 1.2
+
+    case 8:
+        if id in fence_ids:
+            skip_multipliers = true
+
+    case 15:
+        if blacksmith in professions:
+            if id in bar_ids:
+                multiplier = 1.5
+
+    case 22:
+        skip_multipliers = true
+
+    case 26:
+        if (artisan in professions) and not (rancher in professions):
+            multiplier = 1.4
+        if not (artisan in professions) and (rancher in professions):
+            multiplier = 1.2
+        if (artisan in professions) and  (rancher in professions):
+            multiplier = 1.68
+
+    case 27:
+        if tapper in professions:
+            multiplier = 1.25
+
+    case 74:
+        if id==cranberry_seeds:
+            multiplier = 0.5
+
+    case 75, 80 :
+        if tiller in professions:
+            multiplier = 1.1
+
+    case 79:
+        if tiller in professions:
+            if not foraged:
+                multiplier = 1.1
+        if bears_knowledge in events:
+            if id in [296, 410]:
+                multiplier = 3
+
+    case 81:
+        if spring_onion in events:
+            if id==399:
+                multiplier = 5
+
+if undefined(multiplier):
+    multiplier = 1
+
+final_price = floor(max(1, quality_multiplier * multiplier * profit_margin * base_price))
+
+if undefined(skip_multipliers):
+    return final_price
+else:
+    return base_price
+
