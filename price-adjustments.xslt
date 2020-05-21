@@ -4,6 +4,9 @@
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
      Licensed under MPL 2.0 or greater. See URL for more information.
 -->
+
+    <!-- Constants -->
+    <!-- Professions -->
     <xsl:variable name="rancher" select="0" />
     <xsl:variable name="tiller" select="1" />
     <xsl:variable name="artisan" select="4" />
@@ -13,9 +16,11 @@
     <xsl:variable name="blacksmith" select="20" />
     <xsl:variable name="gemologist" select="23" />
 
+    <!-- Events -->
     <xsl:variable name="bears_knowledge" select="2120303" />
     <xsl:variable name="spring_onion" select="3910979" />
 
+    <!-- Special Items -->
     <xsl:variable name="cranberry_seeds" select="493" />
 
     <xsl:template name="price_adjustments">
@@ -49,6 +54,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=4">
                 <xsl:choose>
                     <xsl:when test="$professions[int=$fisher]">
@@ -81,6 +87,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=5 or $category=6 or $category=18">
                 <xsl:choose>
                     <xsl:when test="$professions[int=$rancher]">
@@ -101,9 +108,11 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=8">
                 <xsl:choose>
                     <xsl:when test="$id=298 or $id=322 or $id=323 or $id=324 ">
+                        <!-- Fences -->
                         <xsl:call-template name="print_price">
                             <xsl:with-param name="multiplier" select="1" />
                             <xsl:with-param name="quality" select="$quality" />
@@ -121,11 +130,13 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=15">
                 <xsl:choose>
                     <xsl:when test="$professions[int=$blacksmith]">
                         <xsl:choose>
                             <xsl:when test="$id=298 or $id=322 or $id=323 or $id=324">
+                                <!-- Bars -->
                                 <xsl:call-template name="print_price">
                                     <xsl:with-param name="multiplier" select="1.5" />
                                     <xsl:with-param name="quality" select="$quality" />
@@ -153,7 +164,9 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=22">
+                <!-- Tackle -->
                 <xsl:call-template name="print_price">
                     <xsl:with-param name="multiplier" select="1" />
                     <xsl:with-param name="quality" select="$quality" />
@@ -161,6 +174,7 @@
                     <xsl:with-param name="base_price" select="$base_price" />
                 </xsl:call-template>
             </xsl:when>
+
             <xsl:when test="$category=26">
                 <xsl:choose>
                     <xsl:when test="$professions[int=$artisan] and not($professions[int=$rancher])">
@@ -172,6 +186,7 @@
                         </xsl:call-template>
                     </xsl:when>
                     <xsl:when test="not($professions[int=$artisan]) and $professions[int=$rancher] and ($id=306 or $id=307 or $id=308 or $id=424 or $id=426 or $id=428 or $id=440 or $id=807)">
+                        <!-- The id list is equilvalent to /mayonnaise|cheese|wool|cloth/i.match(name) -->
                         <xsl:call-template name="print_price">
                             <xsl:with-param name="multiplier" select="1.2" />
                             <xsl:with-param name="quality" select="$quality" />
@@ -197,17 +212,32 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=27">
-                <xsl:call-template name="print_price">
-                    <xsl:with-param name="multiplier" select="1" />
-                    <xsl:with-param name="quality" select="$quality" />
-                    <xsl:with-param name="profit_margin" select="1" />
-                    <xsl:with-param name="base_price" select="$base_price" />
-                </xsl:call-template>
+                <xsl:choose>
+                    <xsl:when test="$professions[int=$tapper]">
+                        <xsl:call-template name="print_price">
+                            <xsl:with-param name="multiplier" select="1.25" />
+                            <xsl:with-param name="quality" select="$quality" />
+                            <xsl:with-param name="profit_margin" select="$profit_margin" />
+                            <xsl:with-param name="base_price" select="$base_price" />
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="print_price">
+                            <xsl:with-param name="multiplier" select="1" />
+                            <xsl:with-param name="quality" select="$quality" />
+                            <xsl:with-param name="profit_margin" select="$profit_margin" />
+                            <xsl:with-param name="base_price" select="$base_price" />
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=74">
                 <xsl:choose>
                     <xsl:when test="$id=$cranberry_seeds">
+                        <!-- Weird special case found in Objects.cs -->
                         <xsl:call-template name="print_price">
                             <xsl:with-param name="multiplier" select="0.5" />
                             <xsl:with-param name="quality" select="$quality" />
@@ -225,6 +255,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=75 or $category=80">
                 <xsl:choose>
                     <xsl:when test="$professions[int=$tiller]">
@@ -245,6 +276,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=79">
                 <xsl:choose>
                     <xsl:when test="$professions[int=$tiller] and not($foraged)">
@@ -273,6 +305,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:when test="$category=81">
                 <xsl:choose>
                     <xsl:when test="$events[int=$spring_onion]">
@@ -293,6 +326,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
+
             <xsl:otherwise>
                 <xsl:call-template name="print_price">
                     <xsl:with-param name="multiplier" select="1" />
@@ -316,17 +350,20 @@
                     <xsl:with-param name="value" select="floor(1.25 * $multiplier * $profit_margin * $base_price)" />
                 </xsl:call-template>
             </xsl:when>
+
             <xsl:when test="$quality=2">
                 <xsl:call-template name="one_or_value">
                     <xsl:with-param name="value" select="floor(1.50 * $multiplier * $profit_margin * $base_price)" />
                 </xsl:call-template>
             </xsl:when>
+
             <xsl:when test="$quality=4">
                 <xsl:call-template name="one_or_value">
                     <xsl:with-param name="value" select="floor(2.00 * $multiplier * $profit_margin * $base_price)" />
                     <xsl:with-param name="base_price" select="$base_price" />
                 </xsl:call-template>
             </xsl:when>
+
             <xsl:otherwise>
                 <xsl:call-template name="one_or_value">
                     <xsl:with-param name="value" select="floor(1.00 * $multiplier * $profit_margin * $base_price)" />
@@ -337,12 +374,14 @@
     </xsl:template>
 
     <xsl:template name="one_or_value">
+        <!-- There is no max() function in xslt, so this is a substitute -->
         <xsl:param name="value" />
         <xsl:param name="base_price" />
         <xsl:choose>
             <xsl:when test="$value>=1 or $base_price=0">
                 <xsl:value-of select="$value" />
             </xsl:when>
+
             <xsl:otherwise>
                 <xsl:value-of select="1" />
             </xsl:otherwise>

@@ -6,12 +6,14 @@
 -->
   <xsl:output method="xml" indent="yes" />
 
+  <!-- Global Variables -->
   <xsl:variable name="professions" select="/SaveGame/player/professions" />
   <xsl:variable name="events" select="/SaveGame/player/eventsSeen" />
   <xsl:variable name="profit_margin" select="/SaveGame/player/difficultyModifier" />
 
   <xsl:template match="*/items">
     <xsl:for-each select="Item[@xsi:type='Object' or @xsi:type='ColoredObject']">
+      <!-- Roe is a 'ColoredObject', everything else is an object. -->
       <item>
         <name>
           <xsl:value-of select="Name" />
@@ -34,7 +36,7 @@
             <xsl:with-param name="professions" select="$professions" />
             <xsl:with-param name="events" select="$events" />
             <xsl:with-param name="quality" select="quality" />
-            <xsl:with-param name="foraged" select="isSpawnedObject=true" />
+            <xsl:with-param name="foraged" select="isSpawnedObject=true" /> <!-- According to the xpath spec, any non-empty string is truthy, so we need to explicitly test against 'true' -->
             <xsl:with-param name="profit_margin" select="$profit_margin" />
           </xsl:call-template>
         </actual_price>
@@ -43,6 +45,7 @@
           <xsl:choose>
             <xsl:when test="$parent_items/parent::player">
               <type>Player</type>
+              <!-- Do not include a location for the player since they can move -->
               <description>
                 <xsl:value-of select="$parent_items/parent::player/name" />
               </description>
@@ -52,6 +55,7 @@
               <xsl:call-template name="location" />
             </xsl:when>
             <xsl:when test="$parent_items/parent::Object/Name">
+              <!-- Mini-Fridges, etc. -->
               <type>
                 <xsl:value-of select="$parent_items/parent::Object/Name" />
               </type>
@@ -63,12 +67,14 @@
               <xsl:call-template name="location" />
             </xsl:when>
             <xsl:when test="$parent_items/parent::heldObject/parent::Object/Name">
+              <!-- Autopickers -->
               <type>
                 <xsl:value-of select="$parent_items/parent::heldObject/parent::Object/Name" />
               </type>
               <xsl:call-template name="location" />
             </xsl:when>
             <xsl:when test="$parent_items/parent::output/parent::Building">
+              <!-- Junimo Huts, Mills, etc. -->
               <type>
                 <xsl:value-of select="$parent_items/parent::output/parent::Building/buildingType" />
               </type>
@@ -81,10 +87,10 @@
             <xsl:value-of select="price" />
           </base_price>
           <id>
-            <xsl:value-of select="parentSheetIndex" />
+            <xsl:value-of select="parentSheetIndex" /> <!-- The game uses 'parentSheetIndex' like a unique ID value -->
           </id>
           <category>
-            <xsl:value-of select="-1 * category" />
+            <xsl:value-of select="-1 * category" /> <!-- All categories are >=0 for some reason, so lets make them positive -->
           </category>
         </internal_information>
       </item>
@@ -92,15 +98,17 @@
   </xsl:template>
 
   <xsl:template match="/">
+    <!-- Wrap all 'item's in a root 'item' node -->
     <items>
-      <xsl:attribute name="xsi:noNamespaceSchemaLocation">https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/items.xsd</xsl:attribute>
+      <xsl:attribute name="xsi:noNamespaceSchemaLocation">https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/items.xsd</xsl:attribute> <!-- Include schema -->
       <xsl:apply-templates />
     </items>
   </xsl:template>
 
-  <xsl:template match="text()|@*"></xsl:template>
+  <xsl:template match="text()|@*"></xsl:template> <!-- Only output matching elements -->
 
   <xsl:template name="colours">
+    <!-- Convert packed colour values to a human-readable name -->
     <xsl:param name="num" />
     <xsl:choose>
       <xsl:when test="$num=4294923605">
@@ -167,6 +175,7 @@
   </xsl:template>
 
   <xsl:template name="quality_name">
+    <!-- Convert quality numbers to a quality name -->
     <xsl:param name="quality" />
     <xsl:choose>
       <xsl:when test="$quality=1">Silver</xsl:when>
@@ -181,6 +190,6 @@
     </location>
   </xsl:template>
 
-  <xsl:include href="price-adjustments.xslt" />
+  <xsl:include href="price-adjustments.xslt" /> <!-- Import the price adjustments from a separate file -->
 
 </xsl:stylesheet>
