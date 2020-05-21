@@ -324,11 +324,13 @@
             <xsl:when test="$quality=4">
                 <xsl:call-template name="one_or_value">
                     <xsl:with-param name="value" select="floor(2.00 * $multiplier * $profit_margin * $base_price)" />
+                    <xsl:with-param name="base_price" select="$base_price" />
                 </xsl:call-template>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:call-template name="one_or_value">
                     <xsl:with-param name="value" select="floor(1.00 * $multiplier * $profit_margin * $base_price)" />
+                    <xsl:with-param name="base_price" select="$base_price" />
                 </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
@@ -336,8 +338,9 @@
 
     <xsl:template name="one_or_value">
         <xsl:param name="value" />
+        <xsl:param name="base_price" />
         <xsl:choose>
-            <xsl:when test="$value>=1">
+            <xsl:when test="$value>=1 or $base_price=0">
                 <xsl:value-of select="$value" />
             </xsl:when>
             <xsl:otherwise>
