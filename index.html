@@ -80,7 +80,10 @@
     </section>
 
     <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
-    <div id="loading" style="display: none">Loading…</div>
+    <div id="loading" class="message" style="display: none">Loading…</div>
+    <div id="error" class="message" style="display: none">Error
+        <div>Sorry about that. Please refresh and try again.</div>
+    </div>
 
     <div>
         <!-- We need this empty div so that the contents are horizontally centered on the page. Without it, the contents are left aligned to the rest of the page. -->
