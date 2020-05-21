@@ -93,6 +93,7 @@
 
   <xsl:template match="/">
     <items>
+      <xsl:attribute name="xsi:noNamespaceSchemaLocation">https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/items.xsd</xsl:attribute>
       <xsl:apply-templates />
     </items>
   </xsl:template>
