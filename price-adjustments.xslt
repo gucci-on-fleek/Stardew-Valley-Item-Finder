@@ -279,17 +279,17 @@
 
             <xsl:when test="$category=79">
                 <xsl:choose>
-                    <xsl:when test="$professions[int=$tiller] and not($foraged)">
+                    <xsl:when test="$events[int=$bears_knowledge] and ($id=410 or $id=296)">
                         <xsl:call-template name="print_price">
-                            <xsl:with-param name="multiplier" select="1.1" />
+                            <xsl:with-param name="multiplier" select="3" />
                             <xsl:with-param name="quality" select="$quality" />
                             <xsl:with-param name="profit_margin" select="$profit_margin" />
                             <xsl:with-param name="base_price" select="$base_price" />
                         </xsl:call-template>
                     </xsl:when>
-                    <xsl:when test="$events[int=$bears_knowledge]">
+                    <xsl:when test="$professions[int=$tiller] and not($foraged)">
                         <xsl:call-template name="print_price">
-                            <xsl:with-param name="multiplier" select="3" />
+                            <xsl:with-param name="multiplier" select="1.1" />
                             <xsl:with-param name="quality" select="$quality" />
                             <xsl:with-param name="profit_margin" select="$profit_margin" />
                             <xsl:with-param name="base_price" select="$base_price" />
@@ -308,7 +308,7 @@
 
             <xsl:when test="$category=81">
                 <xsl:choose>
-                    <xsl:when test="$events[int=$spring_onion]">
+                    <xsl:when test="$events[int=$spring_onion] and $id=399">
                         <xsl:call-template name="print_price">
                             <xsl:with-param name="multiplier" select="5" />
                             <xsl:with-param name="quality" select="$quality" />
