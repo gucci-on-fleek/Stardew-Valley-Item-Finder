@@ -14,6 +14,7 @@ const requests = [
   'item-finder.css',
   'items.xslt',
   'items-to-csv.xslt',
+  'price-adjustments.xslt',
   'service-worker.js',
   'assets/gold_star.png',
   'assets/silver_star.png',

@@ -29,7 +29,7 @@ jobs:
         run: sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' service-worker.js # The service worker will only update the cache if its version is changed
 
       - name: Use minified files
-        run: sed -i 's/item-finder.js/item-finder.min.js/; s/service-worker.js/service-worker.min.js/; s/item-finder.css/item-finder.min.css/; s/items.xslt/items.min.xslt/; s/items-to-csv.xslt/items-to-csv.min.xslt/' index.html service-worker.js item-finder.js
+        run: sed -i 's/item-finder.js/item-finder.min.js/; s/service-worker.js/service-worker.min.js/; s/item-finder.css/item-finder.min.css/; s/items.xslt/items.min.xslt/; s/items-to-csv.xslt/items-to-csv.min.xslt/; s/price-adjustments.xslt/price-adjustments.min.xslt/' index.html service-worker.js item-finder.js
 
       - name: Minify Javascript
         run: |
@@ -43,6 +43,7 @@ jobs:
         run: |
           minify --type=xml -o items.min.xslt items.xslt
           minify --type=xml -o items-to-csv.min.xslt items-to-csv.xslt
+          minify --type=xml -o price-adjustments.min.xslt price-adjustments.xslt
 
       - name: Minify HTML
         run: html-minifier index.html --collapse-boolean-attributes --collapse-inline-tag-whitespace --collapse-whitespace --conservative-collapse --decode-entities --html5 --include-auto-generated-tags --remove-attribute-quotes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes -o index.html
