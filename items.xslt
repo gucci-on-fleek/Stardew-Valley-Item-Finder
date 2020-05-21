@@ -106,80 +106,61 @@
         <description>Dark Blue</description>
       </xsl:when>
       <xsl:when test="$num=4294950775">
-        <description>Light Blue
-        </description>
+        <description>Light Blue</description>
       </xsl:when>
       <xsl:when test="$num=4289374720">
-        <description>Dark Blue–Green
-        </description>
+        <description>Dark Teal</description>
       </xsl:when>
       <xsl:when test="$num=4289718784">
-        <description>Light Blue–Green
-        </description>
+        <description>Light Teal</description>
       </xsl:when>
       <xsl:when test="$num=4278233600">
-        <description>Dark Green
-        </description>
+        <description>Dark Green</description>
       </xsl:when>
       <xsl:when test="$num=4278250655">
-        <description>Light Green
-        </description>
+        <description>Light Green</description>
       </xsl:when>
       <xsl:when test="$num=4279429887">
-        <description>Yellow
-        </description>
+        <description>Yellow</description>
       </xsl:when>
       <xsl:when test="$num=4279412735">
-        <description>Yellow–Orange
-        </description>
+        <description>Amber</description>
       </xsl:when>
       <xsl:when test="$num=4279396863">
-        <description>Orange
-        </description>
+        <description>Orange</description>
       </xsl:when>
       <xsl:when test="$num=4278190335">
-        <description>Red
-        </description>
+        <description>Red</description>
       </xsl:when>
       <xsl:when test="$num=4280483975">
-        <description>Dark Red
-        </description>
+        <description>Dark Red</description>
       </xsl:when>
       <xsl:when test="$num=4291276287">
-        <description>Pale Pink
-        </description>
+        <description>Pale Pink</description>
       </xsl:when>
       <xsl:when test="$num=4290999807">
-        <description>Bright Pink
-        </description>
+        <description>Bright Pink</description>
       </xsl:when>
       <xsl:when test="$num=4291166380">
-        <description>Magenta
-        </description>
+        <description>Magenta</description>
       </xsl:when>
       <xsl:when test="$num=4294901903">
-        <description>Purple
-        </description>
+        <description>Purple</description>
       </xsl:when>
       <xsl:when test="$num=4287499097">
-        <description>Dark Purple
-        </description>
+        <description>Dark Purple</description>
       </xsl:when>
       <xsl:when test="$num=4282400832">
-        <description>Black
-        </description>
+        <description>Black</description>
       </xsl:when>
       <xsl:when test="$num=4284769380">
-        <description>Dark Grey
-        </description>
+        <description>Dark Grey</description>
       </xsl:when>
       <xsl:when test="$num=4291348680">
-        <description>Light Grey
-        </description>
+        <description>Light Grey</description>
       </xsl:when>
       <xsl:when test="$num=4294901502">
-        <description>White
-        </description>
+        <description>White</description>
       </xsl:when>
     </xsl:choose>
   </xsl:template>
