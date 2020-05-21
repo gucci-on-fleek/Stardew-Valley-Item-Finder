@@ -63,7 +63,7 @@ window.addEventListener('load', () => get_previous_save())
  * @effects Modifies the `#table_container` DOM element
  */
 function file_opened(event) {
-    display_loading(true)
+    display_loading(true, true)
     const input = event.target;
     const reader = new FileReader();
 
@@ -77,8 +77,7 @@ function file_opened(event) {
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 csv_to_table(xslt_output_to_text(csv))
-                display_loading(false)
-            })
+            }).finally(() => display_loading(false, true))
     };
     reader.readAsText(input.files[0]);
 };
@@ -93,10 +92,10 @@ function file_opened(event) {
 function get_previous_save() {
     const csv = localStorage.getItem('csv')
     if (csv) {
-        display_loading(true)
+        display_loading(true, false)
         csv_string = csv
         csv_to_table(csv)
-        display_loading(false)
+        display_loading(false, false)
     }
 }
 
@@ -139,15 +138,16 @@ function show_element(element) {
 /**
  * Displays a loading indicator
  * @param {Boolean} currently_loading - Should we show or hide the loading display
+ * * @param {Boolean} hide_input - Should hide the input box
  * @effects Modifies the DOM to show/hide the loading display
  */
-function display_loading(currently_loading) {
+function display_loading(currently_loading, hide_input) {
     const loading = document.getElementById('loading')
     const input = document.querySelector('input[type=file]')
 
     if (currently_loading) {
         show_element(loading)
-        hide_element(input)
+        if (hide_input) hide_element(input)
     } else {
         show_element(input)
         hide_element(loading)

@@ -4,7 +4,7 @@
  * Licensed under MPL 2.0 or greater. See URL for more information.
  */
 
-const version="106399557"
+const version="111164073"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
@@ -14,6 +14,7 @@ const requests = [
   'item-finder.min.css',
   'items.min.xslt',
   'items-to-csv.min.xslt',
+  'price-adjustments.min.xslt',
   'service-worker.min.js',
   'assets/gold_star.png',
   'assets/silver_star.png',

@@ -18,10 +18,6 @@ named `Name_123456789`, where `Name` is your player’s name and
 You can sort the table by clicking on the headers, and you can download
 the table as a `CSV` file to use in Excel.
 
-Currently, this tool does *not* account for any professions or special
-events. This may lead to some prices being slightly inaccurate for your
-specific character.
-
 About
 -----
 
@@ -63,6 +59,17 @@ This tool fully supports offline usage. After the first load, no internet access
 
 Developing
 ----------
+
+### Architecture
+This webapp is divided into two main components: processing and display. These elements are fairly independent of each other and can each be easily repurposed for other uses. In fact, feel free to repurpose any of components for your own use.
+
+#### Processing
+All of the data is processed using XML Stylesheet Transforms (`XSLT`). There are two separate steps: the first conversion of the save file to an intermediate `XML` file and a second conversion from the intermediate `XML` file to a final `CSV` file. 
+
+For developers, the first step is likely of the greatest interest. This first step (found in `items.xslt`) can convert any Stardew Valley save into a more basic `XML` file that is easy to parse. You can see how this works by running the transforms from the command-line as demonstrated above or by viewing `items.xsd` and `items.xslt`. These files are lacking in documentation, but they should be fairly self-explanatory if you have a bit of `XML` experience.
+
+#### Display
+After the save file has been transformed to `CSV`, the rest of the webapp is essentially just a fancy `CSV` display. Seriously, most of the functions in `item-finder.js` are general-purpose; the only function specific to Stardew Valley is `replace_icon()`. All of the JavaScript is extensively documented, although some of the `css` is missing comments.
 
 ### Building
 The tool does not need to be build to be run. You can run your own copy of the tool with any simple webserver, like `python -m http.server`. If you want to minify the files, see [the build script](.github/workflows/pages-deploy.yaml) for reference.

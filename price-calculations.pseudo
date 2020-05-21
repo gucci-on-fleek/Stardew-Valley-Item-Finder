@@ -1,0 +1,106 @@
+# Stardew Valley Price Calculation Algorithm
+# Based on game version 1.4.3
+# Algorithm derived from Objects.cs:sellToStorePrice and Objects.cs:getPriceAfterMultipliers
+# The algorithm is written in a Python-like pseudocode to facilitate a transition from C# to xslt
+# This file is a fairly direct port of the decompiled C# code.
+
+@input id (int)
+@input category (int)
+@input base_price (int)
+@input professions (int[])
+@input events (int[])
+@input quality (str)
+@input foraged (bool)
+@input profit_margin (float)
+
+@output final_price (int)
+
+@const rancher = 0
+@const tiller = 1
+@const artisan = 4
+@const fisher = 6
+@const angler = 8
+@const tapper = 15
+@const blacksmith = 20
+@const gemologist = 23
+
+@const bears_knowledge = 2120303
+@const spring_onion = 3910979
+
+@const fence_ids = [298, 322..324]
+@const animal_prod_ids = [306, 307, 308, 424, 426, 428, 440, 807]
+@const cranberry_seeds = 493
+
+@var quality_multiplier (float)
+@var profession_multiplier (float)
+@var special_multiplier (float)
+@var multipliers (float)
+
+switch quality:
+    case 'silver':
+        quality_multiplier = 1.25
+    case 'gold':
+        quality_multiplier = 1.5
+    case 'iridium':
+        quality_multiplier = 2
+
+if rancher in professions:
+    if (id in animal_prod_ids) or (category in [5, 6, 18]):
+        profession_multiplier = 1.2
+
+if tiller in professions:
+    if (category in [75, 80]) or (category==79 and not foraged):
+        profession_multiplier = 1.1
+
+if artisan in professions:
+    if category==26:
+        profession_multiplier = 1.4
+
+if fisher in professions:
+    if category==4:
+        if angler in professions:
+            profession_multiplier = 1.5
+        else:
+            profession_multiplier = 1.25
+
+if tapper in professions:
+    if category==27:
+        profession_multiplier = 1.25
+
+if blacksmith in professions:
+    if id in [334..337]:
+        profession_multiplier = 1.5
+
+if gemologist in professions:
+    if category in [2, 12]:
+        profession_multiplier = 1.3
+
+if bears_knowledge in events:
+    if id in [296, 410]:
+        special_multiplier = 3
+
+if spring_onion in events:
+    if id==399:
+        special_multiplier = 5
+
+if id==cranberry_seeds:
+    special_multiplier = 0.5
+
+if undefined(quality_multiplier):
+    quality_multiplier = 1
+
+if undefined(profession_multiplier):
+    profession_multiplier = 1
+
+if undefined(special_multiplier):
+    special_multiplier = 1
+
+multipliers = quality_multiplier * profession_multiplier * special_multiplier
+
+final_price = floor(max(1, multipliers * profit_margin * base_price))
+
+if (id in fence_ids) or category==22:
+    return base_price
+else:
+    return final_price
+

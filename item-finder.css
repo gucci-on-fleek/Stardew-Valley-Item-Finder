@@ -264,8 +264,15 @@ dd {
     grid-column-start: 2;
 }
 
-#loading {
+.message {
     font-size: 2em;
     font-weight: bold;
     letter-spacing: 2.5px;
+}
+
+.message>* {
+    font-size: initial;
+    font-weight: initial;
+    letter-spacing: initial;
+    font-style: italic;
 }
