@@ -91,7 +91,8 @@ function file_opened(event) {
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 csv_to_table(xslt_output_to_text(csv))
-            }).finally(() => display_loading(false, true))
+            }).finally(() => display_loading(false, true)
+            ).catch(() => show_element(document.getElementById('error')))
     };
     reader.readAsText(input.files[0]);
 };
