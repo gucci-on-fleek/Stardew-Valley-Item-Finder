@@ -16,7 +16,7 @@ named `Name_123456789`, where `Name` is your player’s name and
 -   Linux and macOS: `~/.config/StardewValley/Saves`
 
 You can sort the table by clicking on the headers, and you can download
-the table as a `CSV` file to use in Excel.
+the table as a `CSV` file to use in Excel. You can also click on an item name to view its description from the *Stardew Valley Wiki*.
 
 About
 -----
