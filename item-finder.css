@@ -276,3 +276,10 @@ dd {
     letter-spacing: initial;
     font-style: italic;
 }
+
+.item_description>td {
+    max-width: 0;
+    border: 3px solid var(--color-faded);
+    border-radius: 30px;
+    padding: 10px 15px
+}
