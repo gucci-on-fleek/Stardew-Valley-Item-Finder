@@ -277,7 +277,9 @@ function make_html_table(array, table) {
         for (let j = 0; j < array[i].length; j++) {
             const cell = row.insertCell()
             if (j === 1) { // Quality column
-                cell.appendChild(replace_icon(array[i][j]));
+                const icons = replace_icon(array[i][j])
+                cell.appendChild(icons[0]);
+                cell.setAttribute('data-sort', icons[1])
                 continue;
             }
             cell_text(cell, format_integer(array[i][j]))
@@ -307,20 +309,20 @@ function make_header(array, table) {
 /**
  * Replace quality names with their corresponding icon
  * @param {"Silver"|"Gold"|"Iridium"|""} quality_name - The quality name (Silver, Gold, or Iridium)
- * @returns {Node} An `HTML` fragment containing a star icon
+ * @returns {Array<Node, Number>} An array containing an `HTML` fragment containing a star icon and the order in which to sort the quality.
  * @remarks Uses the Stardew Valley icons for qualities
  * @effects None
  */
 function replace_icon(quality_name) {
     switch (quality_name) {
         case "Silver":
-            return template.silver()
+            return [template.silver(), 1]
         case "Gold":
-            return template.gold()
+            return [template.gold(), 2]
         case "Iridium":
-            return template.iridium()
+            return [template.iridium(), 3]
         default:
-            return document.createTextNode('')
+            return [document.createTextNode(''), 0]
     }
 }
 

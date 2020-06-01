@@ -207,11 +207,6 @@ body {
     height: 1em;
 }
 
-.sort-id {
-    /* sort-id is only used to sort the qualities */
-    display: none
-}
-
 code.block {
     display: block;
     max-width: 100%;
