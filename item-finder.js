@@ -4,7 +4,13 @@
  * Licensed under MPL 2.0 or greater. See URL for more information.
  */
 
-
+/**
+  * Object that produces the HTML template
+  * @type {Map<String, Function>}
+  * @param {Any} [x] - Template-dependant parameter. Not always required.
+  * @returns {DocumentFragment} An element containing the template
+  * @effects None
+  */
 let template
 /**
  * Populates the template object with its members
@@ -25,12 +31,6 @@ function create_template() {
         wiki_search: document.getElementById('wiki_search'),
     }
 
-    /**
-     * Object that produces the HTML template
-     * @param x - The text/nodes to include in the template (Not for all elements)
-     * @returns {DocumentFragment} An element containing the template
-     * @effects None
-     */
     template = {
         table: () => __template.table.content.cloneNode(true).firstElementChild, // Creates an empty table
         header_cell: function (x) { // Creates each header cell
@@ -108,7 +108,7 @@ function get_previous_save() {
     const csv = localStorage.getItem('csv')
     if (csv) {
         display_loading(true, false)
-        csv_string = csv
+        _csv_string = csv
         csv_to_table(csv)
         display_loading(false, false)
     }
@@ -216,7 +216,7 @@ function process_xslt(xslt, xml) {
 }
 
 
-let csv_string; // Global, holds the CSV so that it can later be downloaded
+let _csv_string; // Global, holds the CSV so that it can later be downloaded
 /**
  * Convert the `XSLT` transformed output into a string. Also, save 
  *          the output in LocalStorage.
@@ -231,9 +231,9 @@ let csv_string; // Global, holds the CSV so that it can later be downloaded
  *          to LocalStorage. 
  */
 function xslt_output_to_text(xml) {
-    csv_string = xml.firstChild.wholeText;
-    localStorage.setItem('csv', csv_string)
-    return csv_string
+    _csv_string = xml.firstChild.wholeText;
+    localStorage.setItem('csv', _csv_string)
+    return _csv_string
 }
 
 
@@ -336,7 +336,7 @@ function format_integer(number) {
 }
 
 
-let previous_output = false // Global, true on 2nd/3rd/xth save file loads
+let _previous_output = false // Global, true on 2nd/3rd/xth save file loads
 /**
  * Put the table's `HTML` into the document
  * @param {DocumentFragment} table - The `HTML` fragment to add to the document
@@ -345,7 +345,7 @@ let previous_output = false // Global, true on 2nd/3rd/xth save file loads
 function set_output(table) {
     hide_element(document.querySelector('article'))
 
-    if (previous_output) { // Remove old table
+    if (_previous_output) { // Remove old table
         document.getElementById('item_table').remove()
     }
     table = calculate_sum(table);
@@ -354,7 +354,7 @@ function set_output(table) {
     container.appendChild(table)
 
     show_element(document.querySelector('article'))
-    previous_output = true
+    _previous_output = true
     document.getElementById('filter').focus();
 }
 
@@ -381,7 +381,7 @@ function calculate_sum(table) {
     const foot = table.tFoot
     let tot_price = 0;
     let tot_count = 0;
-    const current_hidden_filter_class = `filter_${filter_class}`;
+    const current_hidden_filter_class = `filter_${_filter_class}`;
 
     while (foot.rows[0]) { // Remove old footers
         foot.rows[0].remove()
@@ -448,7 +448,7 @@ function download_as_csv(text) {
 }
 
 
-let filter_class = 1; // Monotonically incrementing counter to ensure unique CSS classes
+let _filter_class = 1; // Monotonically incrementing counter to ensure unique CSS classes
 /** 
  * Allows the table to be filtered
  * @remarks The naïve version of this function directly applied
@@ -467,9 +467,9 @@ function filter_table() {
     const table = document.getElementById('item_table')
     const rows = table.tBodies[0].rows;
     const search = RegExp(filter, 'i');
-    const last_filter_class = filter_class - 1; // The class that we're adding
+    const last_filter_class = _filter_class - 1; // The class that we're adding
     const last_last_filter_class = last_filter_class - 1; // The class that we're removing
-    const filter_class_name = `filter_${filter_class}`;
+    const filter_class_name = `filter_${_filter_class}`;
     const last_last_filter_class_name = `filter_${last_last_filter_class}`;
 
     remove_descriptions()
@@ -489,7 +489,7 @@ function filter_table() {
 
     const new_foot = calculate_sum(table) // Update the footer after the filter is applied
 
-    filter_class++; // Increment the class's name
+    _filter_class++; // Increment the class's name
 }
 
 
