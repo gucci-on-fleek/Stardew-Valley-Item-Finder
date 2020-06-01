@@ -496,75 +496,6 @@ function filter_table() {
 
 
 /**
- * Make a request to the *Stardew Valley Wiki*.
- * @param {Function} callback - The function to be called with the resultant data 
- * @param {Map<String, String>} parameters - The URL parameters to be used for the request
- * @param {Map<String, String>} [default_parameters] - The default parameters URL parameters to use. Only use if you need to override the default parameters.
- * @remarks The Wiki is using a *really* old version of MediaWiki
- *          (circa 2016), so its CORS support is broken. Although
- *          there appears to be some CORS support with the `origin`
- *          parameter, the server will not return an `Access-
- *          Control-Allow-Origin` header, so it is not possible to
- *          make a request this way. Because of this, we need to
- *          fallback to making a JSONP request. JSONP isn't a very
- *          good method for making requests, but the only alternative
- *          is to proxy the requests with a properly-configured
- *          server.
- * @effects Inserts a `script` element into the DOM which ultimately makes a network request.
- *          
- */
-function make_wiki_request(callback, parameters, default_parameters = {
-    action: 'query',
-    format: 'json',
-    formatversion: '2',
-    redirects: ''
-}) {
-    parameters = new URLSearchParams({ ...parameters, ...default_parameters, callback: callback.name })
-
-    const request_element = template.wiki_query()
-    request_element.firstElementChild.src += parameters.toString()
-    document.head.appendChild(request_element)
-}
-
-
-let _wiki_callback_success, _wiki_callback_failure // Globals, holds resolve/reject functions so that promises can be used
-/**
- * Get the description of an item from the *Stardew Valley Wiki* using its name.
- * @param {String} title - The title of the page to request
- * @returns {Promise<String>} A promise representing the network request.
- * @remarks Because we need to make a JSONP request, we can't use promises
- *          without a wrapper. This function is just a wrapper that allows
- *          us to use promises. Sadly, we need to use 2 global variables
- *          to accomplish this.
- * @effects Modifies the global variables `_wiki_callback_*`. Calls
- *          `make_wiki_request` which ultimately makes a network
- *          request. Also modifies the DOM to remove the JSONP 
- *          `script` element.
- */
-function wiki_description_by_title(title) {
-    make_wiki_request(_wiki_callback, { titles: title, prop: 'pageprops' })
-    const request = new Promise((accept, reject) => { _wiki_callback_success = accept; _wiki_callback_failure = reject })
-    return request.finally(() => document.getElementById('wiki_query').remove()) // Cleanup
-}
-
-
-/**
- * Private. The callback used by the JSONP request.
- * @internal
- * @param {Object} data - The data returned by the `Stardew Valley Wiki`.
- * @effects Calls the `_wiki_callback_*` to resolve a promise.
- */
-function _wiki_callback(data) {
-    try {
-        const result = data.query.pages[0].pageprops.description
-        _wiki_callback_success(result)
-    } catch {
-        _wiki_callback_failure("Item not found.")
-    }
-}
-
-
-/**
  * Allows the user to click on an item name and view its description from the *Stardew Valley Wiki*
  * @effects Adds event listeners. Modifies the DOM. Calls functions which make network requests. 
  */
@@ -597,6 +528,75 @@ function enable_wiki_click() {
         })
     })
     table.addEventListener('beforeSort', remove_descriptions) // The colspan attributes cause problems with sorting
+}
+
+
+let _wiki_callback_success, _wiki_callback_failure // Globals, holds resolve/reject functions so that promises can be used
+/**
+ * Get the description of an item from the *Stardew Valley Wiki* using its name.
+ * @param {String} title - The title of the page to request
+ * @returns {Promise<String>} A promise representing the network request.
+ * @remarks Because we need to make a JSONP request, we can't use promises
+ *          without a wrapper. This function is just a wrapper that allows
+ *          us to use promises. Sadly, we need to use 2 global variables
+ *          to accomplish this.
+ * @effects Modifies the global variables `_wiki_callback_*`. Calls
+ *          `make_wiki_request` which ultimately makes a network
+ *          request. Also modifies the DOM to remove the JSONP 
+ *          `script` element.
+ */
+function wiki_description_by_title(title) {
+    make_wiki_request(_wiki_callback, { titles: title, prop: 'pageprops' })
+    const request = new Promise((accept, reject) => { _wiki_callback_success = accept; _wiki_callback_failure = reject })
+    return request.finally(() => document.getElementById('wiki_query').remove()) // Cleanup
+}
+
+
+/**
+ * Make a request to the *Stardew Valley Wiki*.
+ * @param {Function} callback - The function to be called with the resultant data 
+ * @param {Map<String, String>} parameters - The URL parameters to be used for the request
+ * @param {Map<String, String>} [default_parameters] - The default parameters URL parameters to use. Only use if you need to override the default parameters.
+ * @remarks The Wiki is using a *really* old version of MediaWiki
+ *          (circa 2016), so its CORS support is broken. Although
+ *          there appears to be some CORS support with the `origin`
+ *          parameter, the server will not return an `Access-
+ *          Control-Allow-Origin` header, so it is not possible to
+ *          make a request this way. Because of this, we need to
+ *          fallback to making a JSONP request. JSONP isn't a very
+ *          good method for making requests, but the only alternative
+ *          is to proxy the requests with a properly-configured
+ *          server.
+ * @effects Inserts a `script` element into the DOM which ultimately makes a network request.
+ *          
+ */
+function make_wiki_request(callback, parameters, default_parameters = {
+    action: 'query',
+    format: 'json',
+    formatversion: '2',
+    redirects: ''
+}) {
+    parameters = new URLSearchParams({ ...parameters, ...default_parameters, callback: callback.name })
+
+    const request_element = template.wiki_query()
+    request_element.firstElementChild.src += parameters.toString()
+    document.head.appendChild(request_element)
+}
+
+
+/**
+ * Private. The callback used by the JSONP request.
+ * @internal
+ * @param {Object} data - The data returned by the `Stardew Valley Wiki`.
+ * @effects Calls the `_wiki_callback_*` to resolve a promise.
+ */
+function _wiki_callback(data) {
+    try {
+        const result = data.query.pages[0].pageprops.description
+        _wiki_callback_success(result)
+    } catch {
+        _wiki_callback_failure("Item not found.")
+    }
 }
 
 
