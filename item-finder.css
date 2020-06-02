@@ -101,14 +101,18 @@ h1 {
 }
 
 table {
-    border-collapse: separate;
-    border-spacing: 20px 2px;
-    /* Counteract border-spacing for the left */
-    margin-left: -20px;
+    border-spacing: 0;
+    margin-left: -10px;
+    margin-right: -10px;
     table-layout: auto;
     /* Monospaced numerals */
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
+}
+
+td,
+th {
+    padding: 2px 10px
 }
 
 @media (max-width: 45em) {
@@ -116,8 +120,14 @@ table {
     /* For mobile */
     table {
         /* Reduce spacing when in a tight space */
-        border-spacing: 2px 2px;
-        margin-left: 0px;
+        border-spacing: 0;
+        margin-left: -2px;
+        margin-right: -2px;
+    }
+
+    td,
+    th {
+        padding: 2px 2px
     }
 
     td:nth-of-type(5),
@@ -132,10 +142,7 @@ table {
     }
 }
 
-thead {
-    font-weight: bold;
-}
-
+thead,
 tfoot {
     font-weight: bold;
 }
