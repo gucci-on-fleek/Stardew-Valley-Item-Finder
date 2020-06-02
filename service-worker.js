@@ -36,7 +36,7 @@ self.addEventListener('fetch', function (event) {
   event.waitUntil(refresh_all())
   event.respondWith(
     caches.match(event.request)
-      .then(response => response || fetch(event.request)) // Respond with the current cache, or a network request if not present
+      .then(response => response ?? fetch(event.request)) // Respond with the current cache, or a network request if not present
   )
 })
 
