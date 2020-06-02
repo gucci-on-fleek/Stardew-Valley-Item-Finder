@@ -67,7 +67,10 @@ if (document.readyState === 'loading') {
     create_template();
 }
 
-window.addEventListener('load', () => get_previous_save())
+window.addEventListener('load', function () {
+    get_previous_save();
+    navigator.serviceWorker.register('service-worker.js')
+})
 
 
 /**
