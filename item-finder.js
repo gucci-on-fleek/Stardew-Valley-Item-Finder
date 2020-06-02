@@ -484,7 +484,7 @@ function filter_table() {
     }
 
     const style = document.styleSheets[0];
-    style.insertRule(`.${filter_class_name} {display:none}`);
+    style.insertRule(`.${filter_class_name} {visibility: collapse}`);
     if (last_last_filter_class >= 0) {
         style.deleteRule(1)
     }
