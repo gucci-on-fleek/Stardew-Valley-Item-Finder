@@ -194,8 +194,8 @@ function parse_xml(text) {
  */
 function get_files(paths) {
     let requests = []
-    for (let i = 0; i < paths.length; i++) {
-        requests.push(fetch(paths[i]).then(x => x.text()))
+    for (const path of paths) {
+        requests.push(fetch(path).then(x => x.text()))
     }
 
     return Promise.all(requests)
@@ -274,18 +274,18 @@ function cell_text(cell, text) {
  * @effects None
  */
 function make_html_table(array, table) {
-    for (let i = 1; i < array.length - 1; i++) {
-        const row = table.insertRow()
+    for (const csv_row of array.slice(1, -1)) {
+        const table_row = table.insertRow()
 
-        for (let j = 0; j < array[i].length; j++) {
-            const cell = row.insertCell()
-            if (j === 1) { // Quality column
-                const icons = replace_icon(array[i][j])
-                cell.appendChild(icons[0]);
-                cell.setAttribute('data-sort', icons[1])
+        for (const [index, csv_cell] of csv_row.entries()) {
+            const table_cell = table_row.insertCell()
+            if (index === 1) { // Quality column
+                const icons = replace_icon(csv_cell)
+                table_cell.appendChild(icons[0]);
+                table_cell.setAttribute('data-sort', csv_cell)
                 continue;
             }
-            cell_text(cell, format_integer(array[i][j]))
+            cell_text(table_cell, format_integer(csv_cell))
         }
     }
     return table;
@@ -301,8 +301,9 @@ function make_html_table(array, table) {
  */
 function make_header(array, table) {
     let html = new DocumentFragment;
-    for (let j = 0; j < array[0].length; j++) {
-        html.append(template.header_cell(array[0][j]))
+    const row = array[0]
+    for (const cell of row) {
+        html.append(template.header_cell(cell))
     }
     table.tHead.appendChild(template.header(html))
     return table
@@ -392,7 +393,7 @@ function calculate_sum(table) {
         foot.rows[0].remove()
     }
 
-    for (let i = 0, row; row = table.tBodies[0].rows[i]; i++) {
+    for (const row of table.tBodies[0].rows) {
         if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
         tot_count += parse_integer(row.cells[3].textContent);
         tot_price += parse_integer(row.cells[5].textContent);
@@ -424,8 +425,8 @@ function enable_table_sort() {
         (a, b) => parse_integer(a) - parse_integer(b));
 
     const header_cells = item_table.tHead.rows[0].cells;
-    for (let i = 0; i < header_cells.length; i++) {
-        header_cells[i].addEventListener('keydown', function (event) {
+    for (const cell of header_cells) {
+        cell.addEventListener('keydown', function (event) {
             /* Allow the keyboard to be used for sorting */
             if (event.key === 'Enter') {
                 tablesort.sortTable(event.srcElement)
@@ -478,8 +479,7 @@ function filter_table() {
     const last_last_filter_class_name = `filter_${last_last_filter_class}`;
 
     remove_descriptions()
-    for (let i = 0; i < rows.length; i++) {
-        let row = rows[i];
+    for (const row of rows) {
         if (!row.textContent.match(search)) {
             row.classList.add(filter_class_name);
         }
@@ -609,8 +609,8 @@ function _wiki_callback(data) {
  */
 function remove_descriptions() {
     const descriptions = document.querySelectorAll('.item_description')
-    for (let i = 0; i < descriptions.length; i++) {
-        descriptions[i].remove()
+    for (const description of descriptions) {
+        description.remove()
     }
 }
 
@@ -629,8 +629,8 @@ const _prefixed_items = ['Honey', 'Juice', 'Wine', 'Jelly', 'Aged Roe', 'Roe'] /
 function normalize_names(name) {
     if (name.includes('L. Goat Milk')) { return 'Large Goat Milk' }
     if (name.includes('Pickled')) { return 'Pickles' }
-    for (let i = 0; i < _prefixed_items.length; i++) {
-        if (name.includes(_prefixed_items[i])) { return _prefixed_items[i] }
+    for (const item of _prefixed_items) {
+        if (name.includes(item)) { return _prefixed_items[i] }
     }
     return name
 }
