@@ -72,7 +72,9 @@ For developers, the first step is likely of the greatest interest. This first st
 After the save file has been transformed to `CSV`, the rest of the webapp is essentially just a fancy `CSV` display. Seriously, most of the functions in `item-finder.js` are general-purpose; the only function specific to Stardew Valley is `replace_icon()`. All of the JavaScript is extensively documented, although some of the `css` is missing comments.
 
 ### Building
-The tool does not need to be build to be run. You can run your own copy of the tool with any simple webserver, like `python -m http.server`. If you want to minify the files, see [the build script](.github/workflows/pages-deploy.yaml) for reference.
+The tool does not need to be build to be run. You can run your own copy of the tool with any simple webserver, like `python -m http.server`. 
+
+If you want to minify the files, you'll need to run `./build.sh`. If you are on Ubuntu/Debian, you can install the dependencies using `./build.sh install_dependencies`. Otherwise, you'll need to install the packages some other way. Once the dependencies are installed, just run `./build.sh minify` and you'll be good to go!
 
 ### Documentation
 The non-standard `@effects` tag is used to indicate if a function has side effects.
