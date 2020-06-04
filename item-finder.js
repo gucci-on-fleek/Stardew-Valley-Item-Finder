@@ -630,7 +630,7 @@ function normalize_names(name) {
     if (name.includes('L. Goat Milk')) { return 'Large Goat Milk' }
     if (name.includes('Pickled')) { return 'Pickles' }
     for (const item of _prefixed_items) {
-        if (name.includes(item)) { return _prefixed_items[i] }
+        if (name.includes(item)) { return item }
     }
     return name
 }
