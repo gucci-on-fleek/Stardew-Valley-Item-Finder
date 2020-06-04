@@ -1,7 +1,7 @@
 'use strict';
 /* Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
- * Licensed under MPL 2.0 or greater. See URL for more information.
+ * SPDX-License-Identifier: MPL-2.0+
  */
 
 const version = '1.0'

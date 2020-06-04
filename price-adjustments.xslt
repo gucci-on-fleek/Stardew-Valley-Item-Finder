@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
-     Licensed under MPL 2.0 or greater. See URL for more information.
+     SPDX-License-Identifier: MPL-2.0+
 -->
 
     <!-- Constants -->
