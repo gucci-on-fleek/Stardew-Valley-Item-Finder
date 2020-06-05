@@ -3,6 +3,8 @@
 # Stardew Valley Item Finder
 # https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
 # SPDX-License-Identifier: MPL-2.0+
+# SPDX-FileCopyrightText: 2020 gucci-on-fleek
+
 
 # This script is to be run only from the Dockerfile. See the url above for more info.
 
