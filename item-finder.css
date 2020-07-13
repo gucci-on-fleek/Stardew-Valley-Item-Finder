@@ -248,6 +248,7 @@ footer li:not(:last-child):after {
 abbr {
     text-decoration: none;
     font-variant-caps: all-small-caps;
+    font-variant-numeric: oldstyle-nums;
 }
 
 dl {
@@ -318,4 +319,5 @@ details.license[open] {
     /* Align the details with the rest of the content  */
     left: max((100% - var(--max-page-width)) / 2, var(--page-margin));
     max-width: var(--max-page-width);
+    margin-top: 16px;
 }
