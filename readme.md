@@ -1,6 +1,12 @@
 Stardew Valley Item Finder
 ==========================
 
+<!-- Stardew Valley Item Finder
+     https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+     SPDX-License-Identifier: MPL-2.0+ OR CC-BY-SA-4.0+
+     SPDX-FileCopyrightText: 2020 gucci-on-fleek
+-->
+
 This tool extracts information about all of your items in Stardew Valley
 and displays it in a table. The table shows the items’ names, locations,
 and prices.
@@ -82,4 +88,4 @@ The non-standard `@effects` tag is used to indicate if a function has side effec
 Licencing
 ---------
 
-All files in this repository are licensed under the [MPL version 2 or later](https://www.mozilla.org/en-US/MPL/2.0/). This excludes the files in the `libraries` folder, which are licensed as stated in each file. The files in the `assets` folder belong to ConcernedApe and are used under fair use.
+See [`licence.md`](licence.md).
