@@ -189,7 +189,8 @@ thead tr th {
 }
 
 code {
-    font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace
+    font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace;
+    overflow-wrap: anywhere;
 }
 
 section,
