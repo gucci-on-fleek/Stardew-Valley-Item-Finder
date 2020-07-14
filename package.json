@@ -1,0 +1,20 @@
+{
+  "name": "stardew-valley-item-finder",
+  "description": "Analyze your Stardew Valley save file to find your items.",
+  "homepage": "https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder#readme",
+  "bugs": {
+    "url": "https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder/issues"
+  },
+  "license": "MPL-2.0+",
+  "author": {
+    "name": "gucci-on-fleek",
+    "url": "https://github.com/gucci-on-fleek"
+  },
+  "repository": "github:gucci-on-fleek/Stardew-Valley-Item-Finder",
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "csso-cli": "^3.0.0",
+    "terser": "^4.8.0",
+    "html-minifier": "^4.0.0"
+  }
+}
