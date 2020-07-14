@@ -12,9 +12,12 @@
   },
   "repository": "github:gucci-on-fleek/Stardew-Valley-Item-Finder",
   "devDependencies": {
-    "eslint": "^7.4.0",
     "csso-cli": "^3.0.0",
-    "terser": "^4.8.0",
-    "html-minifier": "^4.0.0"
+    "eslint": "^7.4.0",
+    "html-minifier": "^4.0.0",
+    "stylelint": "^13.6.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-order": "^4.1.0",
+    "terser": "^4.8.0"
   }
 }
