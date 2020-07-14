@@ -1,76 +1,86 @@
-'use strict';
-/* Stardew Valley Item Finder
+"use strict"
+/*
+ * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
  * SPDX-License-Identifier: MPL-2.0+
  * SPDX-FileCopyrightText: 2020 gucci-on-fleek
  */
 
+/* global Tablesort */
+/* exported file_opened, download_as_csv, filter_table */
+
 /**
-  * Object that produces the HTML template
-  * @type {Map<String, Function>}
-  * @param {Any} [x] - Template-dependant parameter. Not always required.
-  * @returns {DocumentFragment} An element containing the template
-  * @effects None
-  */
+ * Object that produces the HTML template
+ * @type {Map<String, Function>}
+ * @param {Any} [x] - Template-dependant parameter. Not always required.
+ * @returns {DocumentFragment} An element containing the template
+ * @effects None
+ */
 let template
+
 /**
  * Populates the template object with its members
  * @effects Modifies global `template`
  */
 function create_template() {
     const __template = {
-        table: document.getElementById('table_base'),
-        cell: document.getElementById('cell_base'),
-        row: document.getElementById('row_base'),
-        header_cell: document.getElementById('header_cell_base'),
-        header: document.getElementById('header_base'),
-        silver: document.getElementById('silver_base'),
-        gold: document.getElementById('gold_base'),
-        iridium: document.getElementById('iridium_base'),
-        wiki_query: document.getElementById('wiki_query_base'),
-        wiki_link: document.getElementById('wiki_link'),
-        wiki_search: document.getElementById('wiki_search'),
+        table: document.getElementById("table_base"),
+        cell: document.getElementById("cell_base"),
+        row: document.getElementById("row_base"),
+        header_cell: document.getElementById("header_cell_base"),
+        header: document.getElementById("header_base"),
+        silver: document.getElementById("silver_base"),
+        gold: document.getElementById("gold_base"),
+        iridium: document.getElementById("iridium_base"),
+        wiki_query: document.getElementById("wiki_query_base"),
+        wiki_link: document.getElementById("wiki_link"),
+        wiki_search: document.getElementById("wiki_search"),
     }
 
     template = {
         table: () => __template.table.content.cloneNode(true).firstElementChild, // Creates an empty table
-        header_cell: function (x) { // Creates each header cell
+        header_cell(x) { // Creates each header cell
             const clone = __template.header_cell.content.cloneNode(true)
-            clone.firstElementChild.insertAdjacentHTML('beforeend', x)
+            clone.firstElementChild.insertAdjacentHTML("beforeend", x)
+
             return clone
         },
-        header: function (x) { // Creates the header row
+        header(x) { // Creates the header row
             const clone = __template.header.content.cloneNode(true)
             clone.firstElementChild.appendChild(x)
+
             return clone
         }, /* Produces the quality images */
         silver: () => __template.silver.content.cloneNode(true),
         gold: () => __template.gold.content.cloneNode(true),
         iridium: () => __template.iridium.content.cloneNode(true),
         wiki_query: () => __template.wiki_query.content.cloneNode(true),
-        wiki_link: function (x) {
+        wiki_link(x) {
             const clone = __template.wiki_link.content.cloneNode(true)
             clone.firstElementChild.href += encodeURIComponent(x)
+
             return clone
         },
-        wiki_search: function (x) {
+        wiki_search(x) {
             const clone = __template.wiki_search.content.cloneNode(true)
             clone.firstElementChild.href += encodeURIComponent(x)
+
             return clone
         },
     }
 }
 
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', create_template);
-} else {  // DOMContentLoaded has already fired
-    create_template();
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", create_template)
+} else { // DOMContentLoaded has already fired
+    create_template()
 }
 
-window.addEventListener('load', function () {
-    get_previous_save();
-    navigator.serviceWorker.register('service-worker.js')
+
+window.addEventListener("load", function () {
+    get_previous_save()
+    navigator.serviceWorker.register("service-worker.js")
 })
 
 
@@ -82,24 +92,25 @@ window.addEventListener('load', function () {
  */
 function file_opened(event) {
     display_loading(true, true)
-    const input = event.target;
-    const reader = new FileReader();
+    const input = event.target
+    const reader = new FileReader()
 
     reader.onload = function () {
-        const file_contents = reader.result;
+        const file_contents = reader.result
         const save_game = parse_xml(file_contents)
 
         get_files(["items.xslt", "items-to-csv.xslt"]).then(
             function (requests) {
-                const items = process_xslt(parse_xml(requests[0]), save_game);
+                const items = process_xslt(parse_xml(requests[0]), save_game)
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 csv_to_table(xslt_output_to_text(csv))
-            }).finally(() => display_loading(false, true)
-            ).catch(() => show_element(document.getElementById('error')))
-    };
-    reader.readAsText(input.files[0]);
-};
+            })
+            .finally(() => display_loading(false, true))
+            .catch(() => show_element(document.getElementById("error")))
+    }
+    reader.readAsText(input.files[0])
+}
 
 
 /**
@@ -109,7 +120,7 @@ function file_opened(event) {
  * @remarks Attempts to load previous save, does nothing if unsuccessful.
  */
 function get_previous_save() {
-    const csv = localStorage.getItem('csv')
+    const csv = localStorage.getItem("csv")
     if (csv) {
         display_loading(true, false)
         _csv_string = csv
@@ -126,11 +137,11 @@ function get_previous_save() {
  */
 function csv_to_table(csv) {
     let table = template.table()
-    const csv_array = csv_to_array(csv);
-    table = make_html_table(csv_array, table);
-    table = make_header(csv_array, table);
-    set_output(table);
-    enable_table_sort();
+    const csv_array = csv_to_array(csv)
+    table = make_html_table(csv_array, table)
+    table = make_header(csv_array, table)
+    set_output(table)
+    enable_table_sort()
     enable_wiki_click()
 }
 
@@ -141,7 +152,7 @@ function csv_to_table(csv) {
  * @effects Modifies the DOM to hide the element
  */
 function hide_element(element) {
-    element.style.display = 'none'
+    element.style.display = "none"
 }
 
 
@@ -151,7 +162,7 @@ function hide_element(element) {
  * @effects Modifies the DOM to show the element
  */
 function show_element(element) {
-    element.style.removeProperty('display')
+    element.style.removeProperty("display")
 }
 
 
@@ -162,8 +173,8 @@ function show_element(element) {
  * @effects Modifies the DOM to show/hide the loading display
  */
 function display_loading(currently_loading, hide_input) {
-    const loading = document.getElementById('loading')
-    const input = document.querySelector('input[type=file]')
+    const loading = document.getElementById("loading")
+    const input = document.querySelector("input[type=file]")
 
     if (currently_loading) {
         show_element(loading)
@@ -182,7 +193,8 @@ function display_loading(currently_loading, hide_input) {
  * @effects None
  */
 function parse_xml(text) {
-    const xml_parser = new DOMParser();
+    const xml_parser = new DOMParser()
+
     return xml_parser.parseFromString(text, "text/xml")
 }
 
@@ -194,11 +206,10 @@ function parse_xml(text) {
  * @effects Initiates a network request to download the URLs
  */
 function get_files(paths) {
-    let requests = []
+    const requests = []
     for (const path of paths) {
         requests.push(fetch(path).then(x => x.text()))
     }
-
     return Promise.all(requests)
 }
 
@@ -211,18 +222,18 @@ function get_files(paths) {
  * @effects None
  */
 function process_xslt(xslt, xml) {
-    const xslt_processor = new XSLTProcessor();
+    const xslt_processor = new XSLTProcessor()
 
-    xslt_processor.importStylesheet(xslt);
-    const processed = xslt_processor.transformToFragment(xml, new Document()); // Non-standard, but supported by everything that isn't IE
+    xslt_processor.importStylesheet(xslt)
+    const processed = xslt_processor.transformToFragment(xml, new Document()) // Non-standard, but supported by everything that isn't IE
 
-    return processed;
+    return processed
 }
 
 
-let _csv_string; // Global, holds the CSV so that it can later be downloaded
+let _csv_string // Global, holds the CSV so that it can later be downloaded
 /**
- * Convert the `XSLT` transformed output into a string. Also, save 
+ * Convert the `XSLT` transformed output into a string. Also, save
  *          the output in LocalStorage.
  * @param {DocumentFragment} xml - The `XML` to convert to a string
  * @returns {String} A string representing the `XML`'s contents
@@ -232,11 +243,12 @@ let _csv_string; // Global, holds the CSV so that it can later be downloaded
  *          the `CSV` into plain text, we need to call this function
  *          to get a string.
  * @effects Modifies global variable `csv_string`. Also adds `csv` key
- *          to LocalStorage. 
+ *          to LocalStorage.
  */
 function xslt_output_to_text(xml) {
-    _csv_string = xml.firstChild.wholeText;
-    localStorage.setItem('csv', _csv_string)
+    _csv_string = xml.firstChild.wholeText
+    localStorage.setItem("csv", _csv_string)
+
     return _csv_string
 }
 
@@ -252,7 +264,7 @@ function xslt_output_to_text(xml) {
  * @effects None
  */
 function csv_to_array(csv) {
-    return csv.split('\n').map(x => x.split(',')) // We made the csv file, so there won't be any edge cases
+    return csv.split("\n").map(x => x.split(",")) // We made the csv file, so there won't be any edge cases
 }
 
 
@@ -282,14 +294,14 @@ function make_html_table(array, table) {
             const table_cell = table_row.insertCell()
             if (index === 1) { // Quality column
                 const icons = replace_icon(csv_cell)
-                table_cell.appendChild(icons[0]);
-                table_cell.setAttribute('data-sort', csv_cell)
-                continue;
+                table_cell.appendChild(icons[0])
+                table_cell.setAttribute("data-sort", csv_cell)
+                continue
             }
             cell_text(table_cell, format_integer(csv_cell))
         }
     }
-    return table;
+    return table
 }
 
 
@@ -301,12 +313,13 @@ function make_html_table(array, table) {
  * @effects None
  */
 function make_header(array, table) {
-    let html = new DocumentFragment;
+    const html = new DocumentFragment()
     const row = array[0]
     for (const cell of row) {
         html.append(template.header_cell(cell))
     }
     table.tHead.appendChild(template.header(html))
+
     return table
 }
 
@@ -327,7 +340,7 @@ function replace_icon(quality_name) {
         case "Iridium":
             return [template.iridium(), 3]
         default:
-            return [document.createTextNode(''), 0]
+            return [document.createTextNode(""), 0]
     }
 }
 
@@ -339,7 +352,7 @@ function replace_icon(quality_name) {
  * @effects None
  */
 function format_integer(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 }
 
 
@@ -350,19 +363,20 @@ let _previous_output = false // Global, true on 2nd/3rd/xth save file loads
  * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
  */
 function set_output(table) {
-    hide_element(document.querySelector('article'))
+    hide_element(document.querySelector("article"))
 
     if (_previous_output) { // Remove old table
-        document.getElementById('item_table').remove()
+        document.getElementById("item_table").remove()
     }
-    table = calculate_sum(table);
+    table = calculate_sum(table) // eslint-disable-line no-param-reassign
 
-    const container = document.getElementById('table_container');
+
+    const container = document.getElementById("table_container")
     container.appendChild(table)
 
-    show_element(document.querySelector('article'))
+    show_element(document.querySelector("article"))
     _previous_output = true
-    document.getElementById('filter').focus();
+    document.getElementById("filter").focus()
 }
 
 
@@ -374,8 +388,9 @@ function set_output(table) {
  * @effects None
  */
 function parse_integer(number) {
-    const match = number.match(/\d/g);
-    return match ? Number(match.join('')) : 0
+    const match = number.match(/\d/g)
+
+    return match ? Number(match.join("")) : 0
 }
 
 
@@ -386,22 +401,24 @@ function parse_integer(number) {
  */
 function calculate_sum(table) {
     const foot = table.tFoot
-    let tot_price = 0;
-    let tot_count = 0;
-    const current_hidden_filter_class = `filter_${_filter_class}`;
+    let tot_price = 0
+    let tot_count = 0
+    const current_hidden_filter_class = `filter_${_filter_class}`
 
     while (foot.rows[0]) { // Remove old footers
         foot.rows[0].remove()
     }
 
     for (const row of table.tBodies[0].rows) {
-        if (row.classList.contains(current_hidden_filter_class)) { continue; } // Skip if hidden by filter
-        tot_count += parse_integer(row.cells[3].textContent);
-        tot_price += parse_integer(row.cells[5].textContent);
+        if (row.classList.contains(current_hidden_filter_class)) {
+            continue
+        } // Skip if hidden by filter
+        tot_count += parse_integer(row.cells[3].textContent)
+        tot_price += parse_integer(row.cells[5].textContent)
     }
 
     const row = foot.insertRow()
-    const blank = () => cell_text(row.insertCell(), (""))
+    const blank = () => cell_text(row.insertCell(), "")
 
     cell_text(row.insertCell(), "Total")
     blank()
@@ -419,17 +436,18 @@ function calculate_sum(table) {
  * @effects Initializes Tablesort. Adds event listeners to the table headers.
  */
 function enable_table_sort() {
-    const item_table = document.getElementById('item_table');
-    const tablesort = new Tablesort(item_table); // Allow the table headings to be used for sorting
+    const item_table = document.getElementById("item_table")
+    const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
 
-    Tablesort.extend('number', item => item.match(/\d/), // Sort numerically
-        (a, b) => parse_integer(a) - parse_integer(b));
+    Tablesort.extend("number",
+        item => item.match(/\d/), // Sort numerically
+        (a, b) => parse_integer(a) - parse_integer(b))
 
-    const header_cells = item_table.tHead.rows[0].cells;
+    const header_cells = item_table.tHead.rows[0].cells
     for (const cell of header_cells) {
-        cell.addEventListener('keydown', function (event) {
+        cell.addEventListener("keydown", function (event) {
             /* Allow the keyboard to be used for sorting */
-            if (event.key === 'Enter') {
+            if (event.key === "Enter") {
                 tablesort.sortTable(event.srcElement)
             }
         })
@@ -439,75 +457,73 @@ function enable_table_sort() {
 
 /**
  * Allow the user to download their save as a CSV
- * @param {String} text 
+ * @param {String} text
  * @remarks Called by the download button
  * @effects Temporarily modifies DOM. Triggers a download.
  */
 function download_as_csv(text) {
-    const element = document.createElement('a')
-    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text))
-    element.setAttribute('download', 'Stardew Valley Items.csv')
-    element.style.display = 'none';
+    const element = document.createElement("a")
+    element.setAttribute("href", `data:text/csv;charset=utf-8,${encodeURIComponent(text)}`)
+    element.setAttribute("download", "Stardew Valley Items.csv")
+    element.style.display = "none"
 
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    document.body.appendChild(element)
+    element.click()
+    document.body.removeChild(element)
 }
 
 
-let _filter_class = 1; // Monotonically incrementing counter to ensure unique CSS classes
-/** 
+let _filter_class = 1 // Monotonically incrementing counter to ensure unique CSS classes
+/**
  * Allows the table to be filtered
  * @remarks The naïve version of this function directly applied
- *          'display: none' to each row. However, this triggered 
- *          a repaint for each row, since it was removed from display. 
+ *          'display: none' to each row. However, this triggered
+ *          a repaint for each row, since it was removed from display.
  *          The optimized version of this function applies a new
- *          and unique class to each row whenever a filter is 
- *          applied. Then—and only then—can we hide that class. 
+ *          and unique class to each row whenever a filter is
+ *          applied. Then—and only then—can we hide that class.
  *          This means that only one repaint is triggered instead
  *          of one for each row. In benchmarks, this is about 250%
  *          faster than the old function.
  * @effects Modifies CSS and the `class` attribute of table rows. Modifies global variable `filter_class`.
  */
 function filter_table() {
-    const filter = document.getElementById('filter').value;
-    const table = document.getElementById('item_table')
-    const rows = table.tBodies[0].rows;
-    const search = RegExp(filter, 'i');
-    const last_filter_class = _filter_class - 1; // The class that we're adding
-    const last_last_filter_class = last_filter_class - 1; // The class that we're removing
-    const filter_class_name = `filter_${_filter_class}`;
-    const last_last_filter_class_name = `filter_${last_last_filter_class}`;
+    const filter = document.getElementById("filter").value
+    const table = document.getElementById("item_table")
+    const rows = table.tBodies[0].rows
+    const search = RegExp(filter, "i")
+    const last_filter_class = _filter_class - 1 // The class that we're adding
+    const last_last_filter_class = last_filter_class - 1 // The class that we're removing
+    const filter_class_name = `filter_${_filter_class}`
+    const last_last_filter_class_name = `filter_${last_last_filter_class}`
 
     remove_descriptions()
     for (const row of rows) {
         if (!row.textContent.match(search)) {
-            row.classList.add(filter_class_name);
+            row.classList.add(filter_class_name)
         }
-        row.classList.remove(last_last_filter_class_name); // Cleanup old filter classes
+        row.classList.remove(last_last_filter_class_name) // Cleanup old filter classes
     }
 
-    const style = document.styleSheets[0];
-    style.insertRule(`.${filter_class_name} {visibility: collapse}`);
+    const style = document.styleSheets[0]
+    style.insertRule(`.${filter_class_name} {visibility: collapse}`)
     if (last_last_filter_class >= 0) {
         style.deleteRule(1)
     }
 
-    const new_foot = calculate_sum(table) // Update the footer after the filter is applied
-
-    _filter_class++; // Increment the class's name
+    _filter_class++ // Increment the class's name
 }
 
 
 /**
  * Allows the user to click on an item name and view its description from the *Stardew Valley Wiki*
- * @effects Adds event listeners. Modifies the DOM. Calls functions which make network requests. 
+ * @effects Adds event listeners. Modifies the DOM. Calls functions which make network requests.
  */
 function enable_wiki_click() {
-    const table = document.getElementById('item_table')
+    const table = document.getElementById("item_table")
     const body = table.tBodies[0]
 
-    body.addEventListener('click', function (event) {
+    body.addEventListener("click", function (event) {
         const target = event.target
         if (target.cellIndex !== 0) { // Only capture click events on the first row
             return
@@ -518,20 +534,20 @@ function enable_wiki_click() {
         wiki_description_by_title(page_title).finally(function () {
             remove_descriptions()
             const row = body.insertRow(target.parentElement.rowIndex)
-            row.className = 'item_description'
+            row.className = "item_description"
             cell = row.insertCell()
             cell.colSpan = 6
-
-        }).then(function (result) {
-            cell.innerHTML = result // use innerHTML because the result can contain character entities
-            cell.appendChild(template.wiki_link(page_title))
-
-        }).catch(function (result) {
-            cell.innerHTML = result
-            cell.appendChild(template.wiki_search(page_title))
         })
+            .then(function (result) {
+                cell.innerHTML = result // Use innerHTML because the result can contain character entities
+                cell.appendChild(template.wiki_link(page_title))
+            })
+            .catch(function (result) {
+                cell.innerHTML = result
+                cell.appendChild(template.wiki_search(page_title))
+            })
     })
-    table.addEventListener('beforeSort', remove_descriptions) // The colspan attributes cause problems with sorting
+    table.addEventListener("beforeSort", remove_descriptions) // The colspan attributes cause problems with sorting
 }
 
 
@@ -546,19 +562,22 @@ let _wiki_callback_success, _wiki_callback_failure // Globals, holds resolve/rej
  *          to accomplish this.
  * @effects Modifies the global variables `_wiki_callback_*`. Calls
  *          `make_wiki_request` which ultimately makes a network
- *          request. Also modifies the DOM to remove the JSONP 
+ *          request. Also modifies the DOM to remove the JSONP
  *          `script` element.
  */
 function wiki_description_by_title(title) {
-    make_wiki_request(_wiki_callback, { titles: title, prop: 'pageprops' })
-    const request = new Promise((accept, reject) => { _wiki_callback_success = accept; _wiki_callback_failure = reject })
-    return request.finally(() => document.getElementById('wiki_query').remove()) // Cleanup
+    make_wiki_request(_wiki_callback, {titles: title, prop: "pageprops"})
+    const request = new Promise((accept, reject) => {
+        _wiki_callback_success = accept; _wiki_callback_failure = reject
+    })
+
+    return request.finally(() => document.getElementById("wiki_query").remove()) // Cleanup
 }
 
 
 /**
  * Make a request to the *Stardew Valley Wiki*.
- * @param {Function} callback - The function to be called with the resultant data 
+ * @param {Function} callback - The function to be called with the resultant data
  * @param {Map<String, String>} parameters - The URL parameters to be used for the request
  * @param {Map<String, String>} [default_parameters] - The default parameters URL parameters to use. Only use if you need to override the default parameters.
  * @remarks The Wiki is using a *really* old version of MediaWiki
@@ -572,18 +591,18 @@ function wiki_description_by_title(title) {
  *          is to proxy the requests with a properly-configured
  *          server.
  * @effects Inserts a `script` element into the DOM which ultimately makes a network request.
- *          
+ *
  */
 function make_wiki_request(callback, parameters, default_parameters = {
-    action: 'query',
-    format: 'json',
-    formatversion: '2',
-    redirects: ''
+    action: "query",
+    format: "json",
+    formatversion: "2",
+    redirects: ""
 }) {
-    parameters = new URLSearchParams({ ...parameters, ...default_parameters, callback: callback.name })
+    const url_parameters = new URLSearchParams({...parameters, ...default_parameters, callback: callback.name})
 
     const request_element = template.wiki_query()
-    request_element.firstElementChild.src += parameters.toString()
+    request_element.firstElementChild.src += url_parameters.toString()
     document.head.appendChild(request_element)
 }
 
@@ -609,14 +628,14 @@ function _wiki_callback(data) {
  * @effects Modifies DOM.
  */
 function remove_descriptions() {
-    const descriptions = document.querySelectorAll('.item_description')
+    const descriptions = document.querySelectorAll(".item_description")
     for (const description of descriptions) {
         description.remove()
     }
 }
 
 
-const _prefixed_items = ['Honey', 'Juice', 'Wine', 'Jelly', 'Aged Roe', 'Roe'] // Constant that lists all items that need to be normalized before a Wiki request.
+const _prefixed_items = ["Honey", "Juice", "Wine", "Jelly", "Aged Roe", "Roe"] // Constant that lists all items that need to be normalized before a Wiki request.
 /**
  * Normalize item names for the *Stardew Valley Wiki* request.
  * @param {String} name - The name of the item
@@ -628,10 +647,16 @@ const _prefixed_items = ['Honey', 'Juice', 'Wine', 'Jelly', 'Aged Roe', 'Roe'] /
  * @effects None
  */
 function normalize_names(name) {
-    if (name.includes('L. Goat Milk')) { return 'Large Goat Milk' }
-    if (name.includes('Pickled')) { return 'Pickles' }
+    if (name.includes("L. Goat Milk")) {
+        return "Large Goat Milk"
+    }
+    if (name.includes("Pickled")) {
+        return "Pickles"
+    }
     for (const item of _prefixed_items) {
-        if (name.includes(item)) { return item }
+        if (name.includes(item)) {
+            return item
+        }
     }
     return name
 }
