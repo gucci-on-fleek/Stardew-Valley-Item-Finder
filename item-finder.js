@@ -24,17 +24,17 @@ let template
  */
 function create_template() {
     const __template = {
-        table: document.getElementById("table_base"),
-        cell: document.getElementById("cell_base"),
-        row: document.getElementById("row_base"),
-        header_cell: document.getElementById("header_cell_base"),
-        header: document.getElementById("header_base"),
-        silver: document.getElementById("silver_base"),
-        gold: document.getElementById("gold_base"),
-        iridium: document.getElementById("iridium_base"),
-        wiki_query: document.getElementById("wiki_query_base"),
-        wiki_link: document.getElementById("wiki_link"),
-        wiki_search: document.getElementById("wiki_search"),
+        table: id("table_base"),
+        cell: id("cell_base"),
+        row: id("row_base"),
+        header_cell: id("header_cell_base"),
+        header: id("header_base"),
+        silver: id("silver_base"),
+        gold: id("gold_base"),
+        iridium: id("iridium_base"),
+        wiki_query: id("wiki_query_base"),
+        wiki_link: id("wiki_link"),
+        wiki_search: id("wiki_search"),
     }
 
     template = {
@@ -107,7 +107,7 @@ function file_opened(event) {
                 csv_to_table(xslt_output_to_text(csv))
             })
             .finally(() => display_loading(false, true))
-            .catch(() => show_element(document.getElementById("error")))
+            .catch(() => show_element(id("error")))
     }
     reader.readAsText(input.files[0])
 }
@@ -127,6 +127,39 @@ function get_previous_save() {
         csv_to_table(csv)
         display_loading(false, false)
     }
+}
+
+
+/**
+ * A shorthand for `document.getElementById()`
+ * @param {String} element_id - The id of the element to retrieve
+ * @returns {Element} The element requested
+ * @effects None
+ */
+function id(element_id) {
+    return document.getElementById(element_id)
+}
+
+
+/**
+ * A shorthand for `document.querySelector()`
+ * @param {String} selector - A selector for an element to retrieve
+ * @returns {Element} The element requested
+ * @effects None
+ */
+function qs(selector) {
+    return document.querySelector(selector)
+}
+
+
+/**
+ * A shorthand for `document.querySelectorAll()`
+ * @param {String} selector - A selector for the elements to retrieve
+ * @returns {Element} The elements requested
+ * @effects None
+ */
+function qsa(selector) {
+    return document.querySelectorAll(selector)
 }
 
 
@@ -169,12 +202,12 @@ function show_element(element) {
 /**
  * Displays a loading indicator
  * @param {Boolean} currently_loading - Should we show or hide the loading display
- * * @param {Boolean} hide_input - Should hide the input box
+ * @param {Boolean} hide_input - Should hide the input box
  * @effects Modifies the DOM to show/hide the loading display
  */
 function display_loading(currently_loading, hide_input) {
-    const loading = document.getElementById("loading")
-    const input = document.querySelector("input[type=file]")
+    const loading = id("loading")
+    const input = qs("input[type=file]")
 
     if (currently_loading) {
         show_element(loading)
@@ -363,20 +396,20 @@ let _previous_output = false // Global, true on 2nd/3rd/xth save file loads
  * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
  */
 function set_output(table) {
-    hide_element(document.querySelector("article"))
+    hide_element(qs("article"))
 
     if (_previous_output) { // Remove old table
-        document.getElementById("item_table").remove()
+        id("item_table").remove()
     }
     table = calculate_sum(table) // eslint-disable-line no-param-reassign
 
 
-    const container = document.getElementById("table_container")
+    const container = id("table_container")
     container.appendChild(table)
 
-    show_element(document.querySelector("article"))
+    show_element(qs("article"))
     _previous_output = true
-    document.getElementById("filter").focus()
+    id("filter").focus()
 }
 
 
@@ -436,7 +469,7 @@ function calculate_sum(table) {
  * @effects Initializes Tablesort. Adds event listeners to the table headers.
  */
 function enable_table_sort() {
-    const item_table = document.getElementById("item_table")
+    const item_table = id("item_table")
     const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
 
     Tablesort.extend("number",
@@ -488,8 +521,8 @@ let _filter_class = 1 // Monotonically incrementing counter to ensure unique CSS
  * @effects Modifies CSS and the `class` attribute of table rows. Modifies global variable `filter_class`.
  */
 function filter_table() {
-    const filter = document.getElementById("filter").value
-    const table = document.getElementById("item_table")
+    const filter = id("filter").value
+    const table = id("item_table")
     const rows = table.tBodies[0].rows
     const search = RegExp(filter, "i")
     const last_filter_class = _filter_class - 1 // The class that we're adding
@@ -520,7 +553,7 @@ function filter_table() {
  * @effects Adds event listeners. Modifies the DOM. Calls functions which make network requests.
  */
 function enable_wiki_click() {
-    const table = document.getElementById("item_table")
+    const table = id("item_table")
     const body = table.tBodies[0]
 
     body.addEventListener("click", function (event) {
@@ -571,7 +604,7 @@ function wiki_description_by_title(title) {
         _wiki_callback_success = accept; _wiki_callback_failure = reject
     })
 
-    return request.finally(() => document.getElementById("wiki_query").remove()) // Cleanup
+    return request.finally(() => id("wiki_query").remove()) // Cleanup
 }
 
 
@@ -628,7 +661,7 @@ function _wiki_callback(data) {
  * @effects Modifies DOM.
  */
 function remove_descriptions() {
-    const descriptions = document.querySelectorAll(".item_description")
+    const descriptions = qsa(".item_description")
     for (const description of descriptions) {
         description.remove()
     }
