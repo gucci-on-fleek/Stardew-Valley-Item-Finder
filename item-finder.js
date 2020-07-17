@@ -38,31 +38,31 @@ function create_template() {
     }
 
     template = {
-        table: () => __template.table.content.cloneNode(true).firstElementChild, // Creates an empty table
+        table: () => clone_element(__template.table).firstElementChild, // Creates an empty table
         header_cell(x) { // Creates each header cell
-            const clone = __template.header_cell.content.cloneNode(true)
+            const clone = clone_element(__template.header_cell)
             clone.firstElementChild.insertAdjacentHTML("beforeend", x)
 
             return clone
         },
         header(x) { // Creates the header row
-            const clone = __template.header.content.cloneNode(true)
+            const clone = clone_element(__template.header)
             clone.firstElementChild.appendChild(x)
 
             return clone
         }, /* Produces the quality images */
-        silver: () => __template.silver.content.cloneNode(true),
-        gold: () => __template.gold.content.cloneNode(true),
-        iridium: () => __template.iridium.content.cloneNode(true),
-        wiki_query: () => __template.wiki_query.content.cloneNode(true),
+        silver: () => clone_element(__template.silver),
+        gold: () => clone_element(__template.gold),
+        iridium: () => clone_element(__template.iridium),
+        wiki_query: () => clone_element(__template.wiki_query),
         wiki_link(x) {
-            const clone = __template.wiki_link.content.cloneNode(true)
+            const clone = clone_element(__template.wiki_link)
             clone.firstElementChild.href += encodeURIComponent(x)
 
             return clone
         },
         wiki_search(x) {
-            const clone = __template.wiki_search.content.cloneNode(true)
+            const clone = clone_element(__template.wiki_search)
             clone.firstElementChild.href += encodeURIComponent(x)
 
             return clone
@@ -160,6 +160,17 @@ function qs(selector) {
  */
 function qsa(selector) {
     return document.querySelectorAll(selector)
+}
+
+
+/**
+ * Clone an element
+ * @param {Element} element - The element to clone
+ * @returns {Element} A duplicate of the initial element
+ * @effects None
+ */
+function clone_element(element) {
+    return element.content.cloneNode(true)
 }
 
 
