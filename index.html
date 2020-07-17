@@ -73,17 +73,17 @@
     </section>
 
     <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
-    <div id="loading" class="message" style="display: none">Loading…</div>
-    <div id="error" class="message" style="display: none">Error
+    <div id="loading" class="message" role="alert" hidden>Loading…</div>
+    <div id="error" class="message" role="alert" hidden>Error
         <div>Sorry about that. Please refresh and try again.</div>
     </div>
 
     <div>
         <!-- We need this empty div so that the contents are horizontally centered on the page. Without it, the contents are left aligned to the rest of the page. -->
-        <article style="display: none" id="table_container">
+        <article hidden id="table_container">
             <h2>Items
-                <input type="text" id="filter" class="input" onkeyup="filter_table()" placeholder="Filter"
-                    title="Filter" role="search" aria-label="Filter Table"></input>
+                <input id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"
+                    type="search" aria-label="Filter Table"></input>
             </h2>
             <input type="button" id="down-button" class="input" value="Download as CSV"
                 onclick="download_as_csv(_csv_string)" />
@@ -136,6 +136,7 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
             <li>
                 <details class="license">
                     <summary>License</summary>
+                    <h2>Licence</h2>
                     <p>The majority of this website is licensed under the <a rel="license"
                             href="licences/MPL-2.0.txt"><abbr title="Mozilla Public Licence">MPL-2.0</abbr></a>
                         or any later version.
@@ -165,7 +166,7 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
     </template>
 
     <template id="header_cell_base">
-        <th tabindex="0"></th>
+        <th tabindex="0" scope="col"></th>
     </template>
 
     <template id="header_base">
@@ -177,7 +178,7 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
     </template>
 
     <template id="gold_base">
-        <img src="assets/gold_star.png" class="icon" alt="Gold" alt="Gold" title="Gold" />
+        <img src="assets/gold_star.png" class="icon" alt="Gold" title="Gold" />
     </template>
 
     <template id="iridium_base">

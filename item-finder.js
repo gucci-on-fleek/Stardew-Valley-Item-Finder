@@ -152,7 +152,7 @@ function csv_to_table(csv) {
  * @effects Modifies the DOM to hide the element
  */
 function hide_element(element) {
-    element.style.display = "none"
+    element.hidden = true
 }
 
 
@@ -162,7 +162,7 @@ function hide_element(element) {
  * @effects Modifies the DOM to show the element
  */
 function show_element(element) {
-    element.style.removeProperty("display")
+    element.hidden = false
 }
 
 
@@ -465,7 +465,7 @@ function download_as_csv(text) {
     const element = document.createElement("a")
     element.setAttribute("href", `data:text/csv;charset=utf-8,${encodeURIComponent(text)}`)
     element.setAttribute("download", "Stardew Valley Items.csv")
-    element.style.display = "none"
+    hide_element(element)
 
     document.body.appendChild(element)
     element.click()
