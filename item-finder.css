@@ -118,6 +118,27 @@ body {
   --page-margin: 15px;
 }
 
+:root { /* stylelint-disable-line no-duplicate-selectors */
+  /* Style scrollbars (Standards-based, currently Firefox only) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-faded) var(--color-background);
+}
+
+/* Chrome fallbacks */
+/* stylelint-disable no-descending-specificity */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-faded);
+}
+/* stylelint-enable no-descending-specificity */
+
 h1 {
   margin-bottom: 0;
 
