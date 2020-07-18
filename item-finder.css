@@ -44,6 +44,17 @@
   display: none !important;
 }
 
+[hidden][aria-hidden="false"] {
+  display: initial !important;
+}
+
+[hidden][aria-hidden="false"]:not(:focus) {
+  /* Make hidden elements with aria-hidden=false only visible to screen readers */
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(100%);
+}
+
 @media print {
   /* Only print the table, and in black and white */
   :root {
@@ -192,7 +203,7 @@ th:nth-of-type(6) {
   text-align: right;
 
   /* Don't wrap numeric columns */
-  overflow-wrap: normal !important;
+  overflow-wrap: normal;
 }
 
 code {
