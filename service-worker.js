@@ -51,7 +51,7 @@ self.addEventListener("activate", function (event) {
 })
 
 async function refresh(resource) {
-    return cache.then(c => fetch(resource, {cache : "no-cache"})
+    return cache.then(c => fetch(resource, {cache: "no-cache"})
         .then(x => c.put(resource, x)) // Fetch from the network and store in cache
     )
 }

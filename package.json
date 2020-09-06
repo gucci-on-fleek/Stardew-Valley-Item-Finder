@@ -18,6 +18,7 @@
     "stylelint": "^13.6.1",
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-order": "^4.1.0",
-    "terser": "^4.8.0"
+    "terser": "^4.8.0",
+    "typescript": "^3.9.7"
   }
 }

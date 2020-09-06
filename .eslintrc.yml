@@ -6,8 +6,6 @@ extends: "eslint:recommended"
 parserOptions:
   ecmaVersion: 11
 rules:
-  no-extra-parens:
-    - error
   no-unreachable-loop:
     - error
   curly:
@@ -120,6 +118,8 @@ rules:
   line-comment-position:
     - error
     - position: beside
+      ignorePattern: "@ts"
+      applyDefaultIgnorePatterns: true
   linebreak-style:
     - error
     - unix
@@ -166,7 +166,6 @@ rules:
   one-var:
     - error
     - initialized: never
-      uninitialized: consecutive
   operator-assignment:
     - error
     - always

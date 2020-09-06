@@ -1,3 +1,5 @@
+// @ts-check
+
 "use strict"
 /*
  * Stardew Valley Item Finder
@@ -10,71 +12,91 @@
 /* exported file_opened, download_as_csv, filter_table */
 
 /**
- * Object that produces the HTML template
- * @type {Map<String, Function>}
- * @param {Any} [x] - Template-dependant parameter. Not always required.
- * @returns {DocumentFragment} An element containing the template
- * @effects None
+ * @type {Object<String, Function>}
  */
-let template
+let template, elements
 
 /**
  * Populates the template object with its members
  * @effects Modifies global `template`
  */
-function create_template() {
-    const __template = {
-        table: id("table_base"),
-        cell: id("cell_base"),
-        row: id("row_base"),
-        header_cell: id("header_cell_base"),
-        header: id("header_base"),
-        silver: id("silver_base"),
-        gold: id("gold_base"),
-        iridium: id("iridium_base"),
-        wiki_query: id("wiki_query_base"),
-        wiki_link: id("wiki_link"),
-        wiki_search: id("wiki_search"),
+function create_templates() {
+    /*
+     * We're handling the elements a little differently here: instead
+     * of calling `document.getElementById` to get an element, you need
+     * to index the global object `elements`. This seems equivalent, but
+     * it provides a few advantages:
+     *  1) Elements are cached after they have been retrieved. This may
+     *     provide a very small speedup
+     *  2) The major reason is so that we can properly typecast elements
+     *     globally. This way, we can typecast all of the elements in one
+     *     place, and avoid messy typecasts inline.
+     */
+    const __elements = { // Holds the elements that require a typecast
+        item_table: /** @type {HTMLTableElement} */ (document.getElementById("item_table"))
     }
 
-    template = {
-        table: () => clone_element(__template.table).firstElementChild, // Creates an empty table
+    const elements_handler = {
+        get(target, property) {
+            if (target[property] === undefined || target[property] === null) {
+                target[property] = document.getElementById(property)
+            }
+            return target[property]
+        }
+    }
+
+    elements = new Proxy(__elements, elements_handler)
+
+    /*
+     * The `template` global is much like the `elements` global, however
+     * the motivation is slightly different. The point of the `template`
+     * being constructed this way is so that most of the templates can
+     * be handled in a general way, but exceptions are easy to add.
+     */
+    const __template = {
         header_cell(x) { // Creates each header cell
-            const clone = clone_element(__template.header_cell)
-            clone.firstElementChild.insertAdjacentHTML("beforeend", x)
+            const clone = clone_template(elements.header_cell_base).firstElementChild
+            clone.insertAdjacentHTML("beforeend", x)
 
             return clone
         },
         header(x) { // Creates the header row
-            const clone = clone_element(__template.header)
-            clone.firstElementChild.appendChild(x)
+            const clone = clone_template(elements.header_base).firstElementChild
+            clone.appendChild(x)
 
             return clone
-        }, /* Produces the quality images */
-        silver: () => clone_element(__template.silver),
-        gold: () => clone_element(__template.gold),
-        iridium: () => clone_element(__template.iridium),
-        wiki_query: () => clone_element(__template.wiki_query),
+        },
         wiki_link(x) {
-            const clone = clone_element(__template.wiki_link)
-            clone.firstElementChild.href += encodeURIComponent(x)
+            const clone = /** @type {HTMLAnchorElement} */ (clone_template(elements.wiki_link_base).firstElementChild)
+            clone.href += encodeURIComponent(x)
 
             return clone
         },
         wiki_search(x) {
-            const clone = clone_element(__template.wiki_search)
-            clone.firstElementChild.href += encodeURIComponent(x)
+            const clone = /** @type {HTMLAnchorElement} */ (clone_template(elements.wiki_search_base).firstElementChild)
+            clone.href += encodeURIComponent(x)
 
             return clone
         },
     }
+
+    const template_handler = {
+        get(target, property) {
+            if (target[property] === undefined) {
+                target[property] = () => clone_template(elements[`${property}_base`]).firstElementChild
+            }
+            return target[property]
+        }
+    }
+
+    template = new Proxy(__template, template_handler)
 }
 
 
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", create_template)
-} else { // DOMContentLoaded has already fired
-    create_template()
+    document.addEventListener("DOMContentLoaded", create_templates) // Run `create_templates` as soon as the page is loaded
+} else { // DOMContentLoaded has already fired, so run it now
+    create_templates()
 }
 
 
@@ -92,11 +114,11 @@ window.addEventListener("load", function () {
  */
 function file_opened(event) {
     display_loading(true, true)
-    const input = event.target
+    const input = /** @type {HTMLInputElement} */ (event.target)
     const reader = new FileReader()
 
     reader.onload = function () {
-        const file_contents = reader.result
+        const file_contents = /** @type {String} */ (reader.result)
         const save_game = parse_xml(file_contents)
 
         get_files(["items.xslt", "items-to-csv.xslt"]).then(
@@ -107,7 +129,7 @@ function file_opened(event) {
                 csv_to_table(xslt_output_to_text(csv))
             })
             .finally(() => display_loading(false, true))
-            .catch(() => show_element(id("error")))
+            .catch(() => show_element(elements.error))
     }
     reader.readAsText(input.files[0])
 }
@@ -131,20 +153,9 @@ function get_previous_save() {
 
 
 /**
- * A shorthand for `document.getElementById()`
- * @param {String} element_id - The id of the element to retrieve
- * @returns {Element} The element requested
- * @effects None
- */
-function id(element_id) {
-    return document.getElementById(element_id)
-}
-
-
-/**
  * A shorthand for `document.querySelector()`
  * @param {String} selector - A selector for an element to retrieve
- * @returns {Element} The element requested
+ * @returns {HTMLElement} The element requested
  * @effects None
  */
 function qs(selector) {
@@ -155,7 +166,7 @@ function qs(selector) {
 /**
  * A shorthand for `document.querySelectorAll()`
  * @param {String} selector - A selector for the elements to retrieve
- * @returns {Element} The elements requested
+ * @returns {NodeListOf<Element>} The elements requested
  * @effects None
  */
 function qsa(selector) {
@@ -164,13 +175,13 @@ function qsa(selector) {
 
 
 /**
- * Clone an element
- * @param {Element} element - The element to clone
- * @returns {Element} A duplicate of the initial element
+ * Clone a template
+ * @param {HTMLTemplateElement} element - The element to clone
+ * @returns {HTMLElement} A duplicate of the initial element
  * @effects None
  */
-function clone_element(element) {
-    return element.content.cloneNode(true)
+function clone_template(element) {
+    return /** @type {HTMLElement} */ (element.content.cloneNode(true))
 }
 
 
@@ -217,7 +228,7 @@ function show_element(element) {
  * @effects Modifies the DOM to show/hide the loading display
  */
 function display_loading(currently_loading, hide_input) {
-    const loading = id("loading")
+    const loading = elements.loading
     const input = qs("input[type=file]")
 
     if (currently_loading) {
@@ -290,7 +301,8 @@ let _csv_string // Global, holds the CSV so that it can later be downloaded
  *          to LocalStorage.
  */
 function xslt_output_to_text(xml) {
-    _csv_string = xml.firstChild.wholeText
+    const text_node = /** @type {Text} */ (xml.firstChild)
+    _csv_string = text_node.wholeText
     localStorage.setItem("csv", _csv_string)
 
     return _csv_string
@@ -300,7 +312,7 @@ function xslt_output_to_text(xml) {
 /**
  * Parse the `CSV` file into an array
  * @param {String} csv - The `CSV` file
- * @returns {Array(String)} - An array representing the `CSV`
+ * @returns {String[][]} - An array representing the `CSV`
  * @remarks This is a very basic `CSV` parser. It just splits on
  *          commas and newlines, so any edge cases **will not** be
  *          accounted for. However, there won't be any edge cases
@@ -325,7 +337,7 @@ function cell_text(cell, text) {
 
 /**
  * Converts the array into the `HTML` table
- * @param {String[]} array - The array to make into a table
+ * @param {String[][]} array - The array to make into a table
  * @param {HTMLTableElement} table - The document fragment to make the table in
  * @returns {HTMLTableElement} The input array as an `HTML` table
  * @effects None
@@ -338,7 +350,7 @@ function make_html_table(array, table) {
             const table_cell = table_row.insertCell()
             if (index === 1) { // Quality column
                 const icons = replace_icon(csv_cell)
-                table_cell.appendChild(icons[0])
+                table_cell.appendChild(icons)
                 table_cell.setAttribute("data-sort", csv_cell)
                 continue
             }
@@ -351,7 +363,7 @@ function make_html_table(array, table) {
 
 /**
  * Extracts the header from the array and returns an `HTML` table header
- * @param {String[]} array - The array to make into a header
+ * @param {String[][]} array - The array to make into a header
  * @param {HTMLTableElement} table - The document fragment to make the table in
  * @returns {HTMLTableElement} The input array as an `HTML` table header
  * @effects None
@@ -370,21 +382,23 @@ function make_header(array, table) {
 
 /**
  * Replace quality names with their corresponding icon
- * @param {"Silver"|"Gold"|"Iridium"|""} quality_name - The quality name (Silver, Gold, or Iridium)
- * @returns {Array<Node, Number>} An array containing an `HTML` fragment containing a star icon and the order in which to sort the quality.
+ * @param {"Silver"|"Gold"|"Iridium"|""|String} quality_name - The quality name (Silver, Gold, or Iridium)
+ * @returns {Node} An array containing an `HTML` fragment containing a star icon and the order in which to sort the quality.
  * @remarks Uses the Stardew Valley icons for qualities
  * @effects None
  */
 function replace_icon(quality_name) {
     switch (quality_name) {
         case "Silver":
-            return [template.silver(), 1]
+            return template.silver()
         case "Gold":
-            return [template.gold(), 2]
+            return template.gold()
         case "Iridium":
-            return [template.iridium(), 3]
+            return template.iridium()
+        case "":
+            return document.createTextNode("")
         default:
-            return [document.createTextNode(""), 0]
+            return document.createTextNode("") // This shouldn't happen, so return an empty node
     }
 }
 
@@ -403,24 +417,24 @@ function format_integer(number) {
 let _previous_output = false // Global, true on 2nd/3rd/xth save file loads
 /**
  * Put the table's `HTML` into the document
- * @param {DocumentFragment} table - The `HTML` fragment to add to the document
+ * @param {HTMLTableElement} table - The `HTML` fragment to add to the document
  * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
  */
 function set_output(table) {
     hide_element(qs("article"))
 
     if (_previous_output) { // Remove old table
-        id("item_table").remove()
+        elements.item_table.remove()
     }
     table = calculate_sum(table) // eslint-disable-line no-param-reassign
 
 
-    const container = id("table_container")
+    const container = elements.table_container
     container.appendChild(table)
 
     show_element(qs("article"))
     _previous_output = true
-    id("filter").focus()
+    elements.filter.focus()
 }
 
 
@@ -480,7 +494,7 @@ function calculate_sum(table) {
  * @effects Initializes Tablesort. Adds event listeners to the table headers.
  */
 function enable_table_sort() {
-    const item_table = id("item_table")
+    const item_table = elements.item_table
     const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
 
     Tablesort.extend("number",
@@ -532,8 +546,8 @@ let _filter_class = 1 // Monotonically incrementing counter to ensure unique CSS
  * @effects Modifies CSS and the `class` attribute of table rows. Modifies global variable `filter_class`.
  */
 function filter_table() {
-    const filter = id("filter").value
-    const table = id("item_table")
+    const filter = elements.filter.value
+    const table = elements.item_table
     const rows = table.tBodies[0].rows
     const search = RegExp(filter, "i")
     const last_filter_class = _filter_class - 1 // The class that we're adding
@@ -564,7 +578,7 @@ function filter_table() {
  * @effects Adds event listeners. Modifies the DOM. Calls functions which make network requests.
  */
 function enable_wiki_click() {
-    const table = id("item_table")
+    const table = elements.item_table
     const body = table.tBodies[0]
 
     body.addEventListener("click", function (event) {
@@ -584,10 +598,12 @@ function enable_wiki_click() {
         })
             .then(function (result) {
                 cell.innerHTML = result // Use innerHTML because the result can contain character entities
+                cell_text(cell, " ")
                 cell.appendChild(template.wiki_link(page_title))
             })
             .catch(function (result) {
                 cell.innerHTML = result
+                cell_text(cell, " ")
                 cell.appendChild(template.wiki_search(page_title))
             })
     })
@@ -615,15 +631,15 @@ function wiki_description_by_title(title) {
         _wiki_callback_success = accept; _wiki_callback_failure = reject
     })
 
-    return request.finally(() => id("wiki_query").remove()) // Cleanup
+    return request.finally(() => elements.wiki_query.remove()) // Cleanup
 }
 
 
 /**
  * Make a request to the *Stardew Valley Wiki*.
  * @param {Function} callback - The function to be called with the resultant data
- * @param {Map<String, String>} parameters - The URL parameters to be used for the request
- * @param {Map<String, String>} [default_parameters] - The default parameters URL parameters to use. Only use if you need to override the default parameters.
+ * @param {Object<String, String>} parameters - The URL parameters to be used for the request
+ * @param {Object<String, String>} [default_parameters] - The default parameters URL parameters to use. Only use if you need to override the default parameters.
  * @remarks The Wiki is using a *really* old version of MediaWiki
  *          (circa 2016), so its CORS support is broken. Although
  *          there appears to be some CORS support with the `origin`
@@ -646,7 +662,7 @@ function make_wiki_request(callback, parameters, default_parameters = {
     const url_parameters = new URLSearchParams({...parameters, ...default_parameters, callback: callback.name})
 
     const request_element = template.wiki_query()
-    request_element.firstElementChild.src += url_parameters.toString()
+    request_element.src += url_parameters.toString()
     document.head.appendChild(request_element)
 }
 
