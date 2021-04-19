@@ -84,6 +84,8 @@
   }
 }
 
+* { box-sizing: border-box; }
+
 html {
   color: var(--color-text);
   background-color: var(--color-background);
@@ -108,12 +110,14 @@ body {
   display: grid;
   justify-items: center;
   margin: var(--page-margin);
+  font-size: 1.0625rem; /* 17px */
 
   /* Use the default system-ui font, when available */
   font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', system-ui, sans-serif;
+  line-height: 1.4; /* Slight Enlargement */
+  hyphens: auto;
   font-variant-ligatures: common-ligatures contextual;
   font-kerning: normal;
-  hyphens: auto;
 
   --page-margin: 15px;
 }
