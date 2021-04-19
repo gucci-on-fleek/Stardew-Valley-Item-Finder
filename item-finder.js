@@ -5,7 +5,7 @@
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
  * SPDX-License-Identifier: MPL-2.0+
- * SPDX-FileCopyrightText: 2020 gucci-on-fleek
+ * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
 /* global Tablesort */
