@@ -6,42 +6,80 @@ Licencing
      SPDX-FileCopyrightText: 2021 gucci-on-fleek
 -->
 
-This file is the licence that governs all files and contributions present in [github.com/gucci-on-fleek/Stardew-Valley-Item-Finder](https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder).
-
-### A quick note ###
-**If you are merely a user of this website, none of this is relevant to you. This licence  only applies if you distribute the software or any of its components.**
-
 Overview
 --------
-Each file should contain the string `SPDX-License-Identifier` somewhere near the top. After this string, there should be a colon followed by the name of a licence that can be found in the `licences/` folder. This licence represents the terms under which the file is licensed. 
+The majority of this website is licensed under the [MPL-2.0](licences/MPL-2.0.txt) or
+any later version. Some additional JavaScript libraries are licensed under other
+[OSI-approved](https://opensource.org/osd) licences
 
-This project uses a few different licences, but all of them meet the [FSF “Free Software”](https://www.gnu.org/philosophy/free-sw.html) and the [OSI “Open Source”](https://opensource.org/osd) definitions. In addition, none of the licences are “Strong Copyleft” (i.e. GPL), so there are no onerous requirements for distribution if you make any modifications.
+All icons used are copyright [ConcernedApe](https://www.stardewvalley.net) and are used
+under Fair Use.
 
-Specific Files and Folders
---------------------------
+Excerpts from the _[Stardew Valley Wiki](https://stardewvalleywiki.com/)_ are licensed
+under [CC-BY-NC-SA-3.0](licences/CC-BY-NC-SA-3.0.txt).
 
-### `assets/` ###
-The `.png` and `.svg` files present in the `assets/` folder are unlicensed. These files were either directly extracted from *Stardew Valley*’s files or are very basic derivatives thereof. However, this is not an issue since the principles of Fair Use allow for them to be used freely for a number of reasons:
-1. The largest original file is 24×24 and has 14 unique colours. An icon this simple does not necessarily meet the threshold of originality required for copyright.
-2. These files are used directly in the context of the game for which they were released. The website where these icons are used does not compete in any way with the game; rather, it enhances the game.
-3. The creator, ConcernedApe, has generally had a pretty friendly attitude towards modders and others who create content derived from the game.
 
-### `libraries/` ###
-All of the files in the `libraries/` folder are third-party libraries. These files are not my own creation, and are licensed as shown in each file.
+General Rules
+-------------
 
-### Documentation (`*.md`) ###
-Any markdown files or documentation are dual-licensed under the MPL ≥v2.0 or CC-BY-SA ≥v4.0. This means that you may choose either licence at your discretion. Note that if a documentation file has an explicit licence that contradicts these terms, that licence supersedes the one listed here.
+1. This licence is only relevant if you choose to _redistribute_ this project or any of
+   its components. No obligations or restrictions are imposed on the mere _use_ of this
+   project.
+2. Each file lists its specific licence in a header near the top. This is the licence
+   that applies to this specific file. These headers should be interpreted as defined by
+   [SPDX](https://spdx.dev/ids/).
+3. Some files may have specific restrictions and conditions attached. Keep reading for
+   more.
 
-### Wiki Content ###
-When you click on an item on the website, the website makes a network request to the *Stardew Valley Wiki*. The content in the Wiki is licensed under CC-BY-NC-SA-3.0. There are no files from the Wiki present in this repository, but a Wiki excerpt appears when a network request is made.
 
-### Other Files ###
-Any files not mentioned above or without a licence header can be assumed to be licensed under the MPL ≥v2.0.
+Specific Rules
+--------------
 
-Requirements for Distribution
------------------------------
-*Note: this is a summary of the legal licence terms, not a legally binding licence. See the `licences/` directory for the true license.*
+### Libraries
+The files present in the `libraries/` folder have been acquired from outside sources and
+thus are licensed separately from the rest of the project. Follow the licence as listed
+in the header for each file.
 
-Almost all of the files in the repository are licensed under the MPL ≥v2.0. In general, this licence has two requirements for distribution:
-1. The licence must be distributed with the software
-2. The source must be made available for any files modified. However, the source does *not* need to be made available for any new files that you add. Any new files that you add can be made available under any licence.
+### Assets
+The files present in the `assets/` folder have been either extracted from 
+_Stardew Valley_ game files or are derivative works thereof. Therefore, the copyright on
+these files belongs solely to ConcernedApe, the creator of _Stardew Valley_. In the
+context of this project — a non-commercial tool used to enhance usage of game from which
+the assets were acquired — the use of four 32×32 icons is considered as Fair Use. It may
+not be appropriate or legal to use these assets for any other purpose, so be cautious when
+redistributing this folder.
+
+### Files not otherwise listed
+Any “code” files not otherwise licensed can be assumed be licensed as `MPL-2.0+`. A
+“code” file is any file designed primarily to be interpreted or executed by a machine.
+Any “documentation” files can be assumed to be licensed as `MPL-2.0+ OR CC-BY-SA-4.0+`.
+A “code” file is any file designed primarily to be read by a human.
+
+### _Stardew Valley Wiki_
+This tool automatically fetches content from the _Stardew Valley Wiki_. This project
+does not distribute any content from the _Wiki_; rather, it fetches excerpts directly 
+from the _Wiki_ to your browser. These excerpts are are licensed under
+[CC-BY-NC-SA-3.0](licences/CC-BY-NC-SA-3.0.txt).
+
+MPL-2.0 Overview
+----------------
+
+The vast majority of this project is licensed under the 
+[Mozilla Public Licence, version 2.0](licences/MPL-2.0.txt) or greater. You’ll need to
+read [the licence](licences/MPL-2.0.txt) for full details, but here’s a quick
+[overview from GitHub](https://choosealicense.com/licenses/mpl-2.0/):
+
+> Permissions of this weak copyleft license are conditioned on making available source
+> code of licensed files and modifications of those files under the same license (or in
+> certain cases, one of the GNU licenses). Copyright and license notices must be
+> preserved. Contributors provide an express grant of patent rights. However, a larger
+> work using the licensed work may be distributed under different terms and without
+> source code for files added in the larger work. 
+> 
+> | Permissions      | Conditions                     | Limitations     |
+> |------------------|--------------------------------|-----------------|
+> | - Commercial use | - Disclose source              | - Liability     |
+> | - Distribution   | - License and copyright notice | - Trademark use |
+> | - Modification   | - Same license (file)          | - Warranty      |
+> | - Patent use     |                                |                 |
+> | - Private use    |                                |                 |
