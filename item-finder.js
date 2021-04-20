@@ -631,7 +631,7 @@ function wiki_description_by_title(title) {
         _wiki_callback_success = accept; _wiki_callback_failure = reject
     })
 
-    return request.finally(() => elements.wiki_query.remove()) // Cleanup
+    return request
 }
 
 
@@ -657,13 +657,12 @@ function make_wiki_request(callback, parameters, default_parameters = {
     action: "query",
     format: "json",
     formatversion: "2",
-    redirects: ""
+    redirects: "",
+    origin: "*",
 }) {
-    const url_parameters = new URLSearchParams({...parameters, ...default_parameters, callback: callback.name})
+    const url_parameters = new URLSearchParams({...parameters, ...default_parameters})
 
-    const request_element = template.wiki_query()
-    request_element.src += url_parameters.toString()
-    document.head.appendChild(request_element)
+    fetch(`https://stardewvalleywiki.com/mediawiki/api.php?${ url_parameters.toString()}`).then(x => x.json().then(y => callback(y)))
 }
 
 
