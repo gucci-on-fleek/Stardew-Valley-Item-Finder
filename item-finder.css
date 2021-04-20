@@ -162,11 +162,6 @@ table {
   font-variant-numeric: tabular-nums;
 }
 
-td,
-th {
-  padding: 2px var(--table-separator-length);
-}
-
 @media (max-width: 45em) {
   /* For Mobile */
   :root {
@@ -195,6 +190,19 @@ th {
   vertical-align: bottom;
 }
 
+td,
+th {
+  padding-top: 2px;
+
+  /* We're doubling the right padding with zero left padding instead
+   * of having single left and right padding because this will give us
+   * more room for the sorting arrows on the right without being occluded.
+   */
+  padding-right: calc(2 * var(--table-separator-length));
+  padding-bottom: 2px;
+  padding-left: 0;
+}
+
 thead tr th,
 tfoot tr td {
   /* Have the header/footer of the table stay in the viewport */
@@ -211,6 +219,32 @@ tfoot tr td {
 thead tr th {
   top: 0;
   cursor: pointer;
+}
+
+td:first-of-type,
+th:first-of-type { /* Fix the left/right paddings for the first/last columns */
+  padding-left: var(--table-separator-length);
+}
+
+td:last-of-type,
+th:last-of-type {
+  padding-right: var(--table-separator-length);
+}
+
+th[aria-sort=ascending]::after {
+  content: " ↑"; /* Thin no-break space + up arrow */
+}
+
+th[aria-sort=descending]::after {
+  content: " ↓"; /* Thin no-break space + down arrow */
+}
+
+th::after {
+  display: inline-block;
+  width: 0;
+  font-weight: bolder;
+  white-space: nowrap;
+  text-decoration: none;
 }
 
 th:focus {
