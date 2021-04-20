@@ -102,7 +102,10 @@ if (document.readyState === "loading") {
 
 window.addEventListener("load", function () {
     get_previous_save()
-    navigator.serviceWorker.register("service-worker.js")
+
+    if (!window.location.origin.includes("127.0.0.1")) { // Disable the cache for local development
+        navigator.serviceWorker.register("service-worker.js")
+    }
 })
 
 
