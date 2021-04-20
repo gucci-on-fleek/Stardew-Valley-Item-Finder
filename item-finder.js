@@ -569,6 +569,8 @@ function filter_table() {
         style.deleteRule(1)
     }
 
+    calculate_sum(table) // Update the footer after the filter is applied
+
     _filter_class++ // Increment the class's name
 }
 
