@@ -33,7 +33,7 @@
             <xsl:value-of select="concat($quote, normalize-space(actual_price), $quote, $col_sep)" />
             <xsl:value-of select="concat($quote, normalize-space(count), $quote, $col_sep)" />
             <xsl:choose>
-                <xsl:when test="contained_in/description and not(contains(contained_in/location, 'Farm'))">
+                <xsl:when test="contained_in/description and not(contains(contained_in/location, 'Farm')) and not(contained_in/type = 'Player')">
                     <xsl:value-of select="concat($quote, normalize-space(contained_in/type), ': ', normalize-space(contained_in/description), ' (', normalize-space(contained_in/location), ')', $quote, $col_sep)" />
                 </xsl:when>
                 <xsl:when test="contained_in/description">
