@@ -232,7 +232,7 @@ function show_element(element) {
  */
 function display_loading(currently_loading, hide_input) {
     const loading = elements.loading
-    const input = qs("input[type=file]")
+    const input = qs("label[for=save_file_input]")
 
     if (currently_loading) {
         show_element(loading)

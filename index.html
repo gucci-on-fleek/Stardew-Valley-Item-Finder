@@ -72,7 +72,9 @@
         </p>
     </section>
 
-    <input type='file' onchange='file_opened(event)' aria-label="Browse for Save File">
+    <input hidden aria-hidden="false" aria-label="Browse for Save File" id="save_file_input" type='file'
+        onchange='file_opened(event)'>
+    <label role="button" aria-hidden="true" for="save_file_input">Browse for Save File</label>
     <div id="loading" class="message" role="alert" hidden>Loading…</div>
     <div id="error" class="message" role="alert" hidden>Error
         <div>Sorry about that. Please refresh and try again.</div>
