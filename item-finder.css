@@ -81,7 +81,19 @@
   }
 }
 
-* { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+}
 
 html {
   color: var(--color-text);
@@ -154,6 +166,7 @@ table {
   overflow-wrap: anywhere;
   table-layout: auto;
   border-spacing: 0;
+  text-rendering: optimizeSpeed;
 
   /* Monospaced numerals */
   font-variant-numeric: tabular-nums;
@@ -407,4 +420,18 @@ input[type=file]:focus + [role=button] {
   background-color: var(--color-text);
   outline: none;
   cursor: pointer;
+}
+
+::selection {
+  background-color: var(--color-faded);
+}
+
+:focus-visible {
+  border-radius: 4px;
+
+  /* outline: solid 20px var(--color-faded); */
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+
+  /* background-color: red; */
 }
