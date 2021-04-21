@@ -505,6 +505,9 @@ function enable_table_sort() {
         (a, b) => parse_integer(a) - parse_integer(b))
 
     const header_cells = item_table.tHead.rows[0].cells
+
+    header_cells[header_cells.length - 1].setAttribute("aria-sort", "ascending") // Show that the table is sorted by the Stack Price by default
+
     for (const cell of header_cells) {
         cell.addEventListener("keydown", function (event) {
             /* Allow the keyboard to be used for sorting */

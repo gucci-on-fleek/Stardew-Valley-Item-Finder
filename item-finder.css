@@ -63,7 +63,9 @@
   h2,
   input,
   header,
-  footer {
+  footer,
+  label,
+  th:not([aria-sort])::after {
     display: none !important;
   }
 
@@ -249,9 +251,15 @@ th[aria-sort=descending]::after {
   content: " ↓"; /* Thin no-break space + down arrow */
 }
 
-th::after {
+th:not([aria-sort])::after {
+  opacity: 0.75;
+  content: " ↕"; /* Thin no-break space + up/down arrow */
+}
+
+th::after { /* stylelint-disable-line no-descending-specificity */
   display: inline-block;
   width: 0;
+  height: 0;
   font-weight: bolder;
   white-space: nowrap;
   text-decoration: none;
