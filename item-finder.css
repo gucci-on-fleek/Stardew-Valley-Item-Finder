@@ -5,38 +5,70 @@
  */
 
 :root {
-  /* All of the colors that we can use */
-  --color-light: hsl(32, 98%, 92%);
-  --color-light-faded: hsla(32, 100%, 90%, 40%);
-  --color-dark: hsl(32, 80%, 8%);
-  --color-dark-faded: hsla(32, 80%, 8%, 40%);
-  --color-blue: hsl(213, 90%, 45%);
-  --color-purple: hsl(280, 90%, 45%);
-  --color-light-blue: hsl(213, 85%, 75%);
-  --color-light-purple: hsl(280, 84%, 75%);
-
-  /* Lengths */
-  --table-separator-length: 10px;
+  --color-primary: hsl(103, 70%, 30%);
+  --color-primary-accent: hsl(105, 30%, 56%);
+  --color-primary-darker: hsl(103, 70%, 27%);
+  --color-secondary: hsl(193, 86%, 32%);
+  --color-text: hsl(103, 100%, 95%);
+  --table-separator-length: 20px;
 }
 
-:root { /* stylelint-disable-line no-duplicate-selectors */
-  /* Default (light mode) */
-  --color-background: var(--color-light);
-  --color-text: var(--color-dark);
-  --color-link: var(--color-blue);
-  --color-link-followed: var(--color-purple);
-  --color-faded: var(--color-dark-faded);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark mode */
-    --color-background: var(--color-dark);
-    --color-text: var(--color-light);
-    --color-link: var(--color-light-blue);
-    --color-link-followed: var(--color-light-purple);
-    --color-faded: var(--color-light-faded);
+@keyframes spin {
+  from {
+    transform: rotate(0deg) scale(3);
   }
+
+  to {
+    transform: rotate(30deg) scale(3);
+  }
+}
+
+@font-face { /* Fira has a sense of "fun" that the OS default fonts don't, so I think that it's worth the extra download size */
+  font-weight: normal;
+  font-family: 'FiraGo';
+  font-style: normal;
+  src: url("assets/FiraGO-Book.woff2") format('woff2');
+}
+
+@font-face {
+  font-weight: bold;
+  font-family: 'FiraGo';
+  font-style: normal;
+  src: url("assets/FiraGO-Medium.woff2") format('woff2');
+}
+
+@font-face {
+  font-weight: normal;
+  font-family: 'FiraGo';
+  font-style: italic;
+  src: url("assets/FiraGO-BookItalic.woff2") format('woff2');
+}
+
+@font-face {
+  font-weight: bold;
+  font-family: 'FiraGo';
+  font-style: italic;
+  src: url("assets/FiraGO-MediumItalic.woff2") format('woff2');
+}
+
+@font-face {
+  font-weight: 100 900;
+  font-family: 'Fira Code';
+  src: url("assets/FiraCode.woff2") format('woff2');
+}
+
+:root::before { /* There was a lot of trial and error here to get this to work. Be weary to make even small changes */
+  position: fixed;
+  top: calc(50vh - 50vmin);
+  left: calc(50vw - 50vmin);
+  z-index: -1;
+  width: 100vmin;
+  height: 100vmin;
+  background:
+    var(--color-primary)
+    repeating-conic-gradient(hsla(0, 0%, 0%, 0.1) 0 15deg, transparent 0 30deg);
+  animation: spin 15s infinite linear;
+  content: "";
 }
 
 [hidden] {
@@ -52,10 +84,20 @@
   clip-path: inset(100%);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 @media print {
   /* Only print the table, and in black and white */
   :root {
-    --color-background: white;
+    --color-primary: white;
     --color-text: black;
   }
 
@@ -73,13 +115,19 @@
     font-size: 10pt;
   }
 
-  thead tr th,
-  tfoot tr td {
+  thead tr :is(th, td) {
     position: inherit !important;
   }
 
   body {
     margin: 0 !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    background: white !important;
+    box-shadow: none !important;
   }
 }
 
@@ -99,21 +147,21 @@ select {
 
 html {
   color: var(--color-text);
-  background-color: var(--color-background);
 }
 
-a:link {
-  color: var(--color-link);
+a:link,
+details.license summary {
+  /* It's hard to find a blue/cyan with acceptable contrast against the green background, so let's use small caps for links instead */
+  color: var(--color-text);
+  font-size: 0.95em;
+  letter-spacing: 0.2em;
   text-decoration: none;
+  font-variant-caps: all-small-caps;
+  box-shadow: 0 1px 0 var(--color-primary-accent);
 }
 
-a:visited {
-  color: var(--color-link-followed);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
+:is(a, details.license summary):hover {
+  box-shadow: 0 3px 0 var(--color-text);
 }
 
 body {
@@ -124,7 +172,7 @@ body {
   font-size: 1.0625rem; /* 17px */
 
   /* Use the default system-ui font, when available */
-  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', system-ui, sans-serif;
+  font-family: 'FiraGO', ui-sans-serif, sans-serif;
   line-height: 1.4; /* Slight Enlargement */
   hyphens: auto;
   font-variant-ligatures: common-ligatures contextual;
@@ -136,7 +184,7 @@ body {
 :root { /* stylelint-disable-line no-duplicate-selectors */
   /* Style scrollbars (Standards-based, currently Firefox only) */
   scrollbar-width: thin;
-  scrollbar-color: var(--color-faded) var(--color-background);
+  scrollbar-color: var(--color-primary-accent) var(--color-primary);
 }
 
 /* Chrome fallbacks */
@@ -146,11 +194,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-background);
+  background: var(--color-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-faded);
+  background-color: var(--color-primary-accent);
 }
 /* stylelint-enable no-descending-specificity */
 
@@ -159,7 +207,7 @@ h1 {
 
   /* Add a horizontal rule below the title */
   padding-bottom: 0.1em;
-  border-bottom: 1px solid var(--color-faded);
+  border-bottom: 1px solid var(--color-primary-accent);
 }
 
 table {
@@ -180,8 +228,7 @@ table {
     --table-separator-length: 2px;
   }
 
-  td:nth-of-type(5),
-  th:nth-of-type(5) {
+  :is(td,th):nth-of-type(5) {
     /* Need extra space between Count and Location */
     padding-left: 5px;
   }
@@ -221,7 +268,23 @@ tfoot tr td {
   position: -webkit-sticky;
   position: sticky;
   z-index: 5;
-  background: var(--color-background);
+
+  /* The sticky headers/footers need to be above the rest of the table, so they need to have a filled background. We can't just copy the same pinwheel to the front, so a solid colour is the best compromise */
+  background-color: var(--color-primary-darker);
+
+  /* We need to fill behind the arrows */
+  box-shadow: 1em 0 0 0 var(--color-primary-darker), -1em 0 0 0 var(--color-primary-darker);
+}
+
+tbody tr:nth-child(odd) {
+  /* The table looks kinda funny with a solid colour behind it, but it also looks bad with the solid headings and a spinning background. I guess that we might as well stripe the table? Feeling pretty conflicted */
+  background-color: var(--color-primary);
+  box-shadow: 1em 0 0 0 var(--color-primary), -1em 0 0 0 var(--color-primary);
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-primary-darker);
+  box-shadow: 1em 0 0 0 var(--color-primary-darker), -1em 0 0 0 var(--color-primary-darker);
 }
 
 tfoot tr td {
@@ -233,13 +296,11 @@ thead tr th {
   cursor: pointer;
 }
 
-td:first-of-type,
-th:first-of-type { /* Fix the left/right paddings for the first/last columns */
+:is(td, th):first-of-type { /* Fix the left/right paddings for the first/last columns */
   padding-left: var(--table-separator-length);
 }
 
-td:last-of-type,
-th:last-of-type {
+:is(td, th):last-of-type {
   padding-right: var(--table-separator-length);
 }
 
@@ -284,7 +345,10 @@ th:nth-of-type(6) {
 }
 
 code {
-  font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace;
+  font-weight: 375;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  font-variant: no-contextual;
+  letter-spacing: 0.05em;
   overflow-wrap: anywhere;
 }
 
@@ -316,7 +380,7 @@ code.block {
 footer {
   margin-top: 1em;
   padding-top: 0;
-  border-top: 1px solid var(--color-faded);
+  border-top: 1px solid var(--color-primary-accent);
 }
 
 footer ul {
@@ -378,13 +442,11 @@ dd {
 .item_description > td {
   max-width: 0;
   padding: 10px 15px;
-  border: 3px solid var(--color-faded);
+  border: 3px solid var(--color-primary-accent);
   border-radius: 30px;
 }
 
 details.license summary {
-  color: var(--color-link);
-
   /* Hide the "open here" triangle */
   list-style: none;
 
@@ -394,10 +456,6 @@ details.license summary {
 
 details.license summary::-webkit-details-marker {
   display: none;
-}
-
-details.license summary:hover {
-  text-decoration: underline;
 }
 
 details.license[open] > summary {
@@ -415,31 +473,48 @@ details.license[open] {
 }
 
 [role=button] {
+  position: relative;
   padding: 1ex;
-  border: 2px solid var(--color-faded);
+  overflow: hidden;
+  font-size: 125%;
+  border: 2px solid var(--color-primary-accent);
   border-radius: 1em;
+}
+
+[role=button]::before {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  z-index: -1;
+  width: 200%;
+  height: 200%;
+  background-color: var(--color-secondary);
+  content: "";
+}
+
+[role=button]:is(:hover, :focus)::before,
+input[type=file]:focus + [role=button]::before {
+  background:
+    var(--color-secondary)
+    repeating-conic-gradient(hsla(0, 0%, 0%, 0.1) 0 15deg, transparent 0 30deg);
+  animation: spin 2s infinite linear;
 }
 
 [role=button]:hover,
 [role=button]:focus,
 input[type=file]:focus + [role=button] {
-  color: var(--color-background);
-  font-weight: 500;
-  background-color: var(--color-text);
+  color: var(--color-text);
   outline: none;
+  box-shadow: 0 0 0 3px var(--color-primary-accent);
   cursor: pointer;
 }
 
 ::selection {
-  background-color: var(--color-faded);
+  background-color: var(--color-secondary);
 }
 
 :focus-visible {
   border-radius: 4px;
-
-  /* outline: solid 20px var(--color-faded); */
   outline: 2px solid var(--color-text);
   outline-offset: 2px;
-
-  /* background-color: red; */
 }
