@@ -65,7 +65,7 @@
             <dt>Linux and macOS</dt>
             <dd><code>~/.config/StardewValley/Saves</code></dd>
         </dl>
-        <p>
+        <p id="table_description">
             You can sort the table by clicking on the headers, and you can download the table as a <abbr>CSV</abbr>
             file to use in Excel. You can also click on an item name to view its description from the <i>Stardew Valley
                 Wiki</i>.
@@ -92,10 +92,11 @@
                 CSV</button>
             <label role="button" aria-hidden="true" for="down-button">Download as
                 <abbr>CSV</abbr></label>
+            <a class="skip-link" href="#after_table">Skip to after the end of the item table</a>
         </article>
     </div>
 
-    <section class="text">
+    <section class="text" id="after_table">
         <h2>About</h2>
         <p>
             This tool runs entirely inside the browser. Your save file is never sent across the network.
@@ -161,7 +162,7 @@ xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
     </footer>
 
     <template id="table_base">
-        <table id="item_table">
+        <table id="item_table" aria-describedby="table_description">
             <caption hidden aria-hidden="false">Items in your Stardew Valley inventory</caption>
             <thead>
             </thead>

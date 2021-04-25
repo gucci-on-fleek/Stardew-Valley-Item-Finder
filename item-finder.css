@@ -44,7 +44,8 @@
   display: none !important;
 }
 
-[hidden][aria-hidden="false"] {
+[hidden][aria-hidden="false"],
+.skip-link:not(:focus) {
   /* Make hidden elements with aria-hidden=false only visible to screen readers */
   position: absolute;
   display: initial !important;
