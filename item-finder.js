@@ -535,7 +535,8 @@ function enable_table_sort() {
     for (const cell of header_cells) {
         cell.addEventListener("keydown", function (event) {
             /* Allow the keyboard to be used for sorting */
-            if (event.key === "Enter") {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault()
                 tablesort.sortTable(event.srcElement)
             }
         })
@@ -610,10 +611,7 @@ function filter_table() {
  * @effects Adds event listeners. Modifies the DOM. Calls functions which make network requests.
  */
 function enable_wiki_click() {
-    const table = elements.item_table
-    const body = table.tBodies[0]
-
-    body.addEventListener("click", function (event) {
+    function wiki_click_event(event) {
         const target = event.target
         if (target.cellIndex !== 0) { // Only capture click events on the first row
             return
@@ -638,6 +636,17 @@ function enable_wiki_click() {
                 cell_text(cell, " ")
                 cell.appendChild(template.wiki_search(page_title))
             })
+    }
+
+    const table = elements.item_table
+    const body = table.tBodies[0]
+
+    body.addEventListener("click", wiki_click_event)
+    body.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault()
+            wiki_click_event(event)
+        }
     })
     table.addEventListener("beforeSort", remove_wiki_descriptions) // The colspan attributes cause problems with sorting
 }
