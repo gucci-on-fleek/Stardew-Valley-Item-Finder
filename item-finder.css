@@ -73,8 +73,7 @@
     font-size: 10pt;
   }
 
-  thead tr th,
-  tfoot tr td {
+  :is(thead, tfoot) tr :is(th, td) {
     position: inherit !important;
   }
 
@@ -180,8 +179,7 @@ table {
     --table-separator-length: 2px;
   }
 
-  td:nth-of-type(5),
-  th:nth-of-type(5) {
+  :is(td, th):nth-of-type(5) {
     /* Need extra space between Count and Location */
     padding-left: 5px;
   }
@@ -215,8 +213,7 @@ th {
   padding-left: 0;
 }
 
-thead tr th,
-tfoot tr td {
+:is(thead, tfoot) tr :is(th, td) {
   /* Have the header/footer of the table stay in the viewport */
   position: -webkit-sticky;
   position: sticky;
@@ -233,13 +230,11 @@ thead tr th {
   cursor: pointer;
 }
 
-td:first-of-type,
-th:first-of-type { /* Fix the left/right paddings for the first/last columns */
+:is(td, th):first-of-type { /* Fix the left/right paddings for the first/last columns */
   padding-left: var(--table-separator-length);
 }
 
-td:last-of-type,
-th:last-of-type {
+:is(td, th):last-of-type {
   padding-right: var(--table-separator-length);
 }
 
@@ -270,12 +265,9 @@ th:focus {
   outline: none;
 }
 
-td:nth-of-type(3),
-td:nth-of-type(4),
-td:nth-of-type(6),
-th:nth-of-type(3),
-th:nth-of-type(4),
-th:nth-of-type(6) {
+:is(td, th):nth-of-type(3),
+:is(td, th):nth-of-type(4),
+:is(td, th):nth-of-type(6) {
   /* Numeric columns should be right-aligned */
   text-align: right;
 
@@ -420,8 +412,7 @@ details.license[open] {
   border-radius: 1em;
 }
 
-[role=button]:hover,
-[role=button]:focus,
+[role=button]:is(:hover, :focus),
 input[type=file]:focus + [role=button] {
   color: var(--color-background);
   font-weight: 500;
@@ -436,10 +427,6 @@ input[type=file]:focus + [role=button] {
 
 :focus-visible {
   border-radius: 4px;
-
-  /* outline: solid 20px var(--color-faded); */
   outline: 2px solid var(--color-text);
   outline-offset: 2px;
-
-  /* background-color: red; */
 }
