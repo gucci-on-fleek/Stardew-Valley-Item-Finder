@@ -65,7 +65,7 @@
   header,
   footer,
   label,
-  th:not([aria-sort])::after {
+  thead tr th:not([aria-sort])::after {
     display: none !important;
   }
 
@@ -179,12 +179,12 @@ table {
     --table-separator-length: 2px;
   }
 
-  :is(td, th):nth-of-type(5) {
+  :is(td, th):nth-child(5) {
     /* Need extra space between Count and Location */
     padding-left: 5px;
   }
 
-  th:nth-of-type(2):not(:focus):not(:active) {
+  thead tr th:nth-child(2):not(:focus):not(:active) {
     /* Hide quality header when in a tight space */
     font-size: 0;
   }
@@ -196,8 +196,13 @@ tfoot {
 }
 
 th {
+  font-weight: normal;
   text-align: left;
   vertical-align: bottom;
+}
+
+th[scope=col] {
+  font-weight: bold;
 }
 
 td,
@@ -238,20 +243,20 @@ thead tr th {
   padding-right: var(--table-separator-length);
 }
 
-th[aria-sort=ascending]::after {
+thead tr th[aria-sort=ascending]::after {
   content: " ↑"; /* Thin no-break space + up arrow */
 }
 
-th[aria-sort=descending]::after {
+thead tr th[aria-sort=descending]::after {
   content: " ↓"; /* Thin no-break space + down arrow */
 }
 
-th:not([aria-sort])::after {
+thead tr th:not([aria-sort])::after {
   opacity: 0.75;
   content: " ↕"; /* Thin no-break space + up/down arrow */
 }
 
-th::after { /* stylelint-disable-line no-descending-specificity */
+thead tr th::after { /* stylelint-disable-line no-descending-specificity */
   display: inline-block;
   width: 0;
   height: 0;
@@ -260,14 +265,14 @@ th::after { /* stylelint-disable-line no-descending-specificity */
   text-decoration: none;
 }
 
-th:focus {
+thead tr th:focus {
   text-decoration: underline;
   outline: none;
 }
 
-:is(td, th):nth-of-type(3),
-:is(td, th):nth-of-type(4),
-:is(td, th):nth-of-type(6) {
+:is(td, th):nth-child(3),
+:is(td, th):nth-child(4),
+:is(td, th):nth-child(6) {
   /* Numeric columns should be right-aligned */
   text-align: right;
 

@@ -54,11 +54,23 @@ function create_templates() {
      * be handled in a general way, but exceptions are easy to add.
      */
     const __template = {
-        header_cell(x) { // Creates each header cell
+        _header_cell(x) { // Creates each header cell
             const clone = clone_template(elements.header_cell_base).firstElementChild
             clone.insertAdjacentHTML("beforeend", x)
 
-            return clone
+            return /** @type {HTMLTableHeaderCellElement} */ (clone)
+        },
+        column_header_cell(x) {
+            const cell = this._header_cell(x)
+            cell.setAttribute("scope", "col")
+
+            return cell
+        },
+        row_header_cell(x) {
+            const cell = this._header_cell(x)
+            cell.setAttribute("scope", "row")
+
+            return cell
         },
         header(x) { // Creates the header row
             const clone = clone_template(elements.header_base).firstElementChild
@@ -350,14 +362,23 @@ function make_html_table(array, table) {
         const table_row = table.insertRow()
 
         for (const [index, csv_cell] of csv_row.entries()) {
-            const table_cell = table_row.insertCell()
-            if (index === 1) { // Quality column
-                const icons = replace_icon(csv_cell)
-                table_cell.appendChild(icons)
-                table_cell.setAttribute("data-sort", csv_cell)
-                continue
+            switch (index) {
+                case 0: { // Item Name
+                    table_row.appendChild(template.row_header_cell(csv_cell))
+                    break
+                }
+                case 1: { // Quality column
+                    const table_cell = table_row.insertCell()
+                    const icons = replace_icon(csv_cell)
+                    table_cell.appendChild(icons)
+                    table_cell.setAttribute("data-sort", csv_cell)
+                    break
+                }
+                default: {
+                    const table_cell = table_row.insertCell()
+                    cell_text(table_cell, format_integer(csv_cell))
+                }
             }
-            cell_text(table_cell, format_integer(csv_cell))
         }
     }
     return table
@@ -375,7 +396,7 @@ function make_header(array, table) {
     const html = new DocumentFragment()
     const row = array[0]
     for (const cell of row) {
-        html.append(template.header_cell(cell))
+        html.append(template.column_header_cell(cell))
     }
     table.tHead.appendChild(template.header(html))
 
