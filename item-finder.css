@@ -412,13 +412,14 @@ details.license[open] {
 }
 
 [role=button] {
+  display: inline-block;
   padding: 1ex;
   border: 2px solid var(--color-faded);
   border-radius: 1em;
 }
 
-[role=button]:is(:hover, :focus),
-input[type=file]:focus + [role=button] {
+:is(input, button):focus + [role=button],
+[role=button]:is(:hover, :focus) {
   color: var(--color-background);
   font-weight: 500;
   background-color: var(--color-text);

@@ -87,9 +87,11 @@
                 <input id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"
                     type="search" aria-label="Filter Table"></input>
             </h2>
-            <input type="button" id="down-button" class="input" value="Download as CSV"
-                onclick="download_as_csv(_csv_string)" />
-
+            <button hidden aria-hidden="false" type="button" id="down-button" class="input"
+                onclick="download_as_csv(_csv_string)">Download as
+                CSV</button>
+            <label role="button" aria-hidden="true" for="down-button">Download as
+                <abbr>CSV</abbr></label>
         </article>
     </div>
 
