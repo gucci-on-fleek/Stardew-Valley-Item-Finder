@@ -87,8 +87,7 @@ rules:
     - error
     - never
   func-names:
-    - error
-    - never
+    - off
   func-style:
     - error
     - declaration

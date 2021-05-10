@@ -438,28 +438,30 @@ function format_integer(number) {
 }
 
 
-let _previous_output = false // Global, true on 2nd/3rd/xth save file loads
 /**
  * Put the table's `HTML` into the document
  * @param {HTMLTableElement} table - The `HTML` fragment to add to the document
- * @effects Modifies DOM element `#table_container`. Modifies global variable `previous_output`.
+ * @effects Modifies DOM element `#table_container`.
  */
-function set_output(table) {
-    hide_element(qs("article"))
+const set_output = (function () {
+    let previous_output = false // True on 2nd/3rd/xth save file loads
 
-    if (_previous_output) { // Remove old table
-        elements.item_table.remove()
+    return function (table) {
+        hide_element(qs("article"))
+
+        if (previous_output) { // Remove old table
+            elements.item_table.remove()
+        }
+        table = calculate_sum(table) // eslint-disable-line no-param-reassign
+
+        const container = elements.table_container
+        container.appendChild(table)
+
+        show_element(qs("article"))
+        previous_output = true
+        elements.filter.focus()
     }
-    table = calculate_sum(table) // eslint-disable-line no-param-reassign
-
-
-    const container = elements.table_container
-    container.appendChild(table)
-
-    show_element(qs("article"))
-    _previous_output = true
-    elements.filter.focus()
-}
+})()
 
 
 /**
