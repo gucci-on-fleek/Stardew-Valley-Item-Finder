@@ -1,4 +1,3 @@
-"use strict"
 /*
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
@@ -22,7 +21,6 @@ const requests = [
     "assets/silver_star.png",
     "assets/iridium_star.png",
     "assets/icon.svg",
-    "assets/icon-32.png",
     "libraries/tablesort.min.js",
     "manifest.webmanifest"
 ]
