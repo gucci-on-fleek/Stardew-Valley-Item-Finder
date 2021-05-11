@@ -1,6 +1,5 @@
 // @ts-check
 
-"use strict"
 /*
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
@@ -8,7 +7,7 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-/* global Tablesort */
+import {Tablesort} from "./libraries/tablesort.min.js" // eslint-disable-line id-match
 
 /**
  * @type {Object<String, Function>}
@@ -553,11 +552,8 @@ function calculate_sum(table) {
  */
 function enable_table_sort() {
     const item_table = elements.item_table
-
-    // @ts-expect-error I can assure you that `Tablesort` is defined
     const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
 
-    // @ts-expect-error
     Tablesort.extend("number",
         item => item.match(/\d/), // Sort numerically
         (a, b) => parse_integer(a) - parse_integer(b))
