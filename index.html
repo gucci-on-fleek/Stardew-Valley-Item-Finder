@@ -72,8 +72,7 @@
         </p>
     </section>
 
-    <input hidden aria-hidden="false" aria-label="Browse for Save File" id="save_file_input" type='file'
-        onchange='file_opened(event)'>
+    <input hidden aria-hidden="false" aria-label="Browse for Save File" id="save_file_input" type='file'>
     <label role="button" aria-hidden="true" for="save_file_input">Browse for Save File</label>
     <div id="loading" class="message" role="alert" hidden>Loading…</div>
     <div id="error" class="message" role="alert" hidden>Error
@@ -84,13 +83,12 @@
         <!-- We need this empty div so that the contents are horizontally centered on the page. Without it, the contents are left aligned to the rest of the page. -->
         <article hidden id="table_container">
             <h2>Items
-                <input id="filter" class="input" onkeyup="filter_table()" placeholder="Filter" title="Filter"
-                    type="search" aria-label="Filter Table"></input>
+                <input id="filter" class="input" placeholder="Filter" title="Filter" type="search"
+                    aria-label="Filter Table"></input>
             </h2>
-            <button hidden aria-hidden="false" type="button" id="down-button" class="input"
-                onclick="download_as_csv(_csv_string)">Download as
+            <button hidden aria-hidden="false" type="button" id="down_button" class="input">Download as
                 CSV</button>
-            <label role="button" aria-hidden="true" for="down-button">Download as
+            <label role="button" aria-hidden="true" for="down_button">Download as
                 <abbr>CSV</abbr></label>
             <a class="skip-link" href="#after_table">Skip to after the end of the item table</a>
         </article>

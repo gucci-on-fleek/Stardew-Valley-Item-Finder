@@ -105,10 +105,28 @@ function create_templates() {
 }
 
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", create_templates) // Run `create_templates` as soon as the page is loaded
-} else { // DOMContentLoaded has already fired, so run it now
+/**
+ * Initialize necessary features after the site has fully loaded
+ * @effects Modifies global variables, adds event listeners
+ */
+function initialize_page() {
     create_templates()
+
+    const listeners = [
+        [elements.save_file_input, "change", event => file_opened(event)],
+        [elements.filter, "keyup", () => filter_table()],
+        [elements.down_button, "click", () => download_as_csv(_csv_string)],
+    ]
+    for (const [element, type, callback] of listeners) {
+        element.addEventListener(type, callback)
+    }
+}
+
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialize_page) // Initialize as soon as the page is loaded
+} else { // DOMContentLoaded has already fired, so run it now
+    initialize_page()
 }
 
 
