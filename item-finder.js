@@ -9,7 +9,6 @@
  */
 
 /* global Tablesort */
-/* exported file_opened, download_as_csv, filter_table */
 
 /**
  * @type {Object<String, Function>}
@@ -116,6 +115,8 @@ function initialize_page() {
         [elements.save_file_input, "change", event => file_opened(event)],
         [elements.filter, "keyup", () => filter_table()],
         [elements.down_button, "click", () => download_as_csv(_csv_string)],
+        [document.body, "dragover", event => event.preventDefault()], // Needed for the drop event to run
+        [document.body, "drop", event => file_opened(event)],
     ]
     for (const [element, type, callback] of listeners) {
         element.addEventListener(type, callback)
@@ -146,10 +147,23 @@ window.addEventListener("load", function () {
  * @effects Modifies the `#table_container` DOM element
  */
 function file_opened(event) {
+    event.preventDefault()
     display_loading(true, true)
-    const input = /** @type {HTMLInputElement} */ (event.target)
-    const reader = new FileReader()
 
+    let file
+    if (event instanceof window.DragEvent) {
+        event.dataTransfer.dropEffect = "copy"
+        file = event.dataTransfer.files[0]
+    } else if (event.target instanceof window.HTMLInputElement) {
+        const input = event.target
+        file = input.files[0]
+    } else { // This shouldn't happen
+        show_element(elements.error)
+
+        return
+    }
+
+    const reader = new FileReader()
     reader.onload = function () {
         const file_contents = /** @type {String} */ (reader.result)
         const save_game = parse_xml(file_contents)
@@ -164,7 +178,7 @@ function file_opened(event) {
             .finally(() => display_loading(false, true))
             .catch(() => show_element(elements.error))
     }
-    reader.readAsText(input.files[0])
+    reader.readAsText(file)
 }
 
 
