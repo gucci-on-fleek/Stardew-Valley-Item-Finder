@@ -116,6 +116,10 @@ function initialize_page() {
         [elements.down_button, "click", () => download_as_csv(_csv_string)],
         [document.body, "dragover", event => event.preventDefault()], // Needed for the drop event to run
         [document.body, "drop", event => file_opened(event)],
+        ...[...qsa("summary")].map(x => [x, "mousedown", event => { // Allow a middle-click to open all summary/details elements
+            event.preventDefault()
+            event.target.click()
+        }]),
     ]
     for (const [element, type, callback] of listeners) {
         element.addEventListener(type, callback)
