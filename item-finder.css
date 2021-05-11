@@ -16,7 +16,7 @@
   --color-light-purple: hsl(280, 84%, 75%);
 
   /* Lengths */
-  --table-separator-length: 10px;
+  --table-separator-length: 1ch;
 }
 
 :root { /* stylelint-disable-line no-duplicate-selectors */
