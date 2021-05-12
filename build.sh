@@ -5,9 +5,6 @@
 # SPDX-License-Identifier: MPL-2.0+
 # SPDX-FileCopyrightText: 2021 gucci-on-fleek
 
-
-# This script is to be run only from the Dockerfile. See the url above for more info.
-
 set -e # Fail the entire build if any command fails
 
 install_dependencies () { 
