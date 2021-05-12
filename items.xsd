@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <!-- Stardew Valley Item Finder
+     https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+     SPDX-License-Identifier: MPL-2.0+
+     SPDX-FileCopyrightText: 2021 gucci-on-fleek
+-->
     <xs:element name="items">
         <xs:complexType>
             <xs:sequence>

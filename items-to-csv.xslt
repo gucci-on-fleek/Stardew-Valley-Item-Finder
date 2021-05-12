@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
-     Licensed under MPL 2.0 or greater. See URL for more information.
+     SPDX-License-Identifier: MPL-2.0+
+     SPDX-FileCopyrightText: 2021 gucci-on-fleek
 -->
     <xsl:output method="text" encoding="utf-8" />
 
@@ -32,8 +33,14 @@
             <xsl:value-of select="concat($quote, normalize-space(actual_price), $quote, $col_sep)" />
             <xsl:value-of select="concat($quote, normalize-space(count), $quote, $col_sep)" />
             <xsl:choose>
+                <xsl:when test="contained_in/description and not(contains(contained_in/location, 'Farm')) and not(contained_in/type = 'Player')">
+                    <xsl:value-of select="concat($quote, normalize-space(contained_in/type), ': ', normalize-space(contained_in/description), ' (', normalize-space(contained_in/location), ')', $quote, $col_sep)" />
+                </xsl:when>
                 <xsl:when test="contained_in/description">
                     <xsl:value-of select="concat($quote, normalize-space(contained_in/type), ': ', normalize-space(contained_in/description), $quote, $col_sep)" />
+                </xsl:when>
+                <xsl:when test="not(contains(contained_in/location, 'Farm'))">
+                    <xsl:value-of select="concat($quote, normalize-space(contained_in/type), ' (', normalize-space(contained_in/location), ')', $quote, $col_sep)" />
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="concat($quote, normalize-space(contained_in/type), $quote, $col_sep)" />

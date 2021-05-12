@@ -1,278 +1,439 @@
 /* Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
- * Licensed under MPL 2.0 or greater. See URL for more information.
+ * SPDX-License-Identifier: MPL-2.0+
+ * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
 :root {
-    /* All of the colors that we can use */
-    --color-light: hsl(32, 98%, 92%);
-    --color-light-faded: hsla(32, 100%, 90%, 40%);
-    --color-dark: hsl(32, 80%, 8%);
-    --color-dark-faded: hsla(32, 80%, 8%, 40%);
-    --color-blue: hsl(213, 90%, 45%);
-    --color-purple: hsl(280, 90%, 45%);
-    --color-light-blue: hsl(213, 85%, 75%);
-    --color-light-purple: hsl(280, 84%, 75%);
+  /* All of the colors that we can use */
+  --color-light: hsl(32, 98%, 92%);
+  --color-light-faded: hsla(32, 100%, 90%, 40%);
+  --color-dark: hsl(32, 80%, 8%);
+  --color-dark-faded: hsla(32, 80%, 8%, 40%);
+  --color-blue: hsl(213, 90%, 45%);
+  --color-purple: hsl(280, 90%, 45%);
+  --color-light-blue: hsl(213, 85%, 75%);
+  --color-light-purple: hsl(280, 84%, 75%);
+
+  /* Lengths */
+  --table-separator-length: 1ch;
 }
 
-
-:root {
-    /* Default (light mode) */
-    --color-background: var(--color-light);
-    --color-text: var(--color-dark);
-    --color-link: var(--color-blue);
-    --color-link-followed: var(--color-purple);
-    --color-faded: var(--color-dark-faded);
+:root { /* stylelint-disable-line no-duplicate-selectors */
+  /* Default (light mode) */
+  --color-background: var(--color-light);
+  --color-text: var(--color-dark);
+  --color-link: var(--color-blue);
+  --color-link-followed: var(--color-purple);
+  --color-faded: var(--color-dark-faded);
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        /* Dark mode */
-        --color-background: var(--color-dark);
-        --color-text: var(--color-light);
-        --color-link: var(--color-light-blue);
-        --color-link-followed: var(--color-light-purple);
-        --color-faded: var(--color-light-faded);
-    }
+  :root {
+    /* Dark mode */
+    --color-background: var(--color-dark);
+    --color-text: var(--color-light);
+    --color-link: var(--color-light-blue);
+    --color-link-followed: var(--color-light-purple);
+    --color-faded: var(--color-light-faded);
+  }
+}
+
+[hidden] {
+  /* Ensure that 'hidden' elements are really hidden */
+  display: none !important;
+}
+
+[hidden][aria-hidden="false"],
+.skip-link:not(:focus) {
+  /* Make hidden elements with aria-hidden=false only visible to screen readers */
+  position: absolute;
+  display: initial !important;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(100%);
 }
 
 @media print {
+  /* Only print the table, and in black and white */
+  :root {
+    --color-background: white;
+    --color-text: black;
+  }
 
-    /* Only print the table, and in black and white */
-    :root {
-        --color-background: white;
-        --color-text: black;
-    }
+  .text,
+  h2,
+  input,
+  header,
+  footer,
+  label,
+  thead tr th:not([aria-sort])::after {
+    display: none !important;
+  }
 
-    .text,
-    h2,
-    input,
-    header,
-    footer {
-        display: none !important
-    }
+  table {
+    font-size: 10pt;
+  }
 
-    table {
-        font-size: 10pt;
-    }
+  :is(thead, tfoot) tr :is(th, td) {
+    position: inherit !important;
+  }
 
-    thead tr th,
-    tfoot tr td {
-        position: inherit !important;
-    }
+  body {
+    margin: 0 !important;
+  }
+}
 
-    body {
-        margin: 0 !important;
-    }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+}
 
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
 }
 
 html {
-    background-color: var(--color-background);
-    color: var(--color-text);
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
 a:link {
-    color: var(--color-link);
-    text-decoration: none;
+  color: var(--color-link);
+  text-decoration: none;
 }
 
 a:visited {
-    color: var(--color-link-followed);
-    text-decoration: none;
+  color: var(--color-link-followed);
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 body {
-    /* Use the default system-ui font, when available */
-    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', system-ui, sans-serif;
-    margin: 15px;
-    font-variant-ligatures: common-ligatures contextual;
+  /* Center all content in the viewport */
+  display: grid;
+  justify-items: center;
+  margin: var(--page-margin);
+  font-size: 1.0625rem; /* 17px */
+
+  /* Use the default system-ui font, when available */
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', system-ui, sans-serif;
+  line-height: 1.4; /* Slight Enlargement */
+  hyphens: auto;
+  font-variant-ligatures: common-ligatures contextual;
+  font-kerning: normal;
+
+  --page-margin: 15px;
 }
 
+:root { /* stylelint-disable-line no-duplicate-selectors */
+  /* Style scrollbars (Standards-based, currently Firefox only) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-faded) var(--color-background);
+}
+
+/* Chrome fallbacks */
+/* stylelint-disable no-descending-specificity */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-faded);
+}
+/* stylelint-enable no-descending-specificity */
+
 h1 {
-    /* Add a horizontal rule below the title */
-    padding-bottom: .1em;
-    border-bottom: 1px solid var(--color-faded);
-    margin-bottom: 0;
+  margin-bottom: 0;
+
+  /* Add a horizontal rule below the title */
+  padding-bottom: 0.1em;
+  border-bottom: 1px solid var(--color-faded);
 }
 
 table {
-    border-collapse: separate;
-    border-spacing: 20px 2px;
-    /* Counteract border-spacing for the left */
-    margin-left: -20px;
-    table-layout: auto;
-    /* Monospaced numerals */
-    font-variant-numeric: tabular-nums;
-    overflow-wrap: anywhere;
+  margin-right: calc(-1 * var(--table-separator-length));
+  margin-left: calc(-1 * var(--table-separator-length));
+  overflow-wrap: anywhere;
+  table-layout: auto;
+  border-spacing: 0;
+  text-rendering: optimizeSpeed;
+
+  /* Monospaced numerals */
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 45em) {
+  /* For Mobile */
+  :root {
+    --table-separator-length: 2px;
+  }
 
-    /* For mobile */
-    table {
-        /* Reduce spacing when in a tight space */
-        border-spacing: 2px 2px;
-        margin-left: 0px;
-    }
+  :is(td, th):nth-child(5) {
+    /* Need extra space between Count and Location */
+    padding-left: 5px;
+  }
 
-    td:nth-of-type(5),
-    th:nth-of-type(5) {
-        /* Need extra space between Count and Location */
-        padding-left: 5px;
-    }
-
-    th:nth-of-type(2) {
-        /* Hide quality header when in a tight space */
-        visibility: hidden
-    }
+  thead tr th:nth-child(2):not(:focus):not(:active) {
+    /* Hide quality header when in a tight space */
+    font-size: 0;
+  }
 }
 
-thead {
-    font-weight: bold;
-}
-
+thead,
 tfoot {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 th {
-    text-align: left;
+  font-weight: normal;
+  text-align: left;
+  vertical-align: bottom;
 }
 
-th:focus {
-    outline: none;
-    text-decoration: underline;
+th[scope=col] {
+  font-weight: bold;
 }
 
-td:nth-of-type(3),
-td:nth-of-type(4),
-td:nth-of-type(6),
-th:nth-of-type(3),
-th:nth-of-type(4),
-th:nth-of-type(6) {
-    /* Numeric columns should be right-aligned */
-    text-align: right;
-    /* Don't wrap numeric columns */
-    overflow-wrap: normal !important;
+td,
+th {
+  padding-top: 2px;
+
+  /* We're doubling the right padding with zero left padding instead
+   * of having single left and right padding because this will give us
+   * more room for the sorting arrows on the right without being occluded.
+   */
+  padding-right: calc(2 * var(--table-separator-length));
+  padding-bottom: 2px;
+  padding-left: 0;
 }
 
-thead tr th,
+:is(thead, tfoot) tr :is(th, td) {
+  /* Have the header/footer of the table stay in the viewport */
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 5;
+  background: var(--color-background);
+}
+
 tfoot tr td {
-    /* Have the header/footer of the table stay in the viewport */
-    position: -webkit-sticky;
-    position: sticky;
-    z-index: 5;
-    background: var(--color-background);
-}
-
-tfoot tr td {
-    bottom: 0;
+  bottom: 0;
 }
 
 thead tr th {
-    top: 0;
-    cursor: pointer;
+  top: 0;
+  cursor: pointer;
+}
+
+:is(td, th):first-of-type { /* Fix the left/right paddings for the first/last columns */
+  padding-left: var(--table-separator-length);
+}
+
+:is(td, th):last-of-type {
+  padding-right: var(--table-separator-length);
+}
+
+thead tr th[aria-sort=ascending]::after {
+  content: " ↑"; /* Thin no-break space + up arrow */
+}
+
+thead tr th[aria-sort=descending]::after {
+  content: " ↓"; /* Thin no-break space + down arrow */
+}
+
+thead tr th:not([aria-sort])::after {
+  opacity: 0.75;
+  content: " ↕"; /* Thin no-break space + up/down arrow */
+}
+
+thead tr th::after { /* stylelint-disable-line no-descending-specificity */
+  display: inline-block;
+  width: 0;
+  height: 0;
+  font-weight: bolder;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+thead tr th:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+:is(td, th):nth-child(3),
+:is(td, th):nth-child(4),
+:is(td, th):nth-child(6) {
+  /* Numeric columns should be right-aligned */
+  text-align: right;
+
+  /* Don't wrap numeric columns */
+  overflow-wrap: normal;
 }
 
 code {
-    font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace
+  font-family: ui-monospace, Consolas, Inconsolata, "Roboto Mono", "Droid Sans Mono", "Fira Mono", monospace;
+  overflow-wrap: anywhere;
 }
 
 section,
 header,
 footer,
 article {
-    /* Don't want really wide text */
-    max-width: 800px;
-    display: block;
-    width: 100%;
-}
+  /* Don't want really wide text */
+  --max-page-width: 50em;
 
-body {
-    /* Center all content in the viewport */
-    display: grid;
-    justify-items: center;
+  display: block;
+  width: 100%;
+  max-width: var(--max-page-width);
 }
 
 #filter {
-    margin-left: 50px;
+  margin-left: 50px;
 }
 
 .icon {
-    height: 1em;
-}
-
-.sort-id {
-    /* sort-id is only used to sort the qualities */
-    display: none
+  height: 1em;
 }
 
 code.block {
-    display: block;
-    max-width: 100%;
+  display: block;
+  max-width: 100%;
 }
 
 footer {
-    padding-top: 0;
-    border-top: 1px solid var(--color-faded);
-    margin-top: 1em;
-    text-align: right;
+  margin-top: 1em;
+  padding-top: 0;
+  border-top: 1px solid var(--color-faded);
 }
 
 footer ul {
-    margin: 0;
-    padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 0;
 }
 
 footer ul li {
-    list-style-type: none;
-    display: inline;
+  display: inline;
+  list-style-type: none;
 }
 
-footer li:not(:first-child):before {
-    content: " • ";
+footer li:not(:last-child)::after {
+  content: " • ";
 }
 
 abbr {
-    text-decoration: none;
-    font-variant-caps: all-small-caps;
+  text-decoration: none;
+  font-variant-caps: all-small-caps;
+  font-variant-numeric: oldstyle-nums;
 }
 
 dl {
-    display: grid;
-    margin-left: 1em;
-    grid-template-columns: fit-content(20%) 1fr;
-    margin: 0 0 0 0;
-    padding-inline-start: 40px;
-    justify-items: start;
-
+  display: grid;
+  grid-template-columns: fit-content(20%) 1fr;
+  justify-items: start;
+  margin: 0 0 0 0;
+  margin-left: 1em;
+  padding-inline-start: 40px;
 }
 
 dt {
-    display: list-item;
-    grid-column-start: 1;
+  display: list-item;
+  grid-column-start: 1;
 }
 
 dd {
-    display: inline;
-    margin-left: 1em;
-    grid-column-start: 2;
+  display: inline;
+  grid-column-start: 2;
+  margin-left: 1em;
 }
 
 .message {
-    font-size: 2em;
-    font-weight: bold;
-    letter-spacing: 2.5px;
+  font-weight: bold;
+  font-size: 2em;
+  letter-spacing: 2.5px;
 }
 
-.message>* {
-    font-size: initial;
-    font-weight: initial;
-    letter-spacing: initial;
-    font-style: italic;
+.message > * {
+  font-weight: initial;
+  font-size: initial;
+  font-style: italic;
+  letter-spacing: initial;
+}
+
+.item_description > td {
+  max-width: 0;
+  padding: 10px 15px;
+  border: 3px solid var(--color-faded);
+  border-radius: 30px;
+}
+
+details.license summary {
+  color: var(--color-link);
+
+  /* Hide the "open here" triangle */
+  list-style: none;
+
+  /* Make the summary look like a URL */
+  cursor: pointer;
+}
+
+details.license summary::-webkit-details-marker {
+  display: none;
+}
+
+details.license summary:hover {
+  text-decoration: underline;
+}
+
+details.license[open] > summary {
+  /* Remove the summary once it has been expanded */
+  display: none;
+}
+
+details.license[open] {
+  /* Show the opened details below the footer */
+  position: absolute;
+
+  /* Align the details with the rest of the content  */
+  left: max((100% - var(--max-page-width)) / 2, var(--page-margin));
+  max-width: var(--max-page-width);
+}
+
+[role=button] {
+  display: inline-block;
+  padding: 1ex;
+  border: 2px solid var(--color-faded);
+  border-radius: 1em;
+}
+
+:is(input, button):focus + [role=button],
+[role=button]:is(:hover, :focus) {
+  color: var(--color-background);
+  font-weight: 500;
+  background-color: var(--color-text);
+  outline: none;
+  cursor: pointer;
+}
+
+::selection {
+  background-color: var(--color-faded);
+}
+
+:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
 }
