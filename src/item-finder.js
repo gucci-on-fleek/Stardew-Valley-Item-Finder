@@ -138,7 +138,7 @@ window.addEventListener("load", function () {
     get_previous_save()
 
     if (!window.location.origin.includes("127.0.0.1")) { // Disable the cache for local development
-        navigator.serviceWorker.register("service-worker.js")
+        navigator.serviceWorker.register("dist/service-worker.js")
     }
 })
 
