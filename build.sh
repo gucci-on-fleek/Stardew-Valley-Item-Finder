@@ -34,7 +34,7 @@ minify_xml () {
 }
 
 minify_js () {
-    terser src/"$1" -c unsafe=true -m "toplevel=true" --mangle-props --source-map "url=$1.map" --output dist/"$1"
+    terser src/"$1" -c unsafe=true -m "toplevel=true" --mangle-props 'regex = /template/' --source-map "url=$1.map" --output dist/"$1"
 }
 
 minify_json () {
