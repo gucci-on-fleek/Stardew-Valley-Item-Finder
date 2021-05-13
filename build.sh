@@ -9,7 +9,7 @@ set -e # Fail the entire build if any command fails
 
 install_dependencies () { 
     sudo npm i -g csso-cli terser html-minifier # csso to minify CSS, terser to minify JS, and html-minifier to minify HTML
-    sudo apt install minify pngcrush zopfli --no-install-recommends -y # to minify XSLT and PNG
+    sudo apt install minify pngcrush zopfli jq --no-install-recommends -y # to minify XSLT and PNG
 
     wget "https://github.com/RazrFalcon/svgcleaner/releases/download/v0.9.5/svgcleaner_linux_x86_64_0.9.5.tar.gz" # to minify SVG
     tar xf svgcleaner* -C ~
@@ -29,6 +29,7 @@ minify_js () {
     terser src/item-finder.js -c unsafe=true -m "toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --mangle-props 'regex = /template/' --source-map "url=item-finder.js.map" --output dist/item-finder.js
     terser src/service-worker.js --source-map "url=service-worker.js.map" --output dist/service-worker.js
     terser src/tablesort.js --source-map "url=service-worker.js.map" --output dist/tablesort.js
+    jq -c < src/manifest.webmanifest > dist/manifest.webmanifest
 }
 
 minify_css () {
