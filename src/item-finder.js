@@ -7,7 +7,7 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-import {Tablesort} from "../libraries/tablesort.min.js" // eslint-disable-line id-match
+import {Tablesort} from "./libraries/tablesort.min.js" // eslint-disable-line id-match
 
 /**
  * @type {Object<String, Function>}
