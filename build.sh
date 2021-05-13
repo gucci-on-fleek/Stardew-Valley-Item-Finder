@@ -68,6 +68,7 @@ minify () {
     parallel_exec '*.png' minify_png
     parallel_exec '*.svg' minify_svg
     use_minified
+    sed -i 's|dist/|src/|' dist/*.map # Fix source maps
 }
 
 unique_cache_name () {
