@@ -8,84 +8,77 @@
 set -e # Fail the entire build if any command fails
 
 install_dependencies () { 
-    sudo npm i -g csso-cli terser html-minifier # csso to minify CSS, terser to minify JS, and html-minifier to minify HTML
-    sudo apt install minify pngcrush zopfli jq --no-install-recommends -y # to minify XSLT and PNG
+    sudo npm i -g csso-cli terser html-minifier svgo
+    sudo apt install minify pngcrush zopfli jq --no-install-recommends -y
 
-    wget "https://github.com/RazrFalcon/svgcleaner/releases/download/v0.9.5/svgcleaner_linux_x86_64_0.9.5.tar.gz" # to minify SVG
+    wget "https://github.com/RazrFalcon/svgcleaner/releases/download/v0.9.5/svgcleaner_linux_x86_64_0.9.5.tar.gz"
     tar xf svgcleaner* -C ~
+    rm svgcleaner*
 
 }
 
-unique_cache_name () {
-    sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' src/service-worker.js # The service worker will only update the cache if its version is changed
-}
-
-use_minified () {
-    sed -i 's|src/|dist/|g' src/index.html src/service-worker.js src/item-finder.js src/service-worker.js src/item-finder.js
-    sed -i 's|\.\./|./|g; ' src/index.html
-}
-
-minify_js () {
-    terser src/item-finder.js -c unsafe=true -m "toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --mangle-props 'regex = /template/' --source-map "url=item-finder.js.map" --output dist/item-finder.js
-    terser src/service-worker.js --source-map "url=service-worker.js.map" --output dist/service-worker.js
-    terser src/tablesort.js --source-map "url=service-worker.js.map" --output dist/tablesort.js
-    jq -c < src/manifest.webmanifest > dist/manifest.webmanifest
+parallel_exec () {
+    find . -type d \( -name 'node_modules' -o -name '.git' \) -prune -o -name "$1" -printf '%f\n' | parallel --will-cite "$0" "$2"
 }
 
 minify_css () {
-    csso src/item-finder.css --source-map file --output dist/item-finder.css
-}
-
-minify_xslt () {
-    command minify --type=xml -o dist/items.xslt src/items.xslt
-    command minify --type=xml -o dist/items-to-csv.xslt src/items-to-csv.xslt
-    command minify --type=xml -o dist/price-adjustments.xslt src/price-adjustments.xslt
+    csso src/"$1" --source-map file --output dist/"$1"
 }
 
 minify_html () {
-    html-minifier src/index.html --collapse-boolean-attributes --collapse-inline-tag-whitespace --collapse-whitespace --conservative-collapse --decode-entities --html5 --include-auto-generated-tags --remove-attribute-quotes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes -o index.html
+    html-minifier src/"$1" --collapse-boolean-attributes --collapse-whitespace --decode-entities --html5 --include-auto-generated-tags --remove-attribute-quotes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes -o dist/"$1"
 }
 
-minify_one_png () {
-    pngcrush -ow -rem gAMA -rem cHRM -rem bKGD -rem tIME -rem tEXt -rem TRRd "$1" # Remove extra data in png files
-    zopflipng -y -m --lossy_transparent "$1" "$1" # Bruteforce compress the png
+minify_xml () {
+    command minify --type=xml -o dist/"$1" src/"$1"
 }
 
-minify_one_svg () {
-    for i in $(seq 5); do # For some reason, svgcleaner needs to be ran multiple times for the best results
-        ~/svgcleaner "$1" "$1" --remove-invisible-elements
+minify_js () {
+    terser src/"$1" -c unsafe=true -m "toplevel=true" --mangle-props --source-map "url=$1.map" --output dist/"$1"
+}
+
+minify_json () {
+    jq -c < src/"$1" > dist/"$1"
+}
+
+minify_png () {
+    pngcrush -ow -rem gAMA -rem cHRM -rem bKGD -rem tIME -rem tEXt -rem TRRd assets/"$1" # Remove extra data in png files
+    zopflipng -y -m --lossy_transparent assets/"$1" assets/"$1" # Bruteforce compress the png
+}
+
+minify_svg () {
+    for i in $(seq 5); do # svgcleaner needs to be ran 5 times for the smallest size
+        ~/svgcleaner assets/"$1" assets/"$1" --remove-invisible-elements
     done
-}
-
-minify_images () {
-    # Recursively minify all images
-    find . -name "*.png" -exec "$0" minify_one_png {} \;
-    find . -name "*.svg" -exec "$0" minify_one_svg {} \;
+    svgo assets/"$1" # svgo needs to be ran twice for the smallest size
+    svgo assets/"$1"
 }
 
 minify () {
-    use_minified
-    minify_js
-    minify_css
-    minify_xslt
-    minify_html
-    minify_images
+    parallel_exec '*.css' minify_css
+    parallel_exec '*.html' minify_html
+    parallel_exec '*.xslt' minify_xml
+    parallel_exec '*.js' minify_js
+    parallel_exec '*.webmanifest' minify_json
+    parallel_exec '*.png' minify_png
+    parallel_exec '*.svg' minify_svg
+}
+
+unique_cache_name () {
+    sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' dist/service-worker.js # The service worker will only update the cache if its version is changed
+}
+
+use_minified () {
+    sed -i 's|src/|dist/|g' dist/*
+    sed -i 's|\.\./|./|g; ' dist/index.html
 }
 
 github_build () {
     install_dependencies
+    minify
     unique_cache_name
-    minify
+    mv dist/index.html ./index.html
 }
 
-docker_build () {
-    apt update
-    apt install sudo
-    apt install npm wget --no-install-recommends -y
-    install_dependencies
-    minify
-}
-
-
-echo "$1"
-$1 "$2"
+echo "** $1 **"
+$1 "$2" "$3"
