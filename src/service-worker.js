@@ -5,23 +5,23 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-const version="837947183"
+const version="837963833"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
     ".",
-    "./dist/item-finder.js",
-    "./dist/item-finder.css",
-    "./dist/items.xslt",
-    "./dist/items-to-csv.xslt",
-    "./dist/price-adjustments.xslt",
-    "./dist/service-worker.js",
-    "./assets/gold_star.png",
-    "./assets/silver_star.png",
-    "./assets/iridium_star.png",
-    "./assets/icon.svg",
-    "./dist/tablesort.js",
-    "./dist/manifest.webmanifest"
+    "item-finder.js",
+    "item-finder.css",
+    "items.xslt",
+    "items-to-csv.xslt",
+    "price-adjustments.xslt",
+    "service-worker.js",
+    "../assets/gold_star.png",
+    "../assets/silver_star.png",
+    "../assets/iridium_star.png",
+    "../assets/icon.svg",
+    "tablesort.js",
+    "manifest.webmanifest"
 ]
 let fetched = 0
 const threshold = 1000 * 60 * 60 * 24 // 1 day in milliseconds

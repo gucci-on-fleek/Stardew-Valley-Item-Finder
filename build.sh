@@ -21,7 +21,8 @@ unique_cache_name () {
 }
 
 use_minified () {
-    sed -i 's|\.\./|./|g; s|src/|dist/|g' src/index.html src/service-worker.js src/item-finder.js src/service-worker.js src/item-finder.js
+    sed -i 's|src/|dist/|g' src/index.html src/service-worker.js src/item-finder.js src/service-worker.js src/item-finder.js
+    sed -i 's|\.\./|./|g; ' src/index.html
 }
 
 minify_js () {
