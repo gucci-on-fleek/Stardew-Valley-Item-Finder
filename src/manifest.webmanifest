@@ -17,6 +17,12 @@
             "src": "../assets/icon.svg",
             "type": "image/svg+xml",
             "sizes": "any"
+        },
+        {
+            "src": "../assets/icon-maskable.svg",
+            "type": "image/svg+xml",
+            "purpose": "maskable",
+            "sizes": "any"
         }
     ],
     "start_url": "/Stardew-Valley-Item-Finder/",
