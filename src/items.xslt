@@ -191,6 +191,6 @@
     </location>
   </xsl:template>
 
-  <xsl:include href="price-adjustments.xslt" /> <!-- Import the price adjustments from a separate file -->
+  <xsl:include href="src/price-adjustments.xslt" /> <!-- Import the price adjustments from a separate file -->
 
 </xsl:stylesheet>
