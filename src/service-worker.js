@@ -5,7 +5,7 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-const version="840197643"
+const version="840338437"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
@@ -15,7 +15,7 @@ const requests = [
     "items.xslt",
     "items-to-csv.xslt",
     "price-adjustments.xslt",
-    "service-worker.js",
+    "../service-worker.js",
     "../assets/gold_star.png",
     "../assets/silver_star.png",
     "../assets/iridium_star.png",

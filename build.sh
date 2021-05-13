@@ -79,6 +79,7 @@ github_build () {
     install_dependencies
     unique_cache_name
     minify
+    mv dist/service-worker.js ./service-worker.js
     mv dist/index.html ./index.html
 }
 
