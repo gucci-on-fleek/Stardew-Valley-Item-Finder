@@ -17,31 +17,30 @@ install_dependencies () {
 }
 
 unique_cache_name () {
-    sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' service-worker.js # The service worker will only update the cache if its version is changed
+    sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' src/service-worker.js # The service worker will only update the cache if its version is changed
 }
 
 use_minified () {
-    sed -i 's/item-finder.js/item-finder.min.js/; s/service-worker.js/service-worker.min.js/; s/item-finder.css/item-finder.min.css/' index.html service-worker.js item-finder.js
-    sed -i 's/items.xslt/items.min.xslt/; s/items-to-csv.xslt/items-to-csv.min.xslt/; s/price-adjustments.xslt/price-adjustments.min.xslt/' service-worker.js item-finder.js
+    sed -i 's|src/|dist/|' src/index.html src/service-worker.js src/item-finder.js src/service-worker.js src/item-finder.js
 }
 
 minify_js () {
-    terser item-finder.js -c unsafe=true -m "toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --mangle-props 'regex = /template/' --source-map "url=item-finder.min.js.map" --output item-finder.min.js
-    terser service-worker.js --source-map "url=service-worker.min.js.map" --output service-worker.min.js
+    terser src/item-finder.js -c unsafe=true -m "toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --mangle-props 'regex = /template/' --source-map "url=item-finder.js.map" --output dist/item-finder.js
+    terser src/service-worker.js --source-map "url=dist/service-worker.js.map" --output dist/service-worker.js
 }
 
 minify_css () {
-    csso item-finder.css --source-map file --output item-finder.min.css
+    csso src/item-finder.css --source-map file --output dist/item-finder.css
 }
 
 minify_xslt () {
-    command minify --type=xml -o items.min.xslt items.xslt
-    command minify --type=xml -o items-to-csv.min.xslt items-to-csv.xslt
-    command minify --type=xml -o price-adjustments.min.xslt price-adjustments.xslt
+    command minify --type=xml -o dist/items.xslt src/items.xslt
+    command minify --type=xml -o dist/items-to-csv.xslt src/items-to-csv.xslt
+    command minify --type=xml -o dist/price-adjustments.xslt src/price-adjustments.xslt
 }
 
 minify_html () {
-    html-minifier index.html --collapse-boolean-attributes --collapse-inline-tag-whitespace --collapse-whitespace --conservative-collapse --decode-entities --html5 --include-auto-generated-tags --remove-attribute-quotes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes -o index.html
+    html-minifier src/index.html --collapse-boolean-attributes --collapse-inline-tag-whitespace --collapse-whitespace --conservative-collapse --decode-entities --html5 --include-auto-generated-tags --remove-attribute-quotes --remove-comments --remove-empty-attributes --remove-redundant-attributes --remove-script-type-attributes --remove-style-link-type-attributes -o index.html
 }
 
 minify_one_png () {

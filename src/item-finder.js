@@ -7,7 +7,7 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-import {Tablesort} from "./libraries/tablesort.min.js" // eslint-disable-line id-match
+import {Tablesort} from "../libraries/tablesort.min.js" // eslint-disable-line id-match
 
 /**
  * @type {Object<String, Function>}
@@ -138,7 +138,7 @@ window.addEventListener("load", function () {
     get_previous_save()
 
     if (!window.location.origin.includes("127.0.0.1")) { // Disable the cache for local development
-        navigator.serviceWorker.register("service-worker.min.js")
+        navigator.serviceWorker.register("service-worker.js")
     }
 })
 
@@ -171,7 +171,7 @@ function file_opened(event) {
         const file_contents = /** @type {String} */ (reader.result)
         const save_game = parse_xml(file_contents)
 
-        get_files(["items.min.xslt", "items-to-csv.min.xslt"]).then(
+        get_files(["items.xslt", "items-to-csv.xslt"]).then(
             function (requests) {
                 const items = process_xslt(parse_xml(requests[0]), save_game)
                 const csv = process_xslt(parse_xml(requests[1]), items)
