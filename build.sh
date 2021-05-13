@@ -65,7 +65,7 @@ minify () {
 }
 
 unique_cache_name () {
-    sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' dist/service-worker.js # The service worker will only update the cache if its version is changed
+    sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' src/service-worker.js # The service worker will only update the cache if its version is changed
 }
 
 use_minified () {
@@ -75,8 +75,8 @@ use_minified () {
 
 github_build () {
     install_dependencies
-    minify
     unique_cache_name
+    minify
     mv dist/index.html ./index.html
 }
 
