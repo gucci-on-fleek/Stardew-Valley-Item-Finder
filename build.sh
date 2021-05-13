@@ -27,6 +27,7 @@ use_minified () {
 minify_js () {
     terser src/item-finder.js -c unsafe=true -m "toplevel=true, reserved=['csv_string', 'file_opened', 'filter_table', 'download_as_csv']" --mangle-props 'regex = /template/' --source-map "url=item-finder.js.map" --output dist/item-finder.js
     terser src/service-worker.js --source-map "url=dist/service-worker.js.map" --output dist/service-worker.js
+    terser src/tablesort.js --source-map "url=dist/service-worker.js.map" --output dist/tablesort.js
 }
 
 minify_css () {
