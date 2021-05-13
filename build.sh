@@ -54,6 +54,11 @@ minify_svg () {
     svgo assets/"$1"
 }
 
+use_minified () {
+    sed -i 's|src/|dist/|g' dist/*
+    sed -i 's|\.\./|./|g; ' dist/index.html
+}
+
 minify () {
     parallel_exec '*.css' minify_css
     parallel_exec '*.html' minify_html
@@ -62,15 +67,11 @@ minify () {
     parallel_exec '*.webmanifest' minify_json
     parallel_exec '*.png' minify_png
     parallel_exec '*.svg' minify_svg
+    use_minified
 }
 
 unique_cache_name () {
     sed -i 's/^const version.*$/const version="'"$GITHUB_RUN_ID"'"/' src/service-worker.js # The service worker will only update the cache if its version is changed
-}
-
-use_minified () {
-    sed -i 's|src/|dist/|g' dist/*
-    sed -i 's|\.\./|./|g; ' dist/index.html
 }
 
 github_build () {

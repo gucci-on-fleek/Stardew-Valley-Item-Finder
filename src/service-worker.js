@@ -5,7 +5,7 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-const version="840136414"
+const version="840139376"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
