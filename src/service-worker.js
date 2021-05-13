@@ -9,19 +9,19 @@ const version = "1.0"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
-    "..",
-    "item-finder.js",
-    "item-finder.css",
-    "items.xslt",
-    "items-to-csv.xslt",
-    "price-adjustments.xslt",
+    ".",
+    "src/item-finder.js",
+    "src/item-finder.css",
+    "src/items.xslt",
+    "src/items-to-csv.xslt",
+    "src/price-adjustments.xslt",
     "service-worker.js",
-    "../assets/gold_star.png",
-    "../assets/silver_star.png",
-    "../assets/iridium_star.png",
-    "../assets/icon.svg",
-    "tablesort.js",
-    "manifest.webmanifest"
+    "assets/gold_star.png",
+    "assets/silver_star.png",
+    "assets/iridium_star.png",
+    "assets/icon.svg",
+    "src/tablesort.js",
+    "src/manifest.webmanifest"
 ]
 let fetched = 0
 const threshold = 1000 * 60 * 60 * 24 // 1 day in milliseconds
