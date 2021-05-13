@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
@@ -101,7 +101,7 @@
   <xsl:template match="/">
     <!-- Wrap all 'item's in a root 'item' node -->
     <items>
-      <xsl:attribute name="xsi:noNamespaceSchemaLocation">https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/items.xsd</xsl:attribute> <!-- Include schema -->
+      <xsl:attribute name="xsi:noNamespaceSchemaLocation">https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/src/items.xsd</xsl:attribute> <!-- Include schema -->
       <xsl:apply-templates />
     </items>
   </xsl:template>
