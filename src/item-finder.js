@@ -171,7 +171,7 @@ function file_opened(event) {
         const file_contents = /** @type {String} */ (reader.result)
         const save_game = parse_xml(file_contents)
 
-        get_files(["src/items.xslt", "src/items-to-csv.xslt"]).then(
+        get_files(["../src/items.xslt", "../src/items-to-csv.xslt"]).then(
             function (requests) {
                 const items = process_xslt(parse_xml(requests[0]), save_game)
                 const csv = process_xslt(parse_xml(requests[1]), items)
@@ -494,7 +494,6 @@ const set_output = (function () {
 
         show_element(qs("article"))
         previous_output = true
-        elements.filter.focus()
     }
 })()
 

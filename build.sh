@@ -55,14 +55,14 @@ minify_svg () {
 }
 
 use_minified () {
-    sed -i 's|src/|dist/|g' dist/*
-    sed -i 's|\.\./|./|g; ' dist/index.html
+    sed -i 's|src/|dist/|g; s|\.\./|./|g' $(find dist/ -name '*.webmanifest' -prune -o -type f -print)
 }
 
 minify () {
     parallel_exec '*.css' minify_css
     parallel_exec '*.html' minify_html
     parallel_exec '*.xslt' minify_xml
+    parallel_exec '*.xsd' minify_xml
     parallel_exec '*.js' minify_js
     parallel_exec '*.webmanifest' minify_json
     parallel_exec '*.png' minify_png
