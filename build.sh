@@ -58,14 +58,16 @@ use_minified () {
 }
 
 minify () {
-    parallel_exec '*.css' minify_css
-    parallel_exec '*.html' minify_html
-    parallel_exec '*.xslt' minify_xml
-    parallel_exec '*.xsd' minify_xml
-    parallel_exec '*.js' minify_js
-    parallel_exec '*.webmanifest' minify_json
-    parallel_exec '*.png' minify_png
-    parallel_exec '*.svg' minify_svg
+    parallel --colsep ' ' --will-cite "$0" parallel_exec '{1}' '{2}' <<EOF
+*.css minify_css
+*.html minify_html
+*.xslt minify_xml
+*.xsd minify_xml
+*.js minify_js
+*.webmanifest minify_json
+*.png minify_png
+*.svg minify_svg
+EOF
     use_minified
     sed -i 's|dist/|../src/|' dist/*.map # Fix source maps
 }
