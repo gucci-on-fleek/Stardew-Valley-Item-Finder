@@ -55,7 +55,7 @@ minify_svg () {
 }
 
 use_minified () {
-    sed -i 's|src/|dist/|g; s|\.\./|./|g' $(find dist/ -name '*.webmanifest' -prune -o -print)
+    sed -i 's|src/|dist/|g; s|\.\./|./|g' $(find dist/ -name '*.webmanifest' -prune -o -type f -print)
 }
 
 minify () {
