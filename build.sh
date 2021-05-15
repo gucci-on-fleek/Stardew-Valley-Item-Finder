@@ -8,7 +8,7 @@
 set -e # Fail the entire build if any command fails
 
 install_dependencies () { 
-    sudo npm i -g csso-cli terser html-minifier svgo
+    sudo npm i -g csso-cli terser html-minifier svgo@^1
     sudo apt install minify pngcrush zopfli jq --no-install-recommends -y
 
     wget "https://github.com/RazrFalcon/svgcleaner/releases/download/v0.9.5/svgcleaner_linux_x86_64_0.9.5.tar.gz"
@@ -50,8 +50,7 @@ minify_svg () {
     for i in $(seq 5); do # svgcleaner needs to be ran 5 times for the smallest size
         ~/svgcleaner assets/"$1" assets/"$1" --remove-invisible-elements
     done
-    svgo assets/"$1" # svgo needs to be ran twice for the smallest size
-    svgo assets/"$1"
+    svgo assets/"$1" --multipass --disable=moveGroupAttrsToElems
 }
 
 use_minified () {
