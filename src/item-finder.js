@@ -494,7 +494,6 @@ const set_output = (function () {
 
         show_element(qs("article"))
         previous_output = true
-        elements.filter.focus()
     }
 })()
 
