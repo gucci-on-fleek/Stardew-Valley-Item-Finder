@@ -47,8 +47,8 @@ function getInnerText(el) {
 
 /** Default sort method if no better sort method is found */
 function caseInsensitiveSort(a, b) {
-    a = a.trim().toLowerCase()
-    b = b.trim().toLowerCase()
+    a = a.trim().toLowerCase() // eslint-disable-line no-param-reassign
+    b = b.trim().toLowerCase() // eslint-disable-line no-param-reassign
     if (a === b) return 0
     if (a < b) return 1
 
@@ -177,7 +177,7 @@ Tablesort.prototype = {
         if (that.table.rows.length < 2) return
 
         if (!sortMethod) { // If we force a sort method, it is not necessary to check rows
-            var cell
+            let cell
             while (items.length < 3 && i < that.table.tBodies[0].rows.length) {
                 if (columnKey) {
                     cell = getCellByKey(that.table.tBodies[0].rows[i].cells, columnKey)
@@ -216,14 +216,14 @@ Tablesort.prototype = {
         for (i = 0; i < that.table.tBodies.length; i++) {
             const newRows = []
             const noSorts = {}
-            var j
+            let j
             let totalRows = 0
             let noSortsSoFar = 0
 
             if (that.table.tBodies[i].rows.length < 2) continue
 
             for (j = 0; j < that.table.tBodies[i].rows.length; j++) {
-                var cell
+                let cell
                 item = that.table.tBodies[i].rows[j]
 
                 if (item.getAttribute("data-sort-method") === "none") {
