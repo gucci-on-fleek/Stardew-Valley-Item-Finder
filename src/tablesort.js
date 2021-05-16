@@ -1,11 +1,24 @@
 /*
+ * Original Source:
  * Tablesort v5.2.1 (2020-06-02)
  * http://tristen.ca/tablesort/demo/
  * SPDX-License-Identifier: MIT
  * SPDX-FileCopyrightText: 2020 Tristen Brown
  */
+/*
+ * Modifications:
+ * Stardew Valley Item Finder
+ * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+ * SPDX-License-Identifier: MPL-2.0+
+ * SPDX-FileCopyrightText: 2021 gucci-on-fleek
+ */
+/* eslint-disable id-match */
+
+
 function Tablesort(el, options) {
-    if (!(this instanceof Tablesort)) return new Tablesort(el, options)
+    if (!(this instanceof Tablesort)) {
+        return new Tablesort(el, options)
+    }
 
     if (!el || el.tagName !== "TABLE") {
         throw new Error("Element must be a table")
@@ -13,11 +26,10 @@ function Tablesort(el, options) {
     this.init(el, options || {})
 }
 
+
 const sortOptions = []
-
-const createEvent = function (name) {
+function createEvent(name) {
     let evt
-
     if (!window.CustomEvent || typeof window.CustomEvent !== "function") {
         evt = document.createEvent("CustomEvent")
         evt.initCustomEvent(name, false, false, undefined)
@@ -27,36 +39,38 @@ const createEvent = function (name) {
     return evt
 }
 
-const getInnerText = function (el) {
+
+function getInnerText(el) {
     return el.getAttribute("data-sort") || el.textContent || el.innerText || ""
 }
 
-// Default sort method if no better sort method is found
-const caseInsensitiveSort = function (a, b) {
+
+/** Default sort method if no better sort method is found */
+function caseInsensitiveSort(a, b) {
     a = a.trim().toLowerCase()
     b = b.trim().toLowerCase()
-
     if (a === b) return 0
     if (a < b) return 1
 
     return -1
 }
 
-const getCellByKey = function (cells, key) {
+
+function getCellByKey(cells, key) {
     return [].slice.call(cells).find(function (cell) {
         return cell.getAttribute("data-sort-column-key") === key
     })
 }
 
-/*
+
+/**
  * Stable sort function
  * If two elements are equal under the original sort function,
  * Then there relative order is reversed
  */
-const stabilize = function (sort, antiStabilize) {
+function stabilize(sort, antiStabilize) {
     return function (a, b) {
         const unstableResult = sort(a.td, b.td)
-
         if (unstableResult === 0) {
             if (antiStabilize) return b.index - a.index
 
@@ -66,11 +80,11 @@ const stabilize = function (sort, antiStabilize) {
     }
 }
 
+
 Tablesort.extend = function (name, pattern, sort) {
     if (typeof pattern !== "function" || typeof sort !== "function") {
         throw new Error("Pattern and sort must be a function")
     }
-
     sortOptions.push({
         name,
         pattern,
@@ -78,14 +92,11 @@ Tablesort.extend = function (name, pattern, sort) {
     })
 }
 
-Tablesort.prototype = {
 
+Tablesort.prototype = {
     init(el, options) {
         const that = this
-        let firstRow
-        let defaultSort
-        let i
-        let cell
+        let firstRow, defaultSort, i, cell
 
         that.table = el
         that.thead = false
@@ -99,6 +110,7 @@ Tablesort.prototype = {
                         break
                     }
                 }
+
                 if (!firstRow) {
                     firstRow = el.tHead.rows[el.tHead.rows.length - 1]
                 }
@@ -110,19 +122,19 @@ Tablesort.prototype = {
 
         if (!firstRow) return
 
-        const onClick = function () {
+        function onClick() {
             if (that.current && that.current !== this) {
                 that.current.removeAttribute("aria-sort")
             }
-
             that.current = this
             that.sortTable(this)
         }
 
-        // Assume first row is the header and attach a click handler to each.
-        for (i = 0; i < firstRow.cells.length; i++) {
+
+        for (i = 0; i < firstRow.cells.length; i++) { // Assume first row is the header and attach a click handler to each.
             cell = firstRow.cells[i]
             cell.setAttribute("role", "columnheader")
+
             if (cell.getAttribute("data-sort-method") !== "none") {
                 cell.tabindex = 0
                 cell.addEventListener("click", onClick, false)
@@ -152,8 +164,7 @@ Tablesort.prototype = {
 
         that.table.dispatchEvent(createEvent("beforeSort"))
 
-        // If updating an existing sort, direction should remain unchanged.
-        if (!update) {
+        if (!update) { // If updating an existing sort, direction should remain unchanged.
             if (sortOrder === "ascending") {
                 sortOrder = "descending"
             } else if (sortOrder === "descending") {
@@ -161,14 +172,11 @@ Tablesort.prototype = {
             } else {
                 sortOrder = that.options.descending ? "descending" : "ascending"
             }
-
             header.setAttribute("aria-sort", sortOrder)
         }
-
         if (that.table.rows.length < 2) return
 
-        // If we force a sort method, it is not necessary to check rows
-        if (!sortMethod) {
+        if (!sortMethod) { // If we force a sort method, it is not necessary to check rows
             var cell
             while (items.length < 3 && i < that.table.tBodies[0].rows.length) {
                 if (columnKey) {
@@ -177,9 +185,7 @@ Tablesort.prototype = {
                     cell = that.table.tBodies[0].rows[i].cells[column]
                 }
 
-                // Treat missing cells as empty cells
-                item = cell ? getInnerText(cell) : ""
-
+                item = cell ? getInnerText(cell) : "" // Treat missing cells as empty cells
                 item = item.trim()
 
                 if (item.length > 0) {
@@ -188,7 +194,6 @@ Tablesort.prototype = {
 
                 i++
             }
-
             if (!items) return
         }
 
@@ -219,8 +224,8 @@ Tablesort.prototype = {
 
             for (j = 0; j < that.table.tBodies[i].rows.length; j++) {
                 var cell
-
                 item = that.table.tBodies[i].rows[j]
+
                 if (item.getAttribute("data-sort-method") === "none") {
                     /*
                      * Keep no-sorts in separate list to be able to insert
@@ -233,8 +238,8 @@ Tablesort.prototype = {
                     } else {
                         cell = item.cells[that.col]
                     }
-                    // Save the index for stable sorting
-                    newRows.push({
+
+                    newRows.push({ // Save the index for stable sorting
                         tr: item,
                         td: cell ? getInnerText(cell) : "",
                         index: totalRows
@@ -242,6 +247,7 @@ Tablesort.prototype = {
                 }
                 totalRows++
             }
+
             /*
              * Before we append should we reverse the new array or not?
              * If we reverse, the sort needs to be `anti-stable` so that
@@ -254,21 +260,17 @@ Tablesort.prototype = {
                 newRows.reverse()
             }
 
-            // Append rows that already exist rather than creating new ones
-            for (j = 0; j < totalRows; j++) {
+            for (j = 0; j < totalRows; j++) { // Append rows that already exist rather than creating new ones
                 if (noSorts[j]) {
-                    // We have a no-sort row for this position, insert it here.
-                    item = noSorts[j]
+                    item = noSorts[j] // We have a no-sort row for this position, insert it here.
                     noSortsSoFar++
                 } else {
                     item = newRows[j - noSortsSoFar].tr
                 }
 
-                // AppendChild(x) moves x if already present somewhere else in the DOM
-                that.table.tBodies[i].appendChild(item)
+                that.table.tBodies[i].appendChild(item) // AppendChild(x) moves x if already present somewhere else in the DOM
             }
         }
-
         that.table.dispatchEvent(createEvent("afterSort"))
     },
 
@@ -278,5 +280,6 @@ Tablesort.prototype = {
         }
     }
 }
+
 
 export {Tablesort}
