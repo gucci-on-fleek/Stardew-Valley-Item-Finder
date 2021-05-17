@@ -58,7 +58,7 @@
             <xsl:when test="$parent_items/parent::Object/Name">
               <!-- Mini-Fridges, etc. -->
               <type>
-                <xsl:value-of select="$parent_items/parent::Object/Name" />
+                <xsl:value-of select="$parent_items/parent::Object/DisplayName" />
               </type>
               <xsl:if test="$parent_items/parent::Object/playerChoiceColor">
                 <xsl:call-template name="colours">
