@@ -189,6 +189,31 @@ table {
     /* Hide quality header when in a tight space */
     font-size: 0;
   }
+
+  dl {
+    padding-inline-start: 0 !important;
+  }
+
+  td,
+  th { /* stylelint-disable-line no-descending-specificity */
+    padding-top: 0.25em !important;
+    padding-bottom: 0.25em !important;
+  }
+
+  footer ul {
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  footer ul li {
+    margin-top: 0.25em;
+    list-style-type: default !important;
+  }
+
+  footer li::after {
+    content: "" !important;
+  }
 }
 
 thead,
@@ -217,6 +242,7 @@ th {
   padding-right: calc(2 * var(--table-separator-length));
   padding-bottom: 2px;
   padding-left: 0;
+  vertical-align: top;
 }
 
 :is(thead, tfoot) tr :is(th, td) {
