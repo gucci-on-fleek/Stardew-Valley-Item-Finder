@@ -14,18 +14,7 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-
-function Tablesort(element, options) { /* eslint-disable-line id-match */
-    if (!(this instanceof Tablesort)) {
-        return new Tablesort(element, options)
-    }
-
-    if (!element || element.tagName !== "TABLE") {
-        throw new Error("Element must be a table")
-    }
-    this.init(element, options || {})
-}
-
+/* Helper Functions */
 
 const sort_options = /** @type {Array<Record<'name'|'pattern'|'sort', any>>} */ ([])
 
@@ -82,20 +71,21 @@ function stabilize(sort, anti_stabilize) {
     }
 }
 
+/* Class Declaration */
 
-Tablesort.extend = function (name, pattern, sort) {
-    if (typeof pattern !== "function" || typeof sort !== "function") {
-        throw new Error("Pattern and sort must be a function")
+class Tablesort {
+    constructor(element, options) {
+        if (!(this instanceof Tablesort)) {
+            return new Tablesort(element, options)
+        }
+
+        if (!element || element.tagName !== "TABLE") {
+            throw new Error("Element must be a table")
+        }
+        this.init(element, options || {})
     }
-    sort_options.push({
-        name,
-        pattern,
-        sort
-    })
-}
 
 
-Tablesort.prototype = {
     init(element, options) {
         const that = /** @type {any} */ (this)
         let first_row, default_sort, i, cell
@@ -151,7 +141,20 @@ Tablesort.prototype = {
             that.current = default_sort
             that.sort_table(default_sort)
         }
-    },
+    }
+
+
+    static extend(name, pattern, sort) {
+        if (typeof pattern !== "function" || typeof sort !== "function") {
+            throw new Error("Pattern and sort must be a function")
+        }
+        sort_options.push({
+            name,
+            pattern,
+            sort
+        })
+    }
+
 
     sort_table(header, update) {
         const that = /** @type {any} */ (this)
@@ -274,7 +277,8 @@ Tablesort.prototype = {
             }
         }
         that.table.dispatchEvent(create_event("afterSort"))
-    },
+    }
+
 
     refresh() {
         const that = /** @type {any} */ (this)
@@ -284,5 +288,7 @@ Tablesort.prototype = {
     }
 }
 
+
+/* Exports */
 
 export {Tablesort}
