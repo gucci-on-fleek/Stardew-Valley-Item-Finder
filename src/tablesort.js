@@ -88,7 +88,7 @@ class Tablesort {
 
     init(element, options) {
         const that = /** @type {any} */ (this)
-        let first_row, default_sort, i, cell
+        let first_row, default_sort
 
         that.table = element
         that.thead = false
@@ -96,9 +96,9 @@ class Tablesort {
 
         if (element.rows && element.rows.length > 0) {
             if (element.tHead && element.tHead.rows.length > 0) {
-                for (i = 0; i < element.tHead.rows.length; i++) {
-                    if (element.tHead.rows[i].getAttribute("data-sort-method") === "thead") {
-                        first_row = element.tHead.rows[i]
+                for (const row of element.tHead.rows) {
+                    if (row.getAttribute("data-sort-method") === "thead") {
+                        first_row = row
                         break
                     }
                 }
@@ -123,8 +123,7 @@ class Tablesort {
         }
 
 
-        for (i = 0; i < first_row.cells.length; i++) { // Assume first row is the header and attach a click handler to each.
-            cell = first_row.cells[i]
+        for (const cell of first_row.cells) { // Assume first row is the header and attach a click handler to each.
             cell.setAttribute("role", "columnheader")
 
             if (cell.getAttribute("data-sort-method") !== "none") {
@@ -161,7 +160,6 @@ class Tablesort {
         const column_key = header.getAttribute("data-sort-column-key")
         const column = header.cellIndex
         let sort_function = case_insensitive_sort
-        let item = /** @type {any} */ ("")
         const items = []
         let i = that.thead ? 0 : 1
         const sort_method = header.getAttribute("data-sort-method")
@@ -190,7 +188,7 @@ class Tablesort {
                     cell = that.table.tBodies[0].rows[i].cells[column]
                 }
 
-                item = cell ? get_inner_text(cell) : "" // Treat missing cells as empty cells
+                let item = cell ? get_inner_text(cell) : "" // Treat missing cells as empty cells
                 item = item.trim()
 
                 if (item.length > 0) {
@@ -202,9 +200,7 @@ class Tablesort {
             if (!items) return
         }
 
-        for (i = 0; i < sort_options.length; i++) {
-            item = sort_options[i]
-
+        for (const item of sort_options) {
             if (sort_method) {
                 if (item.name === sort_method) {
                     sort_function = item.sort
@@ -218,18 +214,17 @@ class Tablesort {
 
         that.col = column
 
-        for (i = 0; i < that.table.tBodies.length; i++) {
+        for (const tbody of that.table.tBodies) {
             const new_rows = []
             const no_sorts = {}
             let j
             let total_rows = 0
             let no_sorts_so_far = 0
 
-            if (that.table.tBodies[i].rows.length < 2) continue
+            if (tbody.rows.length < 2) continue
 
-            for (j = 0; j < that.table.tBodies[i].rows.length; j++) {
+            for (const item of tbody.rows) {
                 let cell
-                item = that.table.tBodies[i].rows[j]
 
                 if (item.getAttribute("data-sort-method") === "none") {
                     /*
@@ -266,6 +261,7 @@ class Tablesort {
             }
 
             for (j = 0; j < total_rows; j++) { // Append rows that already exist rather than creating new ones
+                let item
                 if (no_sorts[j]) {
                     item = no_sorts[j] // We have a no-sort row for this position, insert it here.
                     no_sorts_so_far++
@@ -273,7 +269,7 @@ class Tablesort {
                     item = new_rows[j - no_sorts_so_far].tr
                 }
 
-                that.table.tBodies[i].appendChild(item) // AppendChild(x) moves x if already present somewhere else in the DOM
+                tbody.appendChild(item) // AppendChild(x) moves x if already present somewhere else in the DOM
             }
         }
         that.table.dispatchEvent(create_event("afterSort"))
