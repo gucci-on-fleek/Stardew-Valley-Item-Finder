@@ -151,7 +151,7 @@ window.addEventListener("load", function () {
  */
 function file_opened(event) {
     event.preventDefault()
-    display_loading(true, true)
+    loading_screen({show_loading: true, show_input: false})
 
     let file
     if (event instanceof window.DragEvent) {
@@ -178,7 +178,7 @@ function file_opened(event) {
 
                 csv_to_table(xslt_output_to_text(csv))
             })
-            .finally(() => display_loading(false, true))
+            .finally(() => loading_screen({show_loading: false, show_input: true}))
             .catch(() => show_element(elements.error))
     }
     reader.readAsText(file)
@@ -194,10 +194,10 @@ function file_opened(event) {
 function get_previous_save() {
     const csv = localStorage.getItem("csv")
     if (csv) {
-        display_loading(true, false)
+        loading_screen({show_loading: true, show_input: true})
         _csv_string = csv
         csv_to_table(csv)
-        display_loading(false, false)
+        loading_screen({show_loading: false, show_input: true})
     }
 }
 
@@ -273,17 +273,16 @@ function show_element(element) {
 
 /**
  * Displays a loading indicator
- * @param {Boolean} currently_loading - Should we show or hide the loading display
- * @param {Boolean} hide_input - Should hide the input box
+ * @param {{show_loading?: Boolean; show_input?: Boolean}} arguments - Should we show/hide the input box or the loading screen
  * @effects Modifies the DOM to show/hide the loading display
  */
-function display_loading(currently_loading, hide_input) {
+function loading_screen({show_loading = true, show_input = true} = {}) {
     const loading = elements.loading
     const input = qs("label[for=save_file_input]")
 
-    if (currently_loading) {
+    if (show_loading) {
         show_element(loading)
-        if (hide_input) hide_element(input)
+        if (!show_input) hide_element(input)
     } else {
         show_element(input)
         hide_element(loading)

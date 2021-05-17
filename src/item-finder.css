@@ -292,9 +292,9 @@ thead tr th::after { /* stylelint-disable-line no-descending-specificity */
   text-decoration: none;
 }
 
-thead tr th:focus {
+thead tr th:hover {
   text-decoration: underline;
-  outline: none;
+  cursor: pointer;
 }
 
 :is(td, th):nth-child(3),
