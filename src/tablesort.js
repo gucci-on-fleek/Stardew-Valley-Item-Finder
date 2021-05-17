@@ -1,185 +1,194 @@
+// @ts-check
 /*
+ * Original Source:
  * Tablesort v5.2.1 (2020-06-02)
  * http://tristen.ca/tablesort/demo/
  * SPDX-License-Identifier: MIT
  * SPDX-FileCopyrightText: 2020 Tristen Brown
  */
-function Tablesort(el, options) {
-    if (!(this instanceof Tablesort)) return new Tablesort(el, options)
+/*
+ * Modifications:
+ * Stardew Valley Item Finder
+ * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+ * SPDX-License-Identifier: MPL-2.0+
+ * SPDX-FileCopyrightText: 2021 gucci-on-fleek
+ */
 
-    if (!el || el.tagName !== "TABLE") {
-        throw new Error("Element must be a table")
-    }
-    this.init(el, options || {})
-}
+/* Helper Functions */
 
-const sortOptions = []
+const sort_options = /** @type {Array<Record<'name'|'pattern'|'sort', any>>} */ ([])
 
-const createEvent = function (name) {
-    let evt
 
+function create_event(name) {
+    let event
     if (!window.CustomEvent || typeof window.CustomEvent !== "function") {
-        evt = document.createEvent("CustomEvent")
-        evt.initCustomEvent(name, false, false, undefined)
+        event = document.createEvent("CustomEvent")
+        event.initCustomEvent(name, false, false, undefined)
     } else {
-        evt = new CustomEvent(name)
+        event = new CustomEvent(name)
     }
-    return evt
+    return event
 }
 
-const getInnerText = function (el) {
-    return el.getAttribute("data-sort") || el.textContent || el.innerText || ""
+
+function get_inner_text(element) {
+    return element.getAttribute("data-sort") || element.textContent || element.innerText || ""
 }
 
-// Default sort method if no better sort method is found
-const caseInsensitiveSort = function (a, b) {
-    a = a.trim().toLowerCase()
-    b = b.trim().toLowerCase()
 
+/** Default sort method if no better sort method is found */
+function case_insensitive_sort(a, b) {
+    a = a.trim().toLowerCase() // eslint-disable-line no-param-reassign
+    b = b.trim().toLowerCase() // eslint-disable-line no-param-reassign
     if (a === b) return 0
     if (a < b) return 1
 
     return -1
 }
 
-const getCellByKey = function (cells, key) {
+
+function get_cell_by_key(cells, key) {
     return [].slice.call(cells).find(function (cell) {
         return cell.getAttribute("data-sort-column-key") === key
     })
 }
 
-/*
+
+/**
  * Stable sort function
  * If two elements are equal under the original sort function,
  * Then there relative order is reversed
  */
-const stabilize = function (sort, antiStabilize) {
+function stabilize(sort, anti_stabilize) {
     return function (a, b) {
-        const unstableResult = sort(a.td, b.td)
-
-        if (unstableResult === 0) {
-            if (antiStabilize) return b.index - a.index
+        const unstable_result = sort(a.td, b.td)
+        if (unstable_result === 0) {
+            if (anti_stabilize) return b.index - a.index
 
             return a.index - b.index
         }
-        return unstableResult
+        return unstable_result
     }
 }
 
-Tablesort.extend = function (name, pattern, sort) {
-    if (typeof pattern !== "function" || typeof sort !== "function") {
-        throw new Error("Pattern and sort must be a function")
+/* Class Declaration */
+
+class Tablesort {
+    constructor(element, options) {
+        if (!(this instanceof Tablesort)) {
+            return new Tablesort(element, options)
+        }
+
+        if (!element || element.tagName !== "TABLE") {
+            throw new Error("Element must be a table")
+        }
+        this.init(element, options || {})
     }
 
-    sortOptions.push({
-        name,
-        pattern,
-        sort
-    })
-}
 
-Tablesort.prototype = {
+    init(element, options) {
+        const that = /** @type {any} */ (this)
+        let first_row, default_sort
 
-    init(el, options) {
-        const that = this
-        let firstRow
-        let defaultSort
-        let i
-        let cell
-
-        that.table = el
+        that.table = element
         that.thead = false
         that.options = options
 
-        if (el.rows && el.rows.length > 0) {
-            if (el.tHead && el.tHead.rows.length > 0) {
-                for (i = 0; i < el.tHead.rows.length; i++) {
-                    if (el.tHead.rows[i].getAttribute("data-sort-method") === "thead") {
-                        firstRow = el.tHead.rows[i]
+        if (element.rows && element.rows.length > 0) {
+            if (element.tHead && element.tHead.rows.length > 0) {
+                for (const row of element.tHead.rows) {
+                    if (row.getAttribute("data-sort-method") === "thead") {
+                        first_row = row
                         break
                     }
                 }
-                if (!firstRow) {
-                    firstRow = el.tHead.rows[el.tHead.rows.length - 1]
+
+                if (!first_row) {
+                    first_row = element.tHead.rows[element.tHead.rows.length - 1]
                 }
                 that.thead = true
             } else {
-                firstRow = el.rows[0]
+                first_row = element.rows[0]
             }
         }
 
-        if (!firstRow) return
+        if (!first_row) return
 
-        const onClick = function () {
+        function on_click() {
             if (that.current && that.current !== this) {
                 that.current.removeAttribute("aria-sort")
             }
-
             that.current = this
-            that.sortTable(this)
+            that.sort_table(this)
         }
 
-        // Assume first row is the header and attach a click handler to each.
-        for (i = 0; i < firstRow.cells.length; i++) {
-            cell = firstRow.cells[i]
+
+        for (const cell of first_row.cells) { // Assume first row is the header and attach a click handler to each.
             cell.setAttribute("role", "columnheader")
+
             if (cell.getAttribute("data-sort-method") !== "none") {
                 cell.tabindex = 0
-                cell.addEventListener("click", onClick, false)
+                cell.addEventListener("click", on_click, false)
 
                 if (cell.getAttribute("data-sort-default") !== null) {
-                    defaultSort = cell
+                    default_sort = cell
                 }
             }
         }
 
-        if (defaultSort) {
-            that.current = defaultSort
-            that.sortTable(defaultSort)
+        if (default_sort) {
+            that.current = default_sort
+            that.sort_table(default_sort)
         }
-    },
+    }
 
-    sortTable(header, update) {
-        const that = this
-        const columnKey = header.getAttribute("data-sort-column-key")
+
+    static extend(name, pattern, sort) {
+        if (typeof pattern !== "function" || typeof sort !== "function") {
+            throw new Error("Pattern and sort must be a function")
+        }
+        sort_options.push({
+            name,
+            pattern,
+            sort
+        })
+    }
+
+
+    sort_table(header, update) {
+        const that = /** @type {any} */ (this)
+        const column_key = header.getAttribute("data-sort-column-key")
         const column = header.cellIndex
-        let sortFunction = caseInsensitiveSort
-        let item = ""
+        let sort_function = case_insensitive_sort
         const items = []
         let i = that.thead ? 0 : 1
-        const sortMethod = header.getAttribute("data-sort-method")
-        let sortOrder = header.getAttribute("aria-sort")
+        const sort_method = header.getAttribute("data-sort-method")
+        let sort_order = header.getAttribute("aria-sort")
 
-        that.table.dispatchEvent(createEvent("beforeSort"))
+        that.table.dispatchEvent(create_event("beforeSort"))
 
-        // If updating an existing sort, direction should remain unchanged.
-        if (!update) {
-            if (sortOrder === "ascending") {
-                sortOrder = "descending"
-            } else if (sortOrder === "descending") {
-                sortOrder = "ascending"
+        if (!update) { // If updating an existing sort, direction should remain unchanged.
+            if (sort_order === "ascending") {
+                sort_order = "descending"
+            } else if (sort_order === "descending") {
+                sort_order = "ascending"
             } else {
-                sortOrder = that.options.descending ? "descending" : "ascending"
+                sort_order = that.options.descending ? "descending" : "ascending"
             }
-
-            header.setAttribute("aria-sort", sortOrder)
+            header.setAttribute("aria-sort", sort_order)
         }
-
         if (that.table.rows.length < 2) return
 
-        // If we force a sort method, it is not necessary to check rows
-        if (!sortMethod) {
-            var cell
+        if (!sort_method) { // If we force a sort method, it is not necessary to check rows
+            let cell
             while (items.length < 3 && i < that.table.tBodies[0].rows.length) {
-                if (columnKey) {
-                    cell = getCellByKey(that.table.tBodies[0].rows[i].cells, columnKey)
+                if (column_key) {
+                    cell = get_cell_by_key(that.table.tBodies[0].rows[i].cells, column_key)
                 } else {
                     cell = that.table.tBodies[0].rows[i].cells[column]
                 }
 
-                // Treat missing cells as empty cells
-                item = cell ? getInnerText(cell) : ""
-
+                let item = cell ? get_inner_text(cell) : "" // Treat missing cells as empty cells
                 item = item.trim()
 
                 if (item.length > 0) {
@@ -188,95 +197,94 @@ Tablesort.prototype = {
 
                 i++
             }
-
             if (!items) return
         }
 
-        for (i = 0; i < sortOptions.length; i++) {
-            item = sortOptions[i]
-
-            if (sortMethod) {
-                if (item.name === sortMethod) {
-                    sortFunction = item.sort
+        for (const item of sort_options) {
+            if (sort_method) {
+                if (item.name === sort_method) {
+                    sort_function = item.sort
                     break
                 }
             } else if (items.every(item.pattern)) {
-                sortFunction = item.sort
+                sort_function = item.sort
                 break
             }
         }
 
         that.col = column
 
-        for (i = 0; i < that.table.tBodies.length; i++) {
-            const newRows = []
-            const noSorts = {}
-            var j
-            let totalRows = 0
-            let noSortsSoFar = 0
+        for (const tbody of that.table.tBodies) {
+            const new_rows = []
+            const no_sorts = {}
+            let j
+            let total_rows = 0
+            let no_sorts_so_far = 0
 
-            if (that.table.tBodies[i].rows.length < 2) continue
+            if (tbody.rows.length < 2) continue
 
-            for (j = 0; j < that.table.tBodies[i].rows.length; j++) {
-                var cell
+            for (const item of tbody.rows) {
+                let cell
 
-                item = that.table.tBodies[i].rows[j]
                 if (item.getAttribute("data-sort-method") === "none") {
                     /*
                      * Keep no-sorts in separate list to be able to insert
                      * Them back at their original position later
                      */
-                    noSorts[totalRows] = item
+                    no_sorts[total_rows] = item
                 } else {
-                    if (columnKey) {
-                        cell = getCellByKey(item.cells, columnKey)
+                    if (column_key) {
+                        cell = get_cell_by_key(item.cells, column_key)
                     } else {
                         cell = item.cells[that.col]
                     }
-                    // Save the index for stable sorting
-                    newRows.push({
+
+                    new_rows.push({ // Save the index for stable sorting
                         tr: item,
-                        td: cell ? getInnerText(cell) : "",
-                        index: totalRows
+                        td: cell ? get_inner_text(cell) : "",
+                        index: total_rows
                     })
                 }
-                totalRows++
+                total_rows++
             }
+
             /*
              * Before we append should we reverse the new array or not?
              * If we reverse, the sort needs to be `anti-stable` so that
-             * The double negatives cancel out
+             * The double negatives cancelement out
              */
-            if (sortOrder === "descending") {
-                newRows.sort(stabilize(sortFunction, true))
+            if (sort_order === "descending") {
+                new_rows.sort(stabilize(sort_function, true))
             } else {
-                newRows.sort(stabilize(sortFunction, false))
-                newRows.reverse()
+                new_rows.sort(stabilize(sort_function, false))
+                new_rows.reverse()
             }
 
-            // Append rows that already exist rather than creating new ones
-            for (j = 0; j < totalRows; j++) {
-                if (noSorts[j]) {
-                    // We have a no-sort row for this position, insert it here.
-                    item = noSorts[j]
-                    noSortsSoFar++
+            for (j = 0; j < total_rows; j++) { // Append rows that already exist rather than creating new ones
+                let item
+                if (no_sorts[j]) {
+                    item = no_sorts[j] // We have a no-sort row for this position, insert it here.
+                    no_sorts_so_far++
                 } else {
-                    item = newRows[j - noSortsSoFar].tr
+                    item = new_rows[j - no_sorts_so_far].tr
                 }
 
-                // AppendChild(x) moves x if already present somewhere else in the DOM
-                that.table.tBodies[i].appendChild(item)
+                tbody.appendChild(item) // AppendChild(x) moves x if already present somewhere else in the DOM
             }
         }
+        that.table.dispatchEvent(create_event("afterSort"))
+    }
 
-        that.table.dispatchEvent(createEvent("afterSort"))
-    },
 
     refresh() {
-        if (this.current !== undefined) {
-            this.sortTable(this.current, true)
+        const that = /** @type {any} */ (this)
+        if (that.current !== undefined) {
+            that.sort_table(that.current, true)
         }
     }
 }
+
+
+/* Exports */
 
 export {Tablesort}
