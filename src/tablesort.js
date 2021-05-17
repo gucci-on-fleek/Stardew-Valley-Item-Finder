@@ -1,3 +1,4 @@
+// @ts-check
 /*
  * Original Source:
  * Tablesort v5.2.1 (2020-06-02)
@@ -27,7 +28,9 @@ function Tablesort(el, options) {
 }
 
 
-const sortOptions = []
+const sortOptions = /** @type {Array<Record<'name'|'pattern'|'sort', any>>} */ ([])
+
+
 function createEvent(name) {
     let evt
     if (!window.CustomEvent || typeof window.CustomEvent !== "function") {
@@ -95,7 +98,7 @@ Tablesort.extend = function (name, pattern, sort) {
 
 Tablesort.prototype = {
     init(el, options) {
-        const that = this
+        const that = /** @type {any} */ (this)
         let firstRow, defaultSort, i, cell
 
         that.table = el
@@ -152,11 +155,11 @@ Tablesort.prototype = {
     },
 
     sortTable(header, update) {
-        const that = this
+        const that = /** @type {any} */ (this)
         const columnKey = header.getAttribute("data-sort-column-key")
         const column = header.cellIndex
         let sortFunction = caseInsensitiveSort
-        let item = ""
+        let item = /** @type {any} */ ("")
         const items = []
         let i = that.thead ? 0 : 1
         const sortMethod = header.getAttribute("data-sort-method")
@@ -275,8 +278,9 @@ Tablesort.prototype = {
     },
 
     refresh() {
-        if (this.current !== undefined) {
-            this.sortTable(this.current, true)
+        const that = /** @type {any} */ (this)
+        if (that.current !== undefined) {
+            that.sortTable(that.current, true)
         }
     }
 }
