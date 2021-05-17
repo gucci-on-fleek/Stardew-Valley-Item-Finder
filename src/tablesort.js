@@ -115,8 +115,8 @@ class Tablesort {
         if (!first_row) return
 
         function on_click() {
-            if (that.current && that.current !== this) {
-                that.current.removeAttribute("aria-sort")
+            if (that.current !== this) {
+                element.querySelectorAll("[aria-sort]").forEach(x => x.removeAttribute("aria-sort"))
             }
             that.current = this
             that.sort_table(this)
