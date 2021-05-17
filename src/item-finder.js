@@ -556,10 +556,15 @@ function calculate_sum(table) {
 function enable_table_sort() {
     const item_table = elements.item_table
     const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
+    const qualities = ["Iridium", "Gold", "Silver", ""]
 
     Tablesort.extend("number",
         item => item.match(/\d/), // Sort numerically
         (a, b) => parse_integer(a) - parse_integer(b))
+
+    Tablesort.extend("quality",
+        item => qualities.indexOf(item) !== -1, // Sort numerically
+        (a, b) => qualities.indexOf(b) - qualities.indexOf(a))
 
     const header_cells = item_table.tHead.rows[0].cells
 
