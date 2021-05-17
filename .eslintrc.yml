@@ -99,6 +99,7 @@ rules:
   id-match:
     - error
     - "^_{0,2}([a-z_]+[a-z]|[a-z_])$"
+    - onlyDeclarations: true
   implicit-arrow-linebreak:
     - error
     - beside

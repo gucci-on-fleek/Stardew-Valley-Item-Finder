@@ -570,7 +570,7 @@ function enable_table_sort() {
             /* Allow the keyboard to be used for sorting */
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault()
-                tablesort.sortTable(event.srcElement)
+                tablesort.sort_table(event.srcElement)
             }
         })
     }
