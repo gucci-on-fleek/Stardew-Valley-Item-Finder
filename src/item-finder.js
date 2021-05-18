@@ -7,8 +7,6 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-import {Tablesort} from "./tablesort.js" // eslint-disable-line id-match
-
 /**
  * @type {Object<String, Function>}
  */
@@ -176,7 +174,7 @@ function file_opened(event) {
                 const items = process_xslt(parse_xml(requests[0]), save_game)
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
-                csv_to_table(xslt_output_to_text(csv))
+                array_to_table(csv_to_array(xslt_output_to_text(csv)))
             })
             .finally(() => loading_screen({show_loading: false, show_input: true}))
             .catch(() => show_element(elements.error))
@@ -196,7 +194,7 @@ function get_previous_save() {
     if (csv) {
         loading_screen({show_loading: true, show_input: true})
         _csv_string = csv
-        csv_to_table(csv)
+        array_to_table(csv_to_array(csv))
         loading_screen({show_loading: false, show_input: true})
     }
 }
@@ -237,14 +235,13 @@ function clone_template(element) {
 
 /**
  * Makes an `HTML` table from `CSV` and inserts it into the DOM.
- * @param {String} csv - The `CSV` to make a table from
+ * @param {String[][]} array - The `CSV` to make a table from
  * @effects None directly, however called functions modify the DOM.
  */
-function csv_to_table(csv) {
+function array_to_table(array) {
     let table = template.table()
-    const csv_array = csv_to_array(csv)
-    table = make_html_table(csv_array, table)
-    table = make_header(csv_array, table)
+    table = make_html_table(array, table)
+    table = make_header(array, table)
     set_output(table)
     enable_table_sort()
     enable_wiki_click()
@@ -550,20 +547,11 @@ function calculate_sum(table) {
 
 /**
  * Allow the table to be sorted by clicking on the headings
- * @effects Initializes Tablesort. Adds event listeners to the table headers.
+ * @effects Initializes table sorting. Adds event listeners to the table headers.
  */
-function enable_table_sort() {
+function enable_table_sort() { // TODO
     const item_table = elements.item_table
-    const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
     const qualities = ["Iridium", "Gold", "Silver", ""]
-
-    Tablesort.extend("number",
-        item => item.match(/\d/), // Sort numerically
-        (a, b) => parse_integer(a) - parse_integer(b))
-
-    Tablesort.extend("quality",
-        item => qualities.indexOf(item) !== -1, // Sort numerically
-        (a, b) => qualities.indexOf(b) - qualities.indexOf(a))
 
     const header_cells = item_table.tHead.rows[0].cells
 
@@ -574,7 +562,6 @@ function enable_table_sort() {
             /* Allow the keyboard to be used for sorting */
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault()
-                tablesort.sort_table(event.srcElement)
             }
         })
     }
