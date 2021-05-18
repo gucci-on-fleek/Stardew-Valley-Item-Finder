@@ -38,6 +38,13 @@ function create_templates() {
                 target[property] = document.getElementById(property)
             }
             return target[property]
+        },
+
+        deleteProperty(target, property) {
+            target[property].remove()
+            delete target[property]
+
+            return true
         }
     }
 
@@ -481,7 +488,7 @@ const set_output = (function () {
         hide_element(qs("article"))
 
         if (previous_output) { // Remove old table
-            elements.item_table.remove()
+            delete elements.item_table
         }
         table = calculate_sum(table) // eslint-disable-line no-param-reassign
 
