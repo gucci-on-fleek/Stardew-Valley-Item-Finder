@@ -551,6 +551,29 @@ function calculate_sum(table) {
     return table
 }
 
+/**
+ * Adds an `onclick` event listener to an element
+ * @param {*} element - The element which receives the click
+ * @param {Function} callback - Callback function. Takes the event as its only parameter
+ * @remarks This function is better than just `element
+ *          .addEventListener("click", callback)` because it takes
+ *          keyboard use into consideration. This is very important for
+ *          accessibility, since the keyboard should be able to do
+ *          everything that the mouse can.
+ * @effects Adds event listeners and modifies DOM
+ */
+function add_click_event(element, callback) {
+    element.addEventListener("click", callback)
+
+    element.setAttribute("tabindex", "0")
+    element.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault()
+            callback(event)
+        }
+    })
+}
+
 
 /**
  * Allow the table to be sorted by clicking on the headings
@@ -564,12 +587,7 @@ function enable_table_sort() { // TODO
     header_cells[header_cells.length - 1].setAttribute("aria-sort", "ascending") // Show that the table is sorted by the Stack Price by default
 
     for (const cell of header_cells) {
-        cell.addEventListener("keydown", function (event) {
-            /* Allow the keyboard to be used for sorting */
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault()
-            }
-        })
+        add_click_event(cell, event => sort_table(event.target.cellIndex))
     }
 }
 
@@ -718,13 +736,7 @@ function enable_wiki_click() {
     const table = elements.item_table
     const body = table.tBodies[0]
 
-    body.addEventListener("click", wiki_click_event)
-    body.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault()
-            wiki_click_event(event)
-        }
-    })
+    add_click_event(body, wiki_click_event)
     table.addEventListener("beforeSort", remove_wiki_descriptions) // The colspan attributes cause problems with sorting
 }
 
