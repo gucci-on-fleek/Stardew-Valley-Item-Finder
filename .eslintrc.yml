@@ -65,6 +65,7 @@ rules:
   brace-style:
     - error
     - 1tbs
+    - allowSingleLine: true
   capitalized-comments:
     - error
     - always

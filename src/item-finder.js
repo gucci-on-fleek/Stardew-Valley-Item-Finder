@@ -7,8 +7,6 @@
  * SPDX-FileCopyrightText: 2021 gucci-on-fleek
  */
 
-import {Tablesort} from "./tablesort.js" // eslint-disable-line id-match
-
 /**
  * @type {Object<String, Function>}
  */
@@ -40,6 +38,13 @@ function create_templates() {
                 target[property] = document.getElementById(property)
             }
             return target[property]
+        },
+
+        deleteProperty(target, property) {
+            target[property].remove()
+            delete target[property]
+
+            return true
         }
     }
 
@@ -176,7 +181,8 @@ function file_opened(event) {
                 const items = process_xslt(parse_xml(requests[0]), save_game)
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
-                csv_to_table(xslt_output_to_text(csv))
+                array_to_table(csv_to_array(xslt_output_to_text(csv)))
+                show_initial_sort_direction()
             })
             .finally(() => loading_screen({show_loading: false, show_input: true}))
             .catch(() => show_element(elements.error))
@@ -196,7 +202,8 @@ function get_previous_save() {
     if (csv) {
         loading_screen({show_loading: true, show_input: true})
         _csv_string = csv
-        csv_to_table(csv)
+        array_to_table(csv_to_array(csv))
+        show_initial_sort_direction()
         loading_screen({show_loading: false, show_input: true})
     }
 }
@@ -237,14 +244,13 @@ function clone_template(element) {
 
 /**
  * Makes an `HTML` table from `CSV` and inserts it into the DOM.
- * @param {String} csv - The `CSV` to make a table from
+ * @param {String[][]} array - The `CSV` to make a table from
  * @effects None directly, however called functions modify the DOM.
  */
-function csv_to_table(csv) {
+function array_to_table(array) {
     let table = template.table()
-    const csv_array = csv_to_array(csv)
-    table = make_html_table(csv_array, table)
-    table = make_header(csv_array, table)
+    table = make_html_table(array, table)
+    table = make_header(array, table)
     set_output(table)
     enable_table_sort()
     enable_wiki_click()
@@ -369,7 +375,10 @@ function xslt_output_to_text(xml) {
  * @effects None
  */
 function csv_to_array(csv) {
-    return csv.split("\n").map(x => x.split(",")) // We made the csv file, so there won't be any edge cases
+    return csv
+        .split("\n")
+        .map(x => x.split(","))
+        .slice(0, -1) // We made the csv file, so there won't be any edge cases
 }
 
 
@@ -392,7 +401,7 @@ function cell_text(cell, text) {
  * @effects None
  */
 function make_html_table(array, table) {
-    for (const csv_row of array.slice(1, -1)) {
+    for (const csv_row of array.slice(1)) {
         const table_row = table.insertRow()
 
         for (const [index, csv_cell] of csv_row.entries()) {
@@ -405,7 +414,6 @@ function make_html_table(array, table) {
                     const table_cell = table_row.insertCell()
                     const icons = replace_icon(csv_cell)
                     table_cell.appendChild(icons)
-                    table_cell.setAttribute("data-sort", csv_cell)
                     break
                 }
                 default: {
@@ -484,7 +492,7 @@ const set_output = (function () {
         hide_element(qs("article"))
 
         if (previous_output) { // Remove old table
-            elements.item_table.remove()
+            delete elements.item_table
         }
         table = calculate_sum(table) // eslint-disable-line no-param-reassign
 
@@ -547,37 +555,107 @@ function calculate_sum(table) {
     return table
 }
 
+/**
+ * Adds an `onclick` event listener to an element
+ * @param {*} element - The element which receives the click
+ * @param {Function} callback - Callback function. Takes the event as its only parameter
+ * @remarks This function is better than just `element
+ *          .addEventListener("click", callback)` because it takes
+ *          keyboard use into consideration. This is very important for
+ *          accessibility, since the keyboard should be able to do
+ *          everything that the mouse can.
+ * @effects Adds event listeners and modifies DOM
+ */
+function add_click_event(element, callback) {
+    element.addEventListener("click", callback)
+
+    element.setAttribute("tabindex", "0")
+    element.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault()
+            callback(event)
+        }
+    })
+}
+
 
 /**
  * Allow the table to be sorted by clicking on the headings
- * @effects Initializes Tablesort. Adds event listeners to the table headers.
+ * @effects Initializes table sorting. Adds event listeners to the table headers.
  */
 function enable_table_sort() {
-    const item_table = elements.item_table
-    const tablesort = new Tablesort(item_table) // Allow the table headings to be used for sorting
-    const qualities = ["Iridium", "Gold", "Silver", ""]
+    const get_header_cells = () => elements.item_table.tHead.rows[0].cells // This needs to be a function since the actual table element is replaced multiple times
 
-    Tablesort.extend("number",
-        item => item.match(/\d/), // Sort numerically
-        (a, b) => parse_integer(a) - parse_integer(b))
+    for (const cell of get_header_cells()) {
+        add_click_event(cell, function ({target}) {
+            const index = target.cellIndex
+            const next_sort_ascending = target.getAttribute("aria-sort") !== "ascending"
 
-    Tablesort.extend("quality",
-        item => qualities.indexOf(item) !== -1, // Sort numerically
-        (a, b) => qualities.indexOf(b) - qualities.indexOf(a))
+            sort_table(index, next_sort_ascending)
 
-    const header_cells = item_table.tHead.rows[0].cells
-
-    header_cells[header_cells.length - 1].setAttribute("aria-sort", "ascending") // Show that the table is sorted by the Stack Price by default
-
-    for (const cell of header_cells) {
-        cell.addEventListener("keydown", function (event) {
-            /* Allow the keyboard to be used for sorting */
-            if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault()
-                tablesort.sort_table(event.srcElement)
-            }
+            get_header_cells()[index].focus()
+            get_header_cells()[index].setAttribute("aria-sort", next_sort_ascending ? "ascending" : "descending")
+            filter_table()
         })
     }
+}
+
+
+const sort_table = (function () {
+    const qualities = ["Iridium", "Gold", "Silver", ""]
+    const sorts = [
+        {
+            test(a) { return /\d/.test(a) }, // Numbers
+            compare(a, b) { return parse_integer(a) - parse_integer(b) }
+        },
+        {
+            test(a) { return qualities.indexOf(a) !== -1 }, // Qualities
+            compare(a, b) { return qualities.indexOf(b) - qualities.indexOf(a) }
+        },
+        {
+            test() { return true }, // Fallback String
+            compare(a, b) { return a.localeCompare(b) }
+        }
+    ]
+
+    /**
+     * Sorts the item table
+     * @param {Number} column_index - The column to sort by
+     * @param {Boolean} ascending - `true` if the sort should be smallest-to-largest; `false` if the sort should be largest-to-smallest
+     * @effects Modifies the item table in the DOM
+     */
+    return function (column_index, ascending = true) {
+        const csv_array = csv_to_array(_csv_string)
+        const sorting_array = csv_array.slice(1) // Remove the header
+        let compare
+
+        for (const sort of sorts) {
+            if (sort.test(sorting_array[0][column_index])) {
+                if (ascending) {
+                    compare = (a, b) => sort.compare(a[column_index], b[column_index])
+                } else {
+                    compare = (a, b) => sort.compare(b[column_index], a[column_index])
+                }
+                break
+            }
+        }
+
+        sorting_array.sort(compare)
+
+        sorting_array.splice(0, 0, csv_array[0]) // Add back the header
+        array_to_table(sorting_array)
+    }
+})()
+
+
+/**
+ * Show that the table is initially sorted by descending "Stack Price"
+ * @effects Modifies table header cell ARIA attributes
+ */
+function show_initial_sort_direction() {
+    const header_cells = elements.item_table.tHead.rows[0].cells
+
+    header_cells[header_cells.length - 1].setAttribute("aria-sort", "descending")
 }
 
 
@@ -678,14 +756,7 @@ function enable_wiki_click() {
     const table = elements.item_table
     const body = table.tBodies[0]
 
-    body.addEventListener("click", wiki_click_event)
-    body.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault()
-            wiki_click_event(event)
-        }
-    })
-    table.addEventListener("beforeSort", remove_wiki_descriptions) // The colspan attributes cause problems with sorting
+    add_click_event(body, wiki_click_event)
 }
 
 
