@@ -558,7 +558,6 @@ function calculate_sum(table) {
  */
 function enable_table_sort() { // TODO
     const item_table = elements.item_table
-    const qualities = ["Iridium", "Gold", "Silver", ""]
 
     const header_cells = item_table.tHead.rows[0].cells
 
@@ -573,6 +572,53 @@ function enable_table_sort() { // TODO
         })
     }
 }
+
+
+const sort_table = (function () {
+    const qualities = ["Iridium", "Gold", "Silver", ""]
+    const sorts = [
+        {
+            test(a) { return /\d/.test(a) }, // Numbers
+            compare(a, b) { return parse_integer(a) - parse_integer(b) }
+        },
+        {
+            test(a) { return qualities.indexOf(a) !== -1 }, // Qualities
+            compare(a, b) { return qualities.indexOf(b) - qualities.indexOf(a) }
+        },
+        {
+            test() { return true }, // Fallback String
+            compare(a, b) { return a.localeCompare(b) }
+        }
+    ]
+
+    /**
+     * Sorts the item table
+     * @param {Number} column_index - The column to sort by
+     * @param {Boolean} ascending - `true` if the sort should be smallest-to-largest; `false` if the sort should be largest-to-smallest
+     * @effects Modifies the item table in the DOM
+     */
+    return function (column_index, ascending = true) {
+        const csv_array = csv_to_array(_csv_string)
+        const sorting_array = csv_array.slice(1, -1) // Remove the header
+        let compare
+
+        for (const sort of sorts) {
+            if (sort.test(sorting_array[0][column_index])) {
+                if (ascending) {
+                    compare = (a, b) => sort.compare(a[column_index], b[column_index])
+                } else {
+                    compare = (a, b) => sort.compare(b[column_index], a[column_index])
+                }
+                break
+            }
+        }
+
+        sorting_array.sort(compare)
+
+        sorting_array.splice(0, 0, csv_array[0]) // Add back the header
+        array_to_table(sorting_array)
+    }
+})()
 
 
 /**
