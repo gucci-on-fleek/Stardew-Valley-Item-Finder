@@ -182,6 +182,7 @@ function file_opened(event) {
                 const csv = process_xslt(parse_xml(requests[1]), items)
 
                 array_to_table(csv_to_array(xslt_output_to_text(csv)))
+                show_initial_sort_direction()
             })
             .finally(() => loading_screen({show_loading: false, show_input: true}))
             .catch(() => show_element(elements.error))
@@ -202,6 +203,7 @@ function get_previous_save() {
         loading_screen({show_loading: true, show_input: true})
         _csv_string = csv
         array_to_table(csv_to_array(csv))
+        show_initial_sort_direction()
         loading_screen({show_loading: false, show_input: true})
     }
 }
@@ -373,7 +375,10 @@ function xslt_output_to_text(xml) {
  * @effects None
  */
 function csv_to_array(csv) {
-    return csv.split("\n").map(x => x.split(",")) // We made the csv file, so there won't be any edge cases
+    return csv
+        .split("\n")
+        .map(x => x.split(","))
+        .slice(0, -1) // We made the csv file, so there won't be any edge cases
 }
 
 
@@ -396,7 +401,7 @@ function cell_text(cell, text) {
  * @effects None
  */
 function make_html_table(array, table) {
-    for (const csv_row of array.slice(1, -1)) {
+    for (const csv_row of array.slice(1)) {
         const table_row = table.insertRow()
 
         for (const [index, csv_cell] of csv_row.entries()) {
@@ -409,7 +414,6 @@ function make_html_table(array, table) {
                     const table_cell = table_row.insertCell()
                     const icons = replace_icon(csv_cell)
                     table_cell.appendChild(icons)
-                    table_cell.setAttribute("data-sort", csv_cell)
                     break
                 }
                 default: {
@@ -579,15 +583,20 @@ function add_click_event(element, callback) {
  * Allow the table to be sorted by clicking on the headings
  * @effects Initializes table sorting. Adds event listeners to the table headers.
  */
-function enable_table_sort() { // TODO
-    const item_table = elements.item_table
+function enable_table_sort() {
+    const get_header_cells = () => elements.item_table.tHead.rows[0].cells // This needs to be a function since the actual table element is replaced multiple times
 
-    const header_cells = item_table.tHead.rows[0].cells
+    for (const cell of get_header_cells()) {
+        add_click_event(cell, function ({target}) {
+            const index = target.cellIndex
+            const next_sort_ascending = target.getAttribute("aria-sort") !== "ascending"
 
-    header_cells[header_cells.length - 1].setAttribute("aria-sort", "ascending") // Show that the table is sorted by the Stack Price by default
+            sort_table(index, next_sort_ascending)
 
-    for (const cell of header_cells) {
-        add_click_event(cell, event => sort_table(event.target.cellIndex))
+            get_header_cells()[index].focus()
+            get_header_cells()[index].setAttribute("aria-sort", next_sort_ascending ? "ascending" : "descending")
+            filter_table()
+        })
     }
 }
 
@@ -617,7 +626,7 @@ const sort_table = (function () {
      */
     return function (column_index, ascending = true) {
         const csv_array = csv_to_array(_csv_string)
-        const sorting_array = csv_array.slice(1, -1) // Remove the header
+        const sorting_array = csv_array.slice(1) // Remove the header
         let compare
 
         for (const sort of sorts) {
@@ -637,6 +646,17 @@ const sort_table = (function () {
         array_to_table(sorting_array)
     }
 })()
+
+
+/**
+ * Show that the table is initially sorted by descending "Stack Price"
+ * @effects Modifies table header cell ARIA attributes
+ */
+function show_initial_sort_direction() {
+    const header_cells = elements.item_table.tHead.rows[0].cells
+
+    header_cells[header_cells.length - 1].setAttribute("aria-sort", "descending")
+}
 
 
 /**
@@ -737,7 +757,6 @@ function enable_wiki_click() {
     const body = table.tBodies[0]
 
     add_click_event(body, wiki_click_event)
-    table.addEventListener("beforeSort", remove_wiki_descriptions) // The colspan attributes cause problems with sorting
 }
 
 
