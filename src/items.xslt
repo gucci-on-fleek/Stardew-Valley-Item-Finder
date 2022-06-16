@@ -13,8 +13,7 @@
   <xsl:variable name="profit_margin" select="/SaveGame/player/difficultyModifier" />
 
   <xsl:template match="*/items">
-    <xsl:for-each select="Item[@xsi:type='Object' or @xsi:type='ColoredObject']">
-      <!-- Roe is a 'ColoredObject', everything else is an object. -->
+    <xsl:for-each select="Item[not(@xsi:nil)]">
       <item>
         <name>
           <xsl:value-of select="Name" />
