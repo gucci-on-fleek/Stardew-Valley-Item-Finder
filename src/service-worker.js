@@ -20,7 +20,6 @@ const requests = [
     "assets/silver_star.png",
     "assets/iridium_star.png",
     "assets/icon.svg",
-    "src/tablesort.js",
     "src/manifest.webmanifest"
 ]
 let fetched = 0
