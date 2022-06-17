@@ -3,7 +3,7 @@
   <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
      SPDX-License-Identifier: MPL-2.0+
-     SPDX-FileCopyrightText: 2021 gucci-on-fleek
+     SPDX-FileCopyrightText: 2022 Max Chernoff
 -->
   <xsl:output method="xml" indent="yes" />
 
@@ -12,7 +12,7 @@
   <xsl:variable name="events" select="/SaveGame/player/eventsSeen" />
   <xsl:variable name="profit_margin" select="/SaveGame/player/difficultyModifier" />
 
-  <xsl:template match="*/items">
+  <xsl:template match="*/items[not(parent::farmhand/name[not(text())])]">
     <xsl:for-each select="Item[not(@xsi:nil)]">
       <item>
         <name>
@@ -43,11 +43,11 @@
         <contained_in>
           <xsl:variable name="parent_items" select="parent::items" />
           <xsl:choose>
-            <xsl:when test="$parent_items/parent::player">
+            <xsl:when test="$parent_items/parent::player or $parent_items/parent::farmhand">
               <type>Player</type>
               <!-- Do not include a location for the player since they can move -->
               <description>
-                <xsl:value-of select="$parent_items/parent::player/name" />
+                <xsl:value-of select="$parent_items/parent::player/name | $parent_items/parent::farmhand/name" />
               </description>
             </xsl:when>
             <xsl:when test="$parent_items/parent::fridge">
@@ -186,7 +186,20 @@
 
   <xsl:template name="location">
     <location>
-      <xsl:value-of select="ancestor::GameLocation/name" />
+      <xsl:choose>
+        <xsl:when test="ancestor::GameLocation/name='FarmHouse'">
+          House
+        </xsl:when>
+        <xsl:when test="ancestor::GameLocation/name='FarmCave'">
+          Cave
+        </xsl:when>
+        <xsl:when test="ancestor::Building/buildingType">
+          <xsl:value-of select="ancestor::Building/buildingType"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="ancestor::GameLocation/name" />
+        </xsl:otherwise>
+      </xsl:choose>
     </location>
   </xsl:template>
 

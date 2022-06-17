@@ -2,10 +2,10 @@
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
  * SPDX-License-Identifier: MPL-2.0+
- * SPDX-FileCopyrightText: 2021 gucci-on-fleek
+ * SPDX-FileCopyrightText: 2022 Max Chernoff
  */
 
-const version="2512936159"
+const version="2514122757"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
