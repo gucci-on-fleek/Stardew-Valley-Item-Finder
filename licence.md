@@ -3,7 +3,7 @@ Licencing
 <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
      SPDX-License-Identifier: MPL-2.0+ OR CC-BY-SA-4.0+
-     SPDX-FileCopyrightText: 2021 gucci-on-fleek
+     SPDX-FileCopyrightText: 2022 Max Chernoff
 -->
 
 Overview
