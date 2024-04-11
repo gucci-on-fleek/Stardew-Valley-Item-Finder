@@ -16,7 +16,7 @@
     <xsl:for-each select="Item[not(@xsi:nil)]">
       <item>
         <name>
-          <xsl:value-of select="Name" />
+          <xsl:value-of select="Name | name" />
         </name>
         <xsl:if test="quality &gt; 0">
           <quality>
@@ -26,7 +26,7 @@
           </quality>
         </xsl:if>
         <count>
-          <xsl:value-of select="Stack" />
+          <xsl:value-of select="Stack | stack" />
         </count>
         <actual_price>
           <xsl:call-template name="price_adjustments">
@@ -43,21 +43,21 @@
         <contained_in>
           <xsl:variable name="parent_items" select="parent::items" />
           <xsl:choose>
-            <xsl:when test="$parent_items/parent::player or $parent_items/parent::farmhand">
+            <xsl:when test="$parent_items/parent::player or $parent_items/parent::farmhand or $parent_items/parent::Farmer">
               <type>Player</type>
               <!-- Do not include a location for the player since they can move -->
               <description>
-                <xsl:value-of select="$parent_items/parent::player/name | $parent_items/parent::farmhand/name" />
+                <xsl:value-of select="$parent_items/parent::player/name | $parent_items/parent::farmhand/name | $parent_items/parent::Farmer/name" />
               </description>
             </xsl:when>
             <xsl:when test="$parent_items/parent::fridge">
               <type>Fridge</type>
               <xsl:call-template name="location" />
             </xsl:when>
-            <xsl:when test="$parent_items/parent::Object/Name">
+            <xsl:when test="$parent_items/parent::Object/Name | $parent_items/parent::Object/name">
               <!-- Mini-Fridges, etc. -->
               <type>
-                <xsl:value-of select="$parent_items/parent::Object/DisplayName" />
+                <xsl:value-of select="$parent_items/parent::Object/DisplayName | $parent_items/parent::Object/displayName | $parent_items/parent::Object/name" />
               </type>
               <xsl:if test="$parent_items/parent::Object/playerChoiceColor">
                 <xsl:call-template name="colours">
@@ -66,17 +66,17 @@
               </xsl:if>
               <xsl:call-template name="location" />
             </xsl:when>
-            <xsl:when test="$parent_items/parent::heldObject/parent::Object/Name">
+            <xsl:when test="$parent_items/parent::heldObject/parent::Object/Name | $parent_items/parent::heldObject/parent::Object/name">
               <!-- Autopickers -->
               <type>
-                <xsl:value-of select="$parent_items/parent::heldObject/parent::Object/Name" />
+                <xsl:value-of select="$parent_items/parent::heldObject/parent::Object/Name | $parent_items/parent::heldObject/parent::Object/name" />
               </type>
               <xsl:call-template name="location" />
             </xsl:when>
-            <xsl:when test="$parent_items/parent::output/parent::Building">
+            <xsl:when test="$parent_items/parent::output/parent::Building | $parent_items/parent::Chest/parent::buildingChests/parent::Building">
               <!-- Junimo Huts, Mills, etc. -->
               <type>
-                <xsl:value-of select="$parent_items/parent::output/parent::Building/buildingType" />
+                <xsl:value-of select="$parent_items/parent::output/parent::Building/buildingType | $parent_items/parent::Chest/parent::buildingChests/parent::Building/buildingType" />
               </type>
               <xsl:call-template name="location" />
             </xsl:when>
@@ -195,6 +195,9 @@
         </xsl:when>
         <xsl:when test="ancestor::Building/buildingType">
           <xsl:value-of select="ancestor::Building/buildingType"/>
+        </xsl:when>
+        <xsl:when test="ancestor::Chest/parent::buildingChests/parent::Building/buildingType">
+          <xsl:value-of select="ancestor::Chest/parent::buildingChests/parent::Building/buildingType"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:value-of select="ancestor::GameLocation/name" />
