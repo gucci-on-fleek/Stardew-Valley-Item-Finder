@@ -17,7 +17,7 @@
         <xsl:value-of select="concat($quote, 'Count', $quote, $col_sep)" />
         <xsl:value-of select="concat($quote, 'Stored in', $quote, $col_sep)" />
         <xsl:value-of select="concat($quote, 'Stack Price', $quote)" />
-        <xsl:text>&#xA; </xsl:text>
+        <xsl:text> &#xA; </xsl:text>
 
         <xsl:for-each select="item">
             <xsl:sort select="actual_price * count" data-type="number" order="descending" />
