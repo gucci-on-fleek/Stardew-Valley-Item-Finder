@@ -3,13 +3,12 @@
     <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
      SPDX-License-Identifier: MPL-2.0+
-     SPDX-FileCopyrightText: 2022 Max Chernoff
+     SPDX-FileCopyrightText: 2024 Max Chernoff
 -->
     <xsl:output method="text" encoding="utf-8" />
 
     <xsl:variable name="col_sep" select="','" />
     <xsl:variable name="quote" select="''" />
-    <xsl:variable name="row_sep" select="'&#xA;'" />
 
     <xsl:template match="/items">
         <xsl:value-of select="concat($quote, 'Item Name', $quote, $col_sep)" />
@@ -17,7 +16,8 @@
         <xsl:value-of select="concat($quote, 'Price', $quote, $col_sep)" />
         <xsl:value-of select="concat($quote, 'Count', $quote, $col_sep)" />
         <xsl:value-of select="concat($quote, 'Stored in', $quote, $col_sep)" />
-        <xsl:value-of select="concat($quote, 'Stack Price', $quote, $row_sep)" />
+        <xsl:value-of select="concat($quote, 'Stack Price', $quote)" />
+        <xsl:text>&#xA; </xsl:text>
 
         <xsl:for-each select="item">
             <xsl:sort select="actual_price * count" data-type="number" order="descending" />
@@ -48,7 +48,7 @@
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:value-of select="concat($quote, actual_price * count, $quote)" />
-            <xsl:value-of select="$row_sep" />
+            <xsl:text>&#xA; </xsl:text>
         </xsl:for-each>
     </xsl:template>
 
