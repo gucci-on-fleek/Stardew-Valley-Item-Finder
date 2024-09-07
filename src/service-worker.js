@@ -13,7 +13,7 @@ const requests = [
     "src/item-finder.js",
     "src/item-finder.css",
     "src/items.xslt",
-    "src/items-to-csv.xslt",
+    "src/items-to-tsv.xslt",
     "src/price-adjustments.xslt",
     "service-worker.js",
     "assets/gold_star.png",

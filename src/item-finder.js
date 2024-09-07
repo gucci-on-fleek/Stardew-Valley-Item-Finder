@@ -118,7 +118,7 @@ function initialize_page() {
     const listeners = [
         [elements.save_file_input, "change", event => file_opened(event)],
         [elements.filter, "keyup", () => filter_table()],
-        [elements.down_button, "click", () => download_as_csv(_csv_string)],
+        [elements.down_button, "click", () => download_as_tsv(_tsv_string)],
         [document.body, "dragover", event => event.preventDefault()], // Needed for the drop event to run
         [document.body, "drop", event => file_opened(event)],
         ...[...qsa("summary")].map(x => [x, "mousedown", event => { // Allow a middle-click to open all summary/details elements
@@ -176,12 +176,12 @@ function file_opened(event) {
         const file_contents = /** @type {String} */ (reader.result)
         const save_game = parse_xml(file_contents)
 
-        get_files(["../src/items.xslt", "../src/items-to-csv.xslt"]).then(
+        get_files(["../src/items.xslt", "../src/items-to-tsv.xslt"]).then(
             function (requests) {
                 const items = process_xslt(parse_xml(requests[0]), save_game)
-                const csv = process_xslt(parse_xml(requests[1]), items)
+                const tsv = process_xslt(parse_xml(requests[1]), items)
 
-                array_to_table(csv_to_array(xslt_output_to_text(csv)))
+                array_to_table(tsv_to_array(xslt_output_to_text(tsv)))
                 show_initial_sort_direction()
             })
             .finally(() => loading_screen({show_loading: false, show_input: true}))
@@ -198,11 +198,11 @@ function file_opened(event) {
  * @remarks Attempts to load previous save, does nothing if unsuccessful.
  */
 function get_previous_save() {
-    const csv = localStorage.getItem("csv")
-    if (csv) {
+    const tsv = localStorage.getItem("tsv")
+    if (tsv) {
         loading_screen({show_loading: true, show_input: true})
-        _csv_string = csv
-        array_to_table(csv_to_array(csv))
+        _tsv_string = tsv
+        array_to_table(tsv_to_array(tsv))
         show_initial_sort_direction()
         loading_screen({show_loading: false, show_input: true})
     }
@@ -243,8 +243,8 @@ function clone_template(element) {
 
 
 /**
- * Makes an `HTML` table from `CSV` and inserts it into the DOM.
- * @param {String[][]} array - The `CSV` to make a table from
+ * Makes an `HTML` table from `TSV` and inserts it into the DOM.
+ * @param {String[][]} array - The `TSV` to make a table from
  * @effects None directly, however called functions modify the DOM.
  */
 function array_to_table(array) {
@@ -341,7 +341,7 @@ function process_xslt(xslt, xml) {
 }
 
 
-let _csv_string // Global, holds the CSV so that it can later be downloaded
+let _tsv_string // Global, holds the TSV so that it can later be downloaded
 /**
  * Convert the `XSLT` transformed output into a string. Also, save
  *          the output in LocalStorage.
@@ -350,35 +350,35 @@ let _csv_string // Global, holds the CSV so that it can later be downloaded
  * @remarks `XSLT` transform a document into another `XML` document
  *          or plain text, however, the `XSLTProcessor` object always
  *          returns an `XMLDocument` object. Since we are transforming
- *          the `CSV` into plain text, we need to call this function
+ *          the `TSV` into plain text, we need to call this function
  *          to get a string.
- * @effects Modifies global variable `csv_string`. Also adds `csv` key
+ * @effects Modifies global variable `tsv_string`. Also adds `tsv` key
  *          to LocalStorage.
  */
 function xslt_output_to_text(xml) {
     const text_node = /** @type {Text} */ (xml.firstChild)
-    _csv_string = text_node.wholeText
-    localStorage.setItem("csv", _csv_string)
+    _tsv_string = text_node.wholeText
+    localStorage.setItem("tsv", _tsv_string)
 
-    return _csv_string
+    return _tsv_string
 }
 
 
 /**
- * Parse the `CSV` file into an array
- * @param {String} csv - The `CSV` file
- * @returns {String[][]} - An array representing the `CSV`
- * @remarks This is a very basic `CSV` parser. It just splits on
- *          commas and newlines, so any edge cases **will not** be
+ * Parse the `TSV` file into an array
+ * @param {String} tsv - The `TSV` file
+ * @returns {String[][]} - An array representing the `TSV`
+ * @remarks This is a very basic `TSV` parser. It just splits on
+ *          tabs and newlines, so any edge cases **will not** be
  *          accounted for. However, there won't be any edge cases
- *          since we control the input `CSV`.
+ *          since we control the input `TSV`.
  * @effects None
  */
-function csv_to_array(csv) {
-    return csv
+function tsv_to_array(tsv) {
+    return tsv
         .split("\n")
-        .map(x => x.split(","))
-        .slice(0, -1) // We made the csv file, so there won't be any edge cases
+        .map(x => x.split("\t"))
+        .slice(0, -1) // We made the tsv file, so there won't be any edge cases
 }
 
 
@@ -401,24 +401,24 @@ function cell_text(cell, text) {
  * @effects None
  */
 function make_html_table(array, table) {
-    for (const csv_row of array.slice(1)) {
+    for (const tsv_row of array.slice(1)) {
         const table_row = table.insertRow()
 
-        for (const [index, csv_cell] of csv_row.entries()) {
+        for (const [index, tsv_cell] of tsv_row.entries()) {
             switch (index) {
                 case 0: { // Item Name
-                    table_row.appendChild(template.row_header_cell(csv_cell))
+                    table_row.appendChild(template.row_header_cell(tsv_cell))
                     break
                 }
                 case 1: { // Quality column
                     const table_cell = table_row.insertCell()
-                    const icons = replace_icon(csv_cell)
+                    const icons = replace_icon(tsv_cell)
                     table_cell.appendChild(icons)
                     break
                 }
                 default: {
                     const table_cell = table_row.insertCell()
-                    cell_text(table_cell, format_integer(csv_cell))
+                    cell_text(table_cell, format_integer(tsv_cell))
                 }
             }
         }
@@ -625,8 +625,8 @@ const sort_table = (function () {
      * @effects Modifies the item table in the DOM
      */
     return function (column_index, ascending = true) {
-        const csv_array = csv_to_array(_csv_string)
-        const sorting_array = csv_array.slice(1) // Remove the header
+        const tsv_array = tsv_to_array(_tsv_string)
+        const sorting_array = tsv_array.slice(1) // Remove the header
         let compare
 
         for (const sort of sorts) {
@@ -642,7 +642,7 @@ const sort_table = (function () {
 
         sorting_array.sort(compare)
 
-        sorting_array.splice(0, 0, csv_array[0]) // Add back the header
+        sorting_array.splice(0, 0, tsv_array[0]) // Add back the header
         array_to_table(sorting_array)
     }
 })()
@@ -660,15 +660,15 @@ function show_initial_sort_direction() {
 
 
 /**
- * Allow the user to download their save as a CSV
+ * Allow the user to download their save as a TSV
  * @param {String} text
  * @remarks Called by the download button
  * @effects Temporarily modifies DOM. Triggers a download.
  */
-function download_as_csv(text) {
+function download_as_tsv(text) {
     const element = document.createElement("a")
-    element.setAttribute("href", `data:text/csv;charset=utf-8,${encodeURIComponent(text)}`)
-    element.setAttribute("download", "Stardew Valley Items.csv")
+    element.setAttribute("href", `data:text/tab-separated-values;charset=utf-8,${encodeURIComponent(text)}`)
+    element.setAttribute("download", "Stardew Valley Items.tsv")
     hide_element(element)
 
     document.body.appendChild(element)
