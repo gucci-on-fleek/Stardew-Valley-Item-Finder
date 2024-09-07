@@ -177,9 +177,9 @@ function file_opened(event) {
         const save_game = parse_xml(file_contents)
 
         get_files(["assets/items.xslt", "assets/items-to-tsv.xslt"]).then(
-            function (requests) {
-                const items = process_xslt(parse_xml(requests[0]), save_game)
-                const tsv = process_xslt(parse_xml(requests[1]), items)
+            async function (requests) {
+                const items = await process_xslt(parse_xml(requests[0]), save_game)
+                const tsv = await process_xslt(parse_xml(requests[1]), items)
 
                 array_to_table(tsv_to_array(xslt_output_to_text(tsv)))
                 show_initial_sort_direction()
@@ -331,8 +331,18 @@ function get_files(paths) {
  * @returns {DocumentFragment} The transformed `XML`
  * @effects None
  */
-function process_xslt(xslt, xml) {
+async function process_xslt(xslt, xml) {
     const xslt_processor = new XSLTProcessor()
+
+    const include = xslt.querySelector("include")
+    const href = include?.getAttribute("href")
+    if (include && href) {
+        const inner = parse_xml(await (await fetch(href)).text())
+        const fragment = new DocumentFragment()
+        fragment.append(...inner.firstElementChild.childNodes)
+        include.replaceWith(fragment)
+    }
+
 
     xslt_processor.importStylesheet(xslt)
     const processed = xslt_processor.transformToFragment(xml, new Document()) /* Non-standard, but supported by everything that isn't IE */
