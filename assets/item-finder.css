@@ -1,0 +1,297 @@
+/*!- regexReplaceAll `/\*[^\0]*?\*\/|\s*\n\s*|([^-\w])\s+` `/**/
+/* Stardew Valley Item Finder
+ * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+ * SPDX-License-Identifier: MPL-2.0+
+ * SPDX-FileCopyrightText: 2024 Max Chernoff
+ */
+
+ :root {
+    /* All of the colors that we can use */
+    --color-light: hsl(32, 98%, 92%);
+    --color-light-semi: hsl(32, 35%, 65%);
+    --color-light-faded: hsl(32, 20%, 40%);
+    --color-dark: hsl(32, 80%, 8%);
+    --color-dark-semi: hsl(32, 35%, 28%);
+    --color-dark-faded: hsl(32, 20%, 60%);
+    --color-blue: hsl(213, 90%, 33%);
+    --color-purple: hsl(280, 90%, 37%);
+    --color-light-blue: hsl(213, 85%, 75%);
+    --color-light-purple: hsl(280, 84%, 75%);
+
+    --heading-ratio: 0.7071067811865476;
+    --heading-base: 2.5rem;
+    --margin-big: 1.75rem;
+    --margin-small: 0.5rem;
+    --base-font-size: 1.125rem;
+    --page-margin: 15px;
+    --max-page-width: 55rem;
+    --margin-width: calc((100vw  - var(--max-page-width)) / 2);
+
+    --table-separator-length: 1ch;
+}
+
+@media print {
+    /* Only print the table, and in black and white */
+    :root {
+        --color-background: white;
+        --color-text: black;
+    }
+
+    .text,
+    h2,
+    input,
+    header,
+    footer,
+    label,
+    thead tr th:not([aria-sort])::after {
+        display: none !important;
+    }
+
+    table {
+        font-size: 10pt;
+    }
+
+    :is(thead, tfoot) tr :is(th, td) {
+        position: inherit !important;
+    }
+
+    body {
+        margin: 0 !important;
+    }
+}
+
+table {
+    margin-right: calc(-1 * var(--table-separator-length));
+    margin-left: calc(-1 * var(--table-separator-length));
+    overflow-wrap: anywhere;
+    table-layout: auto;
+    border-spacing: 0;
+    text-rendering: optimizeSpeed;
+
+    /* Monospaced numerals */
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 45em) {
+    /* For Mobile */
+    :root {
+        --table-separator-length: 2px;
+    }
+
+    :is(td, th):nth-child(5) {
+        /* Need extra space between Count and Location */
+        padding-left: 5px;
+    }
+
+    thead tr th:nth-child(2):not(:focus):not(:active) {
+        /* Hide quality header when in a tight space */
+        font-size: 0;
+    }
+
+    dl {
+        padding-inline-start: 0 !important;
+    }
+
+    td,
+    th { /* stylelint-disable-line no-descending-specificity */
+        padding-top: 0.25em !important;
+        padding-bottom: 0.25em !important;
+    }
+}
+
+thead,
+tfoot {
+    font-weight: bold;
+}
+
+th {
+    font-weight: normal;
+    text-align: left;
+    vertical-align: bottom;
+}
+
+th[scope=col] {
+    font-weight: bold;
+}
+
+td,
+th {
+    padding-top: 2px;
+
+    /* We're doubling the right padding with zero left padding instead
+     * of having single left and right padding because this will give us
+     * more room for the sorting arrows on the right without being occluded.
+     */
+    padding-right: calc(2 * var(--table-separator-length));
+    padding-bottom: 2px;
+    padding-left: 0;
+    vertical-align: top;
+}
+
+:is(thead, tfoot) tr :is(th, td) {
+    /* Have the header/footer of the table stay in the viewport */
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 5;
+    background: var(--color-background);
+}
+
+tfoot tr td {
+    bottom: 0;
+}
+
+thead tr th {
+    top: 0;
+    cursor: pointer;
+}
+
+:is(td, th):first-of-type { /* Fix the left/right paddings for the first/last columns */
+    padding-left: var(--table-separator-length);
+}
+
+:is(td, th):last-of-type {
+    padding-right: var(--table-separator-length);
+}
+
+thead tr th[aria-sort=ascending]::after {
+    content: " ↑"; /* Thin no-break space + up arrow */
+}
+
+thead tr th[aria-sort=descending]::after {
+    content: " ↓"; /* Thin no-break space + down arrow */
+}
+
+thead tr th:not([aria-sort])::after {
+    opacity: 0.75;
+    content: " ↕"; /* Thin no-break space + up/down arrow */
+}
+
+thead tr th::after { /* stylelint-disable-line no-descending-specificity */
+    display: inline-block;
+    width: 0;
+    height: 0;
+    font-weight: bolder;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+thead tr th:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+:is(td, th):nth-child(3),
+:is(td, th):nth-child(4),
+:is(td, th):nth-child(6) {
+    /* Numeric columns should be right-aligned */
+    text-align: right;
+
+    /* Don't wrap numeric columns */
+    overflow-wrap: normal;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    tbody tr:not(.item_description):hover {
+        --table-border-width: 0.0625rem; /* 1px */
+        --table-border-offset: 1em;
+
+        /* Draw a top and bottom rule on hover. We need the big box-shadow
+         * calculations so that the rules extend beyond the table. */
+        box-shadow: calc((-1 * var(--table-border-offset)) - (2 * var(--table-border-width))) 0 0 0 var(--color-background), calc(var(--table-border-offset) + (2 * var(--table-border-width))) 0 0 0 var(--color-background), calc(-1 * var(--table-border-offset)) 0 0 var(--table-border-width) var(--color-faded), var(--table-border-offset) 0 0 var(--table-border-width) var(--color-faded);
+    }
+}
+
+#filter {
+    margin-left: 50px;
+}
+
+.icon {
+    height: 1em;
+}
+
+dl {
+    display: grid;
+    grid-template-columns: fit-content(20%) 1fr;
+    justify-items: start;
+    margin: 0 0 0 0;
+    margin-left: 1em;
+    padding-inline-start: 40px;
+}
+
+dt {
+    display: list-item;
+    grid-column-start: 1;
+}
+
+dd {
+    display: inline;
+    grid-column-start: 2;
+    margin-left: 1em;
+}
+
+.message {
+    font-weight: bold;
+    font-size: 2em;
+    letter-spacing: 2.5px;
+}
+
+.message > * {
+    font-weight: initial;
+    font-size: initial;
+    font-style: italic;
+    letter-spacing: initial;
+}
+
+.item_description > td {
+    max-width: 0;
+    padding: 10px 15px;
+    border: 3px solid var(--color-faded);
+    border-radius: 30px;
+}
+
+details.license summary {
+    color: var(--color-link);
+
+    /* Hide the "open here" triangle */
+    list-style: none;
+
+    /* Make the summary look like a URL */
+    cursor: pointer;
+    font-weight: normal;
+}
+
+details.license summary::-webkit-details-marker {
+    display: none;
+}
+
+details.license summary:hover {
+    text-decoration: underline;
+}
+
+details.license[open] > summary {
+    /* Remove the summary once it has been expanded */
+    display: none;
+}
+
+details.license[open] {
+    /* Align the details with the rest of the content  */
+    left: max((100% - var(--max-page-width)) / 2, var(--page-margin));
+    max-width: var(--max-page-width);
+}
+
+[role=button] {
+    display: inline-block;
+    padding: 1ex;
+    border: 2px solid var(--color-faded);
+    border-radius: 1em;
+}
+
+:is(input, button):focus + [role=button],
+[role=button]:is(:hover, :focus) {
+    color: var(--color-background);
+    font-weight: 500;
+    background-color: var(--color-text);
+    outline: none;
+    cursor: pointer;
+}
+/** /` "${1}" -!*/

@@ -6,7 +6,7 @@ _Stardew Valley_ Item Finder
 <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
      SPDX-License-Identifier: MPL-2.0+ OR CC-BY-SA-4.0+
-     SPDX-FileCopyrightText: 2022 Max Chernoff
+     SPDX-FileCopyrightText: 2024 Max Chernoff
 -->
 
 This tool extracts information about all of your items in _Stardew Valley_

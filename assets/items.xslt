@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--{{ regexReplaceAll `<![-]-[^\0]*?[-]->\s*|\s*(\n)\s*|([^-\w<!])\s+([^-\w<!])` `-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- Stardew Valley Item Finder
-     https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
-     SPDX-License-Identifier: MPL-2.0+
-     SPDX-FileCopyrightText: 2022 Max Chernoff
--->
+       https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+       SPDX-License-Identifier: MPL-2.0+
+       SPDX-FileCopyrightText: 2022 Max Chernoff
+    -->
   <xsl:output method="xml" indent="yes" />
 
   <!-- Global Variables -->
@@ -206,6 +207,7 @@
     </location>
   </xsl:template>
 
-  <xsl:include href="../src/price-adjustments.xslt" /> <!-- Import the price adjustments from a separate file -->
+  <xsl:include href="assets/price-adjustments.xslt" /> <!-- Import the price adjustments from a separate file -->
 
 </xsl:stylesheet>
+<!--` "${1}${2}${3}" }}-->

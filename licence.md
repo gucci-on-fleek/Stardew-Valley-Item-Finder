@@ -3,7 +3,7 @@ Licencing
 <!-- Stardew Valley Item Finder
      https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
      SPDX-License-Identifier: MPL-2.0+ OR CC-BY-SA-4.0+
-     SPDX-FileCopyrightText: 2022 Max Chernoff
+     SPDX-FileCopyrightText: 2024 Max Chernoff
 -->
 
 Overview
@@ -41,7 +41,7 @@ thus are licensed separately from the rest of the project. Follow the licence as
 in the header for each file.
 
 ### Assets
-The files present in the `assets/` folder have been either extracted from 
+The files present in the `assets/` folder have been either extracted from
 _Stardew Valley_ game files or are derivative works thereof. Therefore, the copyright on
 these files belongs solely to ConcernedApe, the creator of _Stardew Valley_. In the
 context of this project — a non-commercial tool used to enhance usage of game from which
@@ -57,14 +57,14 @@ A “code” file is any file designed primarily to be read by a human.
 
 ### _Stardew Valley Wiki_
 This tool automatically fetches content from the _Stardew Valley Wiki_. This project
-does not distribute any content from the _Wiki_; rather, it fetches excerpts directly 
+does not distribute any content from the _Wiki_; rather, it fetches excerpts directly
 from the _Wiki_ to your browser. These excerpts are are licensed under
 [CC-BY-NC-SA-3.0](licences/CC-BY-NC-SA-3.0.txt).
 
 MPL-2.0 Overview
 ----------------
 
-The vast majority of this project is licensed under the 
+The vast majority of this project is licensed under the
 [Mozilla Public Licence, version 2.0](licences/MPL-2.0.txt) or greater. You’ll need to
 read [the licence](licences/MPL-2.0.txt) for full details, but here’s a quick
 [overview from GitHub](https://choosealicense.com/licenses/mpl-2.0/):
@@ -74,8 +74,8 @@ read [the licence](licences/MPL-2.0.txt) for full details, but here’s a quick
 > certain cases, one of the GNU licenses). Copyright and license notices must be
 > preserved. Contributors provide an express grant of patent rights. However, a larger
 > work using the licensed work may be distributed under different terms and without
-> source code for files added in the larger work. 
-> 
+> source code for files added in the larger work.
+>
 > | Permissions      | Conditions                     | Limitations     |
 > |------------------|--------------------------------|-----------------|
 > | - Commercial use | - Disclose source              | - Liability     |

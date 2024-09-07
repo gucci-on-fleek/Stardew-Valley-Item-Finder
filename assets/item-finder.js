@@ -1,5 +1,5 @@
 // @ts-check
-
+/*! define "content" -!*/
 /*
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
@@ -28,7 +28,7 @@ function create_templates() {
      *     globally. This way, we can typecast all of the elements in one
      *     place, and avoid messy typecasts inline.
      */
-    const __elements = { // Holds the elements that require a typecast
+    const __elements = { /* Holds the elements that require a typecast */
         item_table: /** @type {HTMLTableElement} */ (document.getElementById("item_table"))
     }
 
@@ -57,7 +57,7 @@ function create_templates() {
      * be handled in a general way, but exceptions are easy to add.
      */
     const __template = {
-        _header_cell(x) { // Creates each header cell
+        _header_cell(x) { /* Creates each header cell */
             const clone = clone_template(elements.header_cell_base).firstElementChild
             clone.insertAdjacentHTML("beforeend", x)
 
@@ -75,7 +75,7 @@ function create_templates() {
 
             return cell
         },
-        header(x) { // Creates the header row
+        header(x) { /* Creates the header row */
             const clone = clone_template(elements.header_base).firstElementChild
             clone.appendChild(x)
 
@@ -119,9 +119,9 @@ function initialize_page() {
         [elements.save_file_input, "change", event => file_opened(event)],
         [elements.filter, "keyup", () => filter_table()],
         [elements.down_button, "click", () => download_as_tsv(_tsv_string)],
-        [document.body, "dragover", event => event.preventDefault()], // Needed for the drop event to run
+        [document.body, "dragover", event => event.preventDefault()], /* Needed for the drop event to run */
         [document.body, "drop", event => file_opened(event)],
-        ...[...qsa("summary")].map(x => [x, "mousedown", event => { // Allow a middle-click to open all summary/details elements
+        ...[...qsa("summary")].map(x => [x, "mousedown", event => { /* Allow a middle-click to open all summary/details elements */
             event.preventDefault()
             event.target.click()
         }]),
@@ -133,8 +133,8 @@ function initialize_page() {
 
 
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize_page) // Initialize as soon as the page is loaded
-} else { // DOMContentLoaded has already fired, so run it now
+    document.addEventListener("DOMContentLoaded", initialize_page) /* Initialize as soon as the page is loaded */
+} else { /* DOMContentLoaded has already fired, so run it now */
     initialize_page()
 }
 
@@ -142,8 +142,8 @@ if (document.readyState === "loading") {
 window.addEventListener("load", function () {
     get_previous_save()
 
-    if (!window.location.origin.includes("127.0.0.1")) { // Disable the cache for local development
-        navigator.serviceWorker.register("service-worker.js")
+    if (!window.location.origin.includes("127.0.0.1")) { /* Disable the cache for local development */
+        navigator.serviceWorker.register("assets/service-worker.js")
     }
 })
 
@@ -165,7 +165,7 @@ function file_opened(event) {
     } else if (event.target instanceof window.HTMLInputElement) {
         const input = event.target
         file = input.files[0]
-    } else { // This shouldn't happen
+    } else { /* This shouldn't happen */
         show_element(elements.error)
 
         return
@@ -176,7 +176,7 @@ function file_opened(event) {
         const file_contents = /** @type {String} */ (reader.result)
         const save_game = parse_xml(file_contents)
 
-        get_files(["../src/items.xslt", "../src/items-to-tsv.xslt"]).then(
+        get_files(["assets/items.xslt", "assets/items-to-tsv.xslt"]).then(
             function (requests) {
                 const items = process_xslt(parse_xml(requests[0]), save_game)
                 const tsv = process_xslt(parse_xml(requests[1]), items)
@@ -335,13 +335,13 @@ function process_xslt(xslt, xml) {
     const xslt_processor = new XSLTProcessor()
 
     xslt_processor.importStylesheet(xslt)
-    const processed = xslt_processor.transformToFragment(xml, new Document()) // Non-standard, but supported by everything that isn't IE
+    const processed = xslt_processor.transformToFragment(xml, new Document()) /* Non-standard, but supported by everything that isn't IE */
 
     return processed
 }
 
 
-let _tsv_string // Global, holds the TSV so that it can later be downloaded
+let _tsv_string /* Global, holds the TSV so that it can later be downloaded */
 /**
  * Convert the `XSLT` transformed output into a string. Also, save
  *          the output in LocalStorage.
@@ -378,7 +378,7 @@ function tsv_to_array(tsv) {
     return tsv
         .split("\n")
         .map(x => x.split("\t"))
-        .slice(0, -1) // We made the tsv file, so there won't be any edge cases
+        .slice(0, -1) /* We made the tsv file, so there won't be any edge cases */
 }
 
 
@@ -406,11 +406,11 @@ function make_html_table(array, table) {
 
         for (const [index, tsv_cell] of tsv_row.entries()) {
             switch (index) {
-                case 0: { // Item Name
+                case 0: { /* Item Name */
                     table_row.appendChild(template.row_header_cell(tsv_cell))
                     break
                 }
-                case 1: { // Quality column
+                case 1: { /* Quality column */
                     const table_cell = table_row.insertCell()
                     const icons = replace_icon(tsv_cell)
                     table_cell.appendChild(icons)
@@ -464,7 +464,7 @@ function replace_icon(quality_name) {
         case "":
             return document.createTextNode("")
         default:
-            return document.createTextNode("") // This shouldn't happen, so return an empty node
+            return document.createTextNode("") /* This shouldn't happen, so return an empty node */
     }
 }
 
@@ -486,15 +486,15 @@ function format_integer(number) {
  * @effects Modifies DOM element `#table_container`.
  */
 const set_output = (function () {
-    let previous_output = false // True on 2nd/3rd/xth save file loads
+    let previous_output = false /* True on 2nd/3rd/xth save file loads */
 
     return function (table) {
         hide_element(qs("article"))
 
-        if (previous_output) { // Remove old table
+        if (previous_output) { /* Remove old table */
             delete elements.item_table
         }
-        table = calculate_sum(table) // eslint-disable-line no-param-reassign
+        table = calculate_sum(table) /* eslint-disable-line no-param-reassign */
 
         const container = elements.table_container
         container.appendChild(table)
@@ -530,14 +530,14 @@ function calculate_sum(table) {
     let tot_count = 0
     const current_hidden_filter_class = `filter_${_filter_class}`
 
-    while (foot.rows[0]) { // Remove old footers
+    while (foot.rows[0]) { /* Remove old footers */
         foot.rows[0].remove()
     }
 
     for (const row of table.tBodies[0].rows) {
         if (row.classList.contains(current_hidden_filter_class)) {
             continue
-        } // Skip if hidden by filter
+        } /* Skip if hidden by filter */
         tot_count += parse_integer(row.cells[3].textContent)
         tot_price += parse_integer(row.cells[5].textContent)
     }
@@ -584,7 +584,7 @@ function add_click_event(element, callback) {
  * @effects Initializes table sorting. Adds event listeners to the table headers.
  */
 function enable_table_sort() {
-    const get_header_cells = () => elements.item_table.tHead.rows[0].cells // This needs to be a function since the actual table element is replaced multiple times
+    const get_header_cells = () => elements.item_table.tHead.rows[0].cells /* This needs to be a function since the actual table element is replaced multiple times */
 
     for (const cell of get_header_cells()) {
         add_click_event(cell, function ({target}) {
@@ -605,15 +605,15 @@ const sort_table = (function () {
     const qualities = ["Iridium", "Gold", "Silver", ""]
     const sorts = [
         {
-            test(a) { return /\d/.test(a) }, // Numbers
+            test(a) { return /\d/.test(a) }, /* Numbers */
             compare(a, b) { return parse_integer(a) - parse_integer(b) }
         },
         {
-            test(a) { return qualities.indexOf(a) !== -1 }, // Qualities
+            test(a) { return qualities.indexOf(a) !== -1 }, /* Qualities */
             compare(a, b) { return qualities.indexOf(b) - qualities.indexOf(a) }
         },
         {
-            test() { return true }, // Fallback String
+            test() { return true }, /* Fallback String */
             compare(a, b) { return a.localeCompare(b) }
         }
     ]
@@ -626,7 +626,7 @@ const sort_table = (function () {
      */
     return function (column_index, ascending = true) {
         const tsv_array = tsv_to_array(_tsv_string)
-        const sorting_array = tsv_array.slice(1) // Remove the header
+        const sorting_array = tsv_array.slice(1) /* Remove the header */
         let compare
 
         for (const sort of sorts) {
@@ -642,7 +642,7 @@ const sort_table = (function () {
 
         sorting_array.sort(compare)
 
-        sorting_array.splice(0, 0, tsv_array[0]) // Add back the header
+        sorting_array.splice(0, 0, tsv_array[0]) /* Add back the header */
         array_to_table(sorting_array)
     }
 })()
@@ -677,7 +677,7 @@ function download_as_tsv(text) {
 }
 
 
-let _filter_class = 1 // Monotonically incrementing counter to ensure unique CSS classes
+let _filter_class = 1 /* Monotonically incrementing counter to ensure unique CSS classes */
 /**
  * Allows the table to be filtered
  * @remarks The naïve version of this function directly applied
@@ -696,8 +696,8 @@ function filter_table() {
     const table = elements.item_table
     const rows = table.tBodies[0].rows
     const search = RegExp(filter, "i")
-    const last_filter_class = _filter_class - 1 // The class that we're adding
-    const last_last_filter_class = last_filter_class - 1 // The class that we're removing
+    const last_filter_class = _filter_class - 1 /* The class that we're adding */
+    const last_last_filter_class = last_filter_class - 1 /* The class that we're removing */
     const filter_class_name = `filter_${_filter_class}`
     const last_last_filter_class_name = `filter_${last_last_filter_class}`
 
@@ -706,7 +706,7 @@ function filter_table() {
         if (!row.textContent.match(search)) {
             row.classList.add(filter_class_name)
         }
-        row.classList.remove(last_last_filter_class_name) // Cleanup old filter classes
+        row.classList.remove(last_last_filter_class_name) /* Cleanup old filter classes */
     }
 
     const style = document.styleSheets[0]
@@ -715,9 +715,9 @@ function filter_table() {
         style.deleteRule(1)
     }
 
-    calculate_sum(table) // Update the footer after the filter is applied
+    calculate_sum(table) /* Update the footer after the filter is applied */
 
-    _filter_class++ // Increment the class's name
+    _filter_class++ /* Increment the class's name */
 }
 
 
@@ -728,12 +728,12 @@ function filter_table() {
 function enable_wiki_click() {
     function wiki_click_event(event) {
         const target = event.target
-        if (target.cellIndex !== 0) { // Only capture click events on the first row
+        if (target.cellIndex !== 0) { /* Only capture click events on the first row */
             return
         }
         const page_title = normalize_names(target.textContent)
 
-        let cell // Allow the cell to be carried through each finally/then/catch stages
+        let cell /* Allow the cell to be carried through each finally/then/catch stages */
         wiki_description_by_title(page_title).finally(function () {
             remove_wiki_descriptions()
             const row = body.insertRow(target.parentElement.rowIndex)
@@ -742,7 +742,7 @@ function enable_wiki_click() {
             cell.colSpan = 6
         })
             .then(function (result) {
-                cell.innerHTML = result // Use innerHTML because the result can contain character entities
+                cell.innerHTML = result /* Use innerHTML because the result can contain character entities */
                 cell_text(cell, " ")
                 cell.appendChild(template.wiki_link(page_title))
             })
@@ -802,7 +802,7 @@ function remove_wiki_descriptions() {
 }
 
 
-const _prefixed_items = ["Honey", "Juice", "Wine", "Jelly", "Aged Roe", "Roe"] // Constant that lists all items that need to be normalized before a Wiki request.
+const _prefixed_items = ["Honey", "Juice", "Wine", "Jelly", "Aged Roe", "Roe"] /* Constant that lists all items that need to be normalized before a Wiki request. */
 /**
  * Normalize item names for the *Stardew Valley Wiki* request.
  * @param {String} name - The name of the item
@@ -827,3 +827,5 @@ function normalize_names(name) {
     }
     return name
 }
+/*!- end -!*/
+/*!- regexReplaceAll `/\s*\*[^\0]*?\*\/\s*|\s*(\n)\s*|\s+([^-\w])` (readFile "/tools/Stardew-Valley-Item-Finder/assets/item-finder.js") "${1}${2}" -!*/

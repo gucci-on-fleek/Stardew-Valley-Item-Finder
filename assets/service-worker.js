@@ -2,25 +2,32 @@
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
  * SPDX-License-Identifier: MPL-2.0+
- * SPDX-FileCopyrightText: 2022 Max Chernoff
+ * SPDX-FileCopyrightText: 2024 Max Chernoff
  */
 
-const version = "2.0"
-const cache_name = `stardew-valley-item-finder-v${version}`
+const version = `
+    /*!- $contents := "" -!*/
+    /*!- $root := "/tools/Stardew-Valley-Item-Finder/assets/" -!*/
+    /*!- range listFiles $root -!*/
+        /*!- $contents := cat $contents (readFile (printf "%s%s" $root .)) -!*/
+    /*!- end -!*/
+    /*!- $contents | sha256sum -!*/
+`
+const cache_name = `stardew-valley-item-finder-${version}`
 const cache = caches.open(cache_name)
 const requests = [
-    ".",
-    "src/item-finder.js",
-    "src/item-finder.css",
-    "src/items.xslt",
-    "src/items-to-tsv.xslt",
-    "src/price-adjustments.xslt",
-    "service-worker.js",
-    "assets/gold_star.png",
-    "assets/silver_star.png",
-    "assets/iridium_star.png",
-    "assets/icon.svg",
-    "src/manifest.webmanifest"
+    "..",
+    "../assets/item-finder.css",
+    "../assets/item-finder.js",
+    "../assets/items-to-tsv.xslt",
+    "../assets/items.xslt",
+    "../assets/manifest.webmanifest",
+    "../assets/price-adjustments.xslt",
+    "../assets/service-worker.js",
+    "../images/gold_star.png",
+    "../images/icon.svg",
+    "../images/iridium_star.png",
+    "../images/silver_star.png",
 ]
 let fetched = 0
 const threshold = 1000 * 60 * 60 * 24 // 1 day in milliseconds

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--{{ regexReplaceAll `<![-]-[^\0]*?[-]->\s*|\s*(\n)\s*|([^-\w<!])\s+([^-\w<!])` `-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <!-- Stardew Valley Item Finder
-     https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
-     SPDX-License-Identifier: MPL-2.0+
-     SPDX-FileCopyrightText: 2024 Max Chernoff
--->
+         https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
+         SPDX-License-Identifier: MPL-2.0+
+         SPDX-FileCopyrightText: 2024 Max Chernoff
+    -->
     <xsl:output method="text" encoding="utf-8" />
     <xsl:variable name="col_sep" select="'&#x9;'" />
-    <xsl:variable name="col_sep" select="'&#xA;'" />
+    <xsl:variable name="row_sep" select="'&#xA;'" />
 
     <xsl:template match="/items">
         <xsl:value-of select="concat('Item Name', $col_sep)" />
@@ -50,3 +51,4 @@
     </xsl:template>
 
 </xsl:stylesheet>
+<!--` "${1}${2}${3}" }}-->
