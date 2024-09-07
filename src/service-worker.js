@@ -5,7 +5,7 @@
  * SPDX-FileCopyrightText: 2022 Max Chernoff
  */
 
-const version="10748345855"
+const version="10748378653"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
