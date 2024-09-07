@@ -5,7 +5,7 @@
  * SPDX-FileCopyrightText: 2022 Max Chernoff
  */
 
-const version="8771911899"
+const version="10747618469"
 const cache_name = `stardew-valley-item-finder-v${version}`
 const cache = caches.open(cache_name)
 const requests = [
@@ -13,7 +13,7 @@ const requests = [
     "src/item-finder.js",
     "src/item-finder.css",
     "src/items.xslt",
-    "src/items-to-csv.xslt",
+    "src/items-to-tsv.xslt",
     "src/price-adjustments.xslt",
     "service-worker.js",
     "assets/gold_star.png",

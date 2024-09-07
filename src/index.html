@@ -51,7 +51,7 @@
             <dd><code>~/.config/StardewValley/Saves</code></dd>
         </dl>
         <p id="table_description">
-            You can sort the table by clicking on the headers, and you can download the table as a <abbr>CSV</abbr>
+            You can sort the table by clicking on the headers, and you can download the table as a <abbr>TSV</abbr>
             file to use in Excel. You can also click on an item name to view its description from the <i>Stardew Valley
                 Wiki</i>.
         </p>
@@ -72,9 +72,9 @@
                     aria-label="Filter Table"></input>
             </h2>
             <button hidden aria-hidden="false" type="button" id="down_button" class="input">Download as
-                CSV</button>
+                TSV</button>
             <label role="button" aria-hidden="true" for="down_button">Download as
-                <abbr>CSV</abbr></label>
+                <abbr>TSV</abbr></label>
             <a class="skip-link" href="#after_table">Skip to after the end of the item table</a>
         </article>
     </div>
@@ -107,13 +107,13 @@
             and potatoes, you would type <code>carrot|potato</code>.</p>
         <h3>Running from the Command Line</h3>
         <p>
-            Advanced users can convert their save files to <abbr>CSV</abbr> on the command line. First,
+            Advanced users can convert their save files to <abbr>TSV</abbr> on the command line. First,
             you’ll need to
             download the <abbr>XSLT</abbr> files from the <a
                 href="https://github.com/gucci-on-fleek/Stardew-Valley-Item-Finder">source code repository</a>.
             Then, using <a href="http://xmlsoft.org/XSLT/xsltproc.html"><code>xsltproc</code></a>:</p>
         <code class="block">
-xsltproc items.xslt Name_123456789 | xsltproc items-to-csv.xslt - > items.csv
+xsltproc items.xslt Name_123456789 | xsltproc items-to-tsv.xslt - > items.tsv
         </code>
     </section>
 
