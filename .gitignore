@@ -1,4 +1,5 @@
-test-*
-node_modules/**
+dist/
+node_modules/
 package-lock.json
-testing/**
+test-*
+testing/
