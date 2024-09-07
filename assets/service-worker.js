@@ -9,7 +9,7 @@ const version = `
     /*!- $contents := "" -!*/
     /*!- $root := "/tools/Stardew-Valley-Item-Finder/assets/" -!*/
     /*!- range listFiles $root -!*/
-        /*!- $contents := cat $contents (readFile (printf "%s%s" $root .)) -!*/
+        /*!- $contents = cat $contents (readFile (printf "%s%s" $root .)) -!*/
     /*!- end -!*/
     /*!- $contents | sha256sum -!*/
 `

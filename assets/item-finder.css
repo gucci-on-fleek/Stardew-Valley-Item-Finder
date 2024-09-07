@@ -1,4 +1,4 @@
-/*!- regexReplaceAll `/\*[^\0]*?\*\/|\s*\n\s*|([^-\w])\s+` `/**/
+/*!- regexReplaceAll `/\*[^\0]*?\*\/|\s*\n\s*|([^-\w)])\s+` `/**/
 /* Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
  * SPDX-License-Identifier: MPL-2.0+
@@ -247,6 +247,7 @@ dd {
     padding: 10px 15px;
     border: 3px solid var(--color-faded);
     border-radius: 30px;
+    white-space: unset;
 }
 
 details.license summary {
