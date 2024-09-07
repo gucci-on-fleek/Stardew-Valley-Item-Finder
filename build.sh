@@ -41,8 +41,8 @@ minify_json () {
 }
 
 minify_png () {
-    pngcrush -ow -rem gAMA -rem cHRM -rem bKGD -rem tIME -rem tEXt -rem TRRd assets/"$1" # Remove extra data in png files
     zopflipng -y -m --lossy_transparent assets/"$1" assets/"$1" # Bruteforce compress the png
+    pngcrush -ow -rem gAMA -rem cHRM -rem bKGD -rem tIME -rem tEXt -rem TRRd assets/"$1" # Remove extra data in png files
 }
 
 use_minified () {
@@ -55,7 +55,6 @@ minify () {
 *.html minify_html
 *.xslt minify_xml
 *.xsd minify_xml
-*.js minify_js
 *.webmanifest minify_json
 *.png minify_png
 EOF
