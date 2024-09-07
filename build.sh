@@ -26,7 +26,7 @@ minify_html () {
 
 minify_xml () {
     if [ "$1" = "items-to-tsv.xslt" ]; then
-        return
+        cp src/"$1" dist/"$1"
     fi
     command minify --type=xml -o dist/"$1" src/"$1"
 }
