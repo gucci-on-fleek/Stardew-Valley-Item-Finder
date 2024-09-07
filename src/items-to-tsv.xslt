@@ -6,12 +6,8 @@
      SPDX-FileCopyrightText: 2024 Max Chernoff
 -->
     <xsl:output method="text" encoding="utf-8" />
-
-    <xsl:variable name="_col_sep">x<![CDATA[	]]></xsl:variable>
-    <xsl:variable name="col_sep" select="substring($_col_sep, 2)" />
-    <xsl:variable name="_row_sep">x<![CDATA[
-]]></xsl:variable>
-    <xsl:variable name="row_sep" select="substring($_row_sep, 2)" />
+    <xsl:variable name="col_sep" select="'&#x9;'" />
+    <xsl:variable name="col_sep" select="'&#xA;'" />
 
     <xsl:template match="/items">
         <xsl:value-of select="concat('Item Name', $col_sep)" />
