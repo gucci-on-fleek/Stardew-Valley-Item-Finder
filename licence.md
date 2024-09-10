@@ -8,7 +8,7 @@ Licencing
 
 Overview
 --------
-The majority of this website is licensed under the [MPL-2.0](licences/MPL-2.0.txt) or
+The majority of this website is licensed under the [MPL-2.0](https://www.mozilla.org/en-US/MPL/2.0/) or
 any later version. Some additional JavaScript libraries are licensed under other
 [OSI-approved](https://opensource.org/osd) licences
 
@@ -16,7 +16,7 @@ All icons used are copyright [ConcernedApe](https://www.stardewvalley.net) and a
 under Fair Use.
 
 Excerpts from the _[Stardew Valley Wiki](https://stardewvalleywiki.com/)_ are licensed
-under [CC-BY-NC-SA-3.0](licences/CC-BY-NC-SA-3.0.txt).
+under [CC-BY-NC-SA-3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 
 
 General Rules
@@ -59,14 +59,14 @@ A “code” file is any file designed primarily to be read by a human.
 This tool automatically fetches content from the _Stardew Valley Wiki_. This project
 does not distribute any content from the _Wiki_; rather, it fetches excerpts directly
 from the _Wiki_ to your browser. These excerpts are are licensed under
-[CC-BY-NC-SA-3.0](licences/CC-BY-NC-SA-3.0.txt).
+[CC-BY-NC-SA-3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 
 MPL-2.0 Overview
 ----------------
 
 The vast majority of this project is licensed under the
-[Mozilla Public Licence, version 2.0](licences/MPL-2.0.txt) or greater. You’ll need to
-read [the licence](licences/MPL-2.0.txt) for full details, but here’s a quick
+[Mozilla Public Licence, version 2.0](https://www.mozilla.org/en-US/MPL/2.0/) or greater. You’ll need to
+read [the licence](https://www.mozilla.org/en-US/MPL/2.0/) for full details, but here’s a quick
 [overview from GitHub](https://choosealicense.com/licenses/mpl-2.0/):
 
 > Permissions of this weak copyleft license are conditioned on making available source
