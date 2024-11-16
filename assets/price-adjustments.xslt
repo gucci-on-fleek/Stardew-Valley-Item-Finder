@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--{{ regexReplaceAll `<![-]-[^\0]*?[-]->\s*|\s*(\n)\s*|([^-\w<!])\s+([^-\w<!])` `-->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <!-- Stardew Valley Item Finder
          https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
@@ -271,4 +270,3 @@
     </xsl:template>
 
 </xsl:stylesheet>
-<!--` "${1}${2}${3}" }}-->

@@ -1,5 +1,4 @@
 // @ts-check
-/*! define "content" -!*/
 /*
  * Stardew Valley Item Finder
  * https://gucci-on-fleek.github.io/Stardew-Valley-Item-Finder/
@@ -827,5 +826,3 @@ function normalize_names(name) {
     }
     return name
 }
-/*!- end -!*/
-/*!- regexReplaceAll `/\s*\*[^\0]*?\*\/\s*|\s*(\n)\s*|\s+([^-\w])` (readFile "/tools/Stardew-Valley-Item-Finder/assets/item-finder.js") "${1}${2}" -!*/

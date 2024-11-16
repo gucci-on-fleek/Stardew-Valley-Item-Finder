@@ -30,7 +30,7 @@ let requests = [
     "images/silver_star.png",
 ]
 requests = requests.map(url => "/tools/Stardew-Valley-Item-Finder/" + url)
-requests.push("/style.css")
+requests.push("/assets/style.css")
 
 let fetched = 0
 const threshold = 1000 * 60 * 60 * 24 // 1 day in milliseconds
